@@ -39,3 +39,17 @@ pcn-iptables -S INPUT
 pcn-iptables -L INPUT
 
 ping $ip -W 1 -c 2 -W 2
+
+# check if rules are still working after horus disabled again
+
+polycubectl pcn-iptables set horus=OFF
+
+ping $ip -W 1 -c 2 -W 2
+
+pcn-iptables -A INPUT -s $ip -j DROP
+
+test_fail ping $ip -W 1 -c 2 -W 2
+
+pcn-iptables -D INPUT -s $ip -j DROP
+
+ping $ip -W 1 -c 2 -W 2
