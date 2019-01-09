@@ -511,7 +511,7 @@ void Chain::updateChain() {
       }
     }
   }
-  if ( parent_.ddos_mitigator_runtime_enabled_ == false ) {
+  if (parent_.ddos_mitigator_runtime_enabled_ == false) {
     // Recompile parser
     // parser should ask to DDos its index getIndex from DDoS
     parent_.programs_[std::make_pair(ModulesConstants::PARSER_INGRESS,ChainNameEnum::INVALID_INGRESS)]->reload();
