@@ -55,7 +55,17 @@ ServiceController::ServiceController(const std::string &name,
 }
 
 ServiceController::~ServiceController() {
-  // TODO: destroy all cubes created by this service
+  //std::lock_guard<std::mutex> guard(service_ctrl_mutex_);
+
+  // destroy instances created by this
+  for (auto it = cubes_x_service.begin(); it != cubes_x_service.end(); ) {
+    if (it->first == name_) {
+      it = cubes_x_service.erase(it);
+    } else {
+      it++;
+    }
+  }
+
   switch(type_) {
     case ServiceControllerType::LIBRARY:
       managementInterface.reset();
