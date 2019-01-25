@@ -40,6 +40,18 @@ Cubes are created by the ``polycubectl <cubetype> add <cubename>`` command, for 
   # create a simplebridge instance br1
   polycubectl simplebridge add br1
 
+Types of Cubes
+^^^^^^^^^^^^^^
+
+Polycube has two diferent kind of cubes, standard cubes and transparent cubes.
+
+Standard cubes have ports, usually they process the packets that arrive to those ports making a forwarding decision, i.e, sending the packet to another port.
+Examples of standard cubes are the router and bridge.
+
+Transparent cubes are composed by the ingress and egress pipelines, when a packet comes to a pipeline the transparent cube can modify and let is pass or drop it.
+Transparent cubes can operate in two ways, attached to a standard cube port or to a netdev on the system.
+Examples of transparent cubes are nat, firewall and ddosmitigator.
+
 Cubes Ports
 ^^^^^^^^^^^
 Cubes send/receive traffic through ``ports``.
@@ -98,6 +110,11 @@ Connect Disconnect primitive
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Connect and disconnect API provides a short way to connect ports, without setting up peers explicitly.
+
+Attach and Detach primitives
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+These primitives allow to associate transparent cubes to standard cube's ports or to netdevs on the system.
 
 ::
 
