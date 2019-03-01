@@ -75,12 +75,6 @@ static __always_inline void incrementDefaultCounters_DIRECTION(u32 bytes) {
   }
 }
 
-BPF_TABLE("extern", int, struct packetHeaders, packet, 1);
-static __always_inline struct packetHeaders *getPacket() {
-  int key = 0;
-  return packet.lookup(&key);
-}
-
 static int handle_rx(struct CTXTYPE *ctx, struct pkt_metadata *md) {
   pcn_log(ctx, LOG_DEBUG, "Code Ip_TYPE_DIRECTION receiving packet. ");
 
@@ -88,11 +82,8 @@ static int handle_rx(struct CTXTYPE *ctx, struct pkt_metadata *md) {
  * this code has to be used only in those cases.*/
 #if _NR_ELEMENTS > 0
   int key = 0;
-  struct packetHeaders *pkt = getPacket();
-  if (pkt == NULL) {
-    // Not possible
-    return RX_DROP;
-  }
+  struct packetHeaders *pkt;
+  pkt = (void *)(unsigned long)ctx->data_meta;
 
   struct lpm_k lpm_key = {32, pkt->_TYPEIp};
   struct elements *ele = getBitVect(&lpm_key);

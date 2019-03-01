@@ -122,8 +122,6 @@ BPF_TABLE("extern", int, uint64_t, timestamp, 1);
 
 BPF_TABLE("extern", struct ct_k, struct ct_v, connections, 65536);
 
-BPF_TABLE("extern", int, struct packetHeaders, packet, 1);
-
 /* from include/net/ip.h */
 static __always_inline int ip_decrease_ttl(struct iphdr *iph) {
   u32 check = (__force u32)iph->check;
@@ -145,14 +143,10 @@ static int handle_rx(struct CTXTYPE *ctx, struct pkt_metadata *md) {
 
 #else
   // Conntrack ENABLED
-  struct packetHeaders *pkt;
   int k = 0;
-  pkt = packet.lookup(&k);
 
-  if (pkt == NULL) {
-    // Not possible
-    return RX_DROP;
-  }
+  struct packetHeaders *pkt;
+  pkt = (void *)(unsigned long)ctx->data_meta;
 
   pcn_log(ctx, LOG_DEBUG,
           "[ConntrackTableUpdate] received packet. SrcIP: %I, Flags: %x",

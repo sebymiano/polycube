@@ -42,8 +42,6 @@ struct packetHeaders {
 
 // This is the percpu array containing the current packet headers
 #if _INGRESS_LOGIC
-BPF_TABLE_SHARED("percpu_array", int, struct packetHeaders, packet, 1);
-
 BPF_TABLE_SHARED("percpu_array", int, u64, pkts_default_Input, 1);
 BPF_TABLE_SHARED("percpu_array", int, u64, bytes_default_Input, 1);
 
@@ -52,8 +50,6 @@ BPF_TABLE_SHARED("percpu_array", int, u64, bytes_default_Forward, 1);
 #endif
 
 #if _EGRESS_LOGIC
-BPF_TABLE("extern", int, struct packetHeaders, packet, 1);
-
 BPF_TABLE_SHARED("percpu_array", int, u64, pkts_default_Output, 1);
 BPF_TABLE_SHARED("percpu_array", int, u64, bytes_default_Output, 1);
 #endif
@@ -92,13 +88,31 @@ struct tcp_hdr {
 } __attribute__((packed));
 
 static int handle_rx(struct CTXTYPE *ctx, struct pkt_metadata *md) {
+  int ret;
+  struct packetHeaders *pkt;
+
   pcn_log(ctx, LOG_DEBUG, "Code Parse receiving packet.");
+
+  /* First of all we need to reserve the metadata space on the
+   * packet and this MUST happen before loading ctx->data
+   * otherwise the verifier will raise an error.
+  */
+  ret = bpf_xdp_adjust_meta(ctx, -(int)sizeof(*pkt));
+  if (ret < 0)
+    return XDP_ABORTED;
 
   void *data = (void *)(long)ctx->data;
   void *data_end = (void *)(long)ctx->data_end;
+  pkt = (void *)(unsigned long)ctx->data_meta;
+
+  if (pkt + 1 > data)
+    return XDP_ABORTED;
+
   struct eth_hdr *ethernet = data;
+
   if (data + sizeof(*ethernet) > data_end)
     return RX_DROP;
+
   if (ethernet->proto != bpf_htons(ETH_P_IP)) {
     /*Let everything that is not IP pass. */
     pcn_log(ctx, LOG_DEBUG, "Packet not IP. Let this traffic pass by default.");
@@ -109,15 +123,6 @@ static int handle_rx(struct CTXTYPE *ctx, struct pkt_metadata *md) {
   ip = data + sizeof(struct eth_hdr);
   if (data + sizeof(struct eth_hdr) + sizeof(*ip) > data_end)
     return RX_DROP;
-
-  int key = 0;
-  struct packetHeaders *pkt;
-
-  pkt = packet.lookup(&key);
-  if (pkt == NULL) {
-    // Not possible
-    return RX_DROP;
-  }
 
   pkt->srcIp = ip->saddr;
   pkt->dstIp = ip->daddr;

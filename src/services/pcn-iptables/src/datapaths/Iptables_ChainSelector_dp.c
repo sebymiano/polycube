@@ -48,8 +48,6 @@ enum {
 
 BPF_TABLE("extern", int, struct elements, sharedEle, 1);
 
-BPF_TABLE("extern", int, struct packetHeaders, packet, 1);
-
 #if _INGRESS_LOGIC
 BPF_TABLE_SHARED("hash", __be32, int, localip, 256);
 
@@ -145,12 +143,8 @@ static int handle_rx(struct CTXTYPE *ctx, struct pkt_metadata *md) {
   struct elements *result;
 
   struct packetHeaders *pkt;
-  pkt = packet.lookup(&key);
+  pkt = (void *)(unsigned long)ctx->data_meta;
 
-  if (pkt == NULL) {
-    // Not possible
-    return RX_DROP;
-  }
 
 #if _INGRESS_LOGIC
 

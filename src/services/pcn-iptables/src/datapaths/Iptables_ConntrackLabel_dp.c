@@ -116,9 +116,6 @@ BPF_TABLE_SHARED("lru_hash", struct ct_k, struct ct_v, connections, 65536);
 BPF_TABLE("extern", struct ct_k, struct ct_v, connections, 65536);
 #endif
 
-BPF_TABLE("extern", int, struct packetHeaders, packet, 1);
-// BPF_TABLE("extern", int, struct packetHeaders, packetEgress, 1);
-
 // This is the percpu array containing the forwarding decision. ChainForwarder
 // just lookup this value.
 BPF_TABLE("extern", int, int, forwardingDecision, 1);
@@ -191,12 +188,8 @@ static int handle_rx(struct CTXTYPE *ctx, struct pkt_metadata *md) {
   pcn_log(ctx, LOG_DEBUG, "Conntrack label received packet");
   struct packetHeaders *pkt;
   int k = 0;
-  pkt = packet.lookup(&k);
 
-  if (pkt == NULL) {
-    // Not possible
-    return RX_DROP;
-  }
+  pkt = (void *)(unsigned long)ctx->data_meta;
 
   struct ct_k key = {0, 0, 0, 0, 0};
   uint8_t ipRev = 0;

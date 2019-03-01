@@ -67,8 +67,6 @@ enum {
                      // default action is DROP. //NEVER HIT
 };
 
-BPF_TABLE("extern", int, struct packetHeaders, packet, 1);
-
 // TODO 1024 -> const
 BPF_TABLE("hash", struct horusKey, struct horusValue, horusTable, 1024);
 
@@ -103,12 +101,7 @@ static int handle_rx(struct CTXTYPE *ctx, struct pkt_metadata *md) {
   int zero = 0;
 
   struct packetHeaders *pkt;
-  pkt = packet.lookup(&zero);
-
-  if (pkt == NULL) {
-    // Not possible
-    return RX_DROP;
-  }
+  pkt = (void *)(unsigned long)ctx->data_meta;
 
   // build key
   struct horusKey key;

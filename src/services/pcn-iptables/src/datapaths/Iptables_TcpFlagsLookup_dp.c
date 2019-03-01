@@ -41,12 +41,6 @@ struct packetHeaders {
   uint8_t connStatus;
 };
 
-BPF_TABLE("extern", int, struct packetHeaders, packet, 1);
-static __always_inline struct packetHeaders *getPacket() {
-  int key = 0;
-  return packet.lookup(&key);
-}
-
 #if _NR_ELEMENTS > 0
 struct elements {
   uint64_t bits[_MAXRULES];
@@ -85,11 +79,9 @@ static int handle_rx(struct CTXTYPE *ctx, struct pkt_metadata *md) {
  * so this code has to be used only in this case.*/
 #if _NR_ELEMENTS > 0
   int key = 0;
-  struct packetHeaders *pkt = getPacket();
-  if (pkt == NULL) {
-    // Not possible
-    return RX_DROP;
-  }
+  struct packetHeaders *pkt;
+  pkt = (void *)(unsigned long)ctx->data_meta;
+
   if (pkt->l4proto != IPPROTO_TCP) {
     pcn_log(ctx, LOG_DEBUG, "Code flags _DIRECTION ignoring packet. ");
     call_bpf_program(ctx, _NEXT_HOP_1);
