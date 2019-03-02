@@ -2,6 +2,7 @@ include_directories(${CMAKE_SOURCE_DIR}/src/polycubed/src)
 include_directories(${CMAKE_SOURCE_DIR}/src/libs/polycube/include)
 include_directories(${CMAKE_SOURCE_DIR}/src/libs/spdlog)
 include_directories(${CMAKE_SOURCE_DIR}/src/libs/bcc/src/cc/)
+include_directories("/usr/include/bcc/compat")
 
 add_definitions(-DGUID_LIBUUID)
 

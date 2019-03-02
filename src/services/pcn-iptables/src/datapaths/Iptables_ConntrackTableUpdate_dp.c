@@ -112,12 +112,25 @@ struct ct_v {
 } __attribute__((packed));
 
 #if _INGRESS_LOGIC
+static __always_inline struct packetHeaders *getPacket(struct CTXTYPE *ctx) {
+  void *data = (void *)(long)ctx->data;
+  void *data_end = (void *)(long)ctx->data_end;
+  void *meta = (void *)(unsigned long)ctx->data_meta;
+
+  return meta;
+}
+
 BPF_TABLE_SHARED("percpu_array", int, uint64_t, timestamp, 1);
 BPF_DEVMAP(tx_port, 128);
 #endif
 
 #if _EGRESS_LOGIC
 BPF_TABLE("extern", int, uint64_t, timestamp, 1);
+BPF_TABLE("extern", int, struct packetHeaders, packet, 1);
+static __always_inline struct packetHeaders *getPacket(struct CTXTYPE *ctx) {
+    int key = 0;
+    return packet.lookup(&key);
+}
 #endif
 
 BPF_TABLE("extern", struct ct_k, struct ct_v, connections, 65536);
@@ -143,10 +156,15 @@ static int handle_rx(struct CTXTYPE *ctx, struct pkt_metadata *md) {
 
 #else
   // Conntrack ENABLED
-  int k = 0;
+  struct packetHeaders *pkt = getPacket(ctx);
+  if (pkt == NULL)
+    return RX_DROP;
 
-  struct packetHeaders *pkt;
-  pkt = (void *)(unsigned long)ctx->data_meta;
+  void *data = (void *)(long)ctx->data;
+  void *data_end = (void *)(long)ctx->data_end;
+
+  if (pkt + 1 > data)
+    return RX_DROP;
 
   pcn_log(ctx, LOG_DEBUG,
           "[ConntrackTableUpdate] received packet. SrcIP: %I, Flags: %x",
@@ -617,8 +635,8 @@ static int handle_rx(struct CTXTYPE *ctx, struct pkt_metadata *md) {
 
   /* == ICMP  == */
   if (pkt->l4proto == IPPROTO_ICMP) {
-    void *data = (void *)(long)ctx->data;
-    void *data_end = (void *)(long)ctx->data_end;
+    data = (void *)(long)ctx->data;
+    data_end = (void *)(long)ctx->data_end;
     if (data + 34 + sizeof(struct icmphdr) > data_end)
       return RX_DROP;
     struct icmphdr *icmp = data + 34;
@@ -661,8 +679,8 @@ forward_action:;
   // re-parse pkt is more convinient than parse it at pipeline beginning.
   // furthermore it is needed, since we have to change the packet
 
-  void *data = (void *)(long)ctx->data;
-  void *data_end = (void *)(long)ctx->data_end;
+  data = (void *)(long)ctx->data;
+  data_end = (void *)(long)ctx->data_end;
   struct bpf_fib_lookup fib_params;
   struct ethhdr *eth = data;
   struct ipv6hdr *ip6h;

@@ -57,8 +57,12 @@ std::string Iptables::L4ProtocolLookup::getCode() {
 
   if (program_type_ == ProgramType::INGRESS) {
     replaceAll(no_macro_code, "call_bpf_program", "call_ingress_program");
+    replaceAll(no_macro_code, "_INGRESS_LOGIC", std::to_string(1));
+    replaceAll(no_macro_code, "_EGRESS_LOGIC", std::to_string(0));
   } else if (program_type_ == ProgramType::EGRESS) {
     replaceAll(no_macro_code, "call_bpf_program", "call_egress_program");
+    replaceAll(no_macro_code, "_INGRESS_LOGIC", std::to_string(0));
+    replaceAll(no_macro_code, "_EGRESS_LOGIC", std::to_string(1));
   }
 
   return no_macro_code;

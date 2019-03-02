@@ -87,26 +87,44 @@ struct tcp_hdr {
   __be16 urg_ptr;
 } __attribute__((packed));
 
-static int handle_rx(struct CTXTYPE *ctx, struct pkt_metadata *md) {
-  int ret;
-  struct packetHeaders *pkt;
+#if _INGRESS_LOGIC
+static __always_inline struct packetHeaders *getPacket(struct CTXTYPE *ctx) {
+  int ret = bpf_xdp_adjust_meta(ctx, -(int)sizeof(struct packetHeaders));
+  if (ret < 0)
+    return NULL;
 
+  void *data = (void *)(long)ctx->data;
+  void *data_end = (void *)(long)ctx->data_end;
+  void *meta = (void *)(unsigned long)ctx->data_meta;
+
+  return meta;
+}
+#endif
+
+#if _EGRESS_LOGIC
+BPF_TABLE_SHARED("percpu_array", int, struct packetHeaders, packet, 1);
+static __always_inline struct packetHeaders *getPacket(struct CTXTYPE *ctx) {
+    int key = 0;
+    return packet.lookup(&key);
+}
+#endif
+
+static int handle_rx(struct CTXTYPE *ctx, struct pkt_metadata *md) {
   pcn_log(ctx, LOG_DEBUG, "Code Parse receiving packet.");
 
   /* First of all we need to reserve the metadata space on the
    * packet and this MUST happen before loading ctx->data
    * otherwise the verifier will raise an error.
-  */
-  ret = bpf_xdp_adjust_meta(ctx, -(int)sizeof(*pkt));
-  if (ret < 0)
-    return XDP_ABORTED;
+   */
+  struct packetHeaders *pkt = getPacket(ctx);
+  if (pkt == NULL)
+      return RX_DROP;
 
   void *data = (void *)(long)ctx->data;
   void *data_end = (void *)(long)ctx->data_end;
-  pkt = (void *)(unsigned long)ctx->data_meta;
 
   if (pkt + 1 > data)
-    return XDP_ABORTED;
+      return RX_DROP;
 
   struct eth_hdr *ethernet = data;
 

@@ -44,6 +44,7 @@ Iptables::Iptables(const std::string name, const IptablesJsonObject &conf,
   /*Initialize program*/
   // Insert parser, first program of the chain
 
+  logger()->info("Injecting PARSER_INGRESS");
   // PARSER INGRESS
   programs_.insert(
       // pair <ModulesConstants TYPE, ChainName>
@@ -53,6 +54,7 @@ Iptables::Iptables(const std::string name, const IptablesJsonObject &conf,
                          ChainNameEnum::INVALID_INGRESS),
           new Iptables::Parser(ModulesConstants::PARSER_INGRESS, *this)));
 
+  logger()->info("Injecting PARSER_EGRESS");
   // PARSER EGRESS
   programs_.insert(
       // pair <ModulesConstants TYPE, ChainName>
@@ -63,6 +65,7 @@ Iptables::Iptables(const std::string name, const IptablesJsonObject &conf,
           new Iptables::Parser(ModulesConstants::PARSER_EGRESS, *this,
                                ProgramType::EGRESS)));
 
+  logger()->info("Injecting CHAINSELECTOR_INGRESS");
   // CHAINSELECTOR INGRESS
   programs_.insert(
       std::pair<std::pair<uint8_t, ChainNameEnum>, Iptables::Program *>(
@@ -71,6 +74,7 @@ Iptables::Iptables(const std::string name, const IptablesJsonObject &conf,
           new Iptables::ChainSelector(ModulesConstants::CHAINSELECTOR_INGRESS,
                                       *this)));
 
+  logger()->info("Injecting CHAINSELECTOR_EGRESS");
   // CHAINSELECTOR EGRESS
   programs_.insert(
       std::pair<std::pair<uint8_t, ChainNameEnum>, Iptables::Program *>(
@@ -79,6 +83,7 @@ Iptables::Iptables(const std::string name, const IptablesJsonObject &conf,
           new Iptables::ChainSelector(ModulesConstants::CHAINSELECTOR_EGRESS,
                                       *this, ProgramType::EGRESS)));
 
+  logger()->info("Injecting CONNTRACKLABEL_INGRESS");
   // CONNTRACK INGRESS
   programs_.insert(
       std::pair<std::pair<uint8_t, ChainNameEnum>, Iptables::Program *>(
@@ -87,6 +92,7 @@ Iptables::Iptables(const std::string name, const IptablesJsonObject &conf,
           new Iptables::ConntrackLabel(ModulesConstants::CONNTRACKLABEL_INGRESS,
                                        *this)));
 
+  logger()->info("Injecting CONNTRACKLABEL_EGRESS");
   // CONNTRACK EGRESS
   programs_.insert(
       std::pair<std::pair<uint8_t, ChainNameEnum>, Iptables::Program *>(
@@ -95,6 +101,7 @@ Iptables::Iptables(const std::string name, const IptablesJsonObject &conf,
           new Iptables::ConntrackLabel(ModulesConstants::CONNTRACKLABEL_EGRESS,
                                        *this, ProgramType::EGRESS)));
 
+  logger()->info("Injecting CHAINFORWARDER_INGRESS");
   // CHAINFORWARDER INGRESS
   programs_.insert(
       std::pair<std::pair<uint8_t, ChainNameEnum>, Iptables::Program *>(
@@ -103,6 +110,7 @@ Iptables::Iptables(const std::string name, const IptablesJsonObject &conf,
           new Iptables::ChainForwarder(ModulesConstants::CHAINFORWARDER_INGRESS,
                                        *this)));
 
+  logger()->info("Injecting CHAINFORWARDER_EGRESS");
   // CHAINFORWARDER EGRESS
   programs_.insert(
       std::pair<std::pair<uint8_t, ChainNameEnum>, Iptables::Program *>(
@@ -111,6 +119,7 @@ Iptables::Iptables(const std::string name, const IptablesJsonObject &conf,
           new Iptables::ChainForwarder(ModulesConstants::CHAINFORWARDER_EGRESS,
                                        *this, ProgramType::EGRESS)));
 
+  logger()->info("Injecting CONNTRACKTABLEUPDATE_INGRESS");
   // CONNTRACK TABLE UPDATE INGRESS
   programs_.insert(
       std::pair<std::pair<uint8_t, ChainNameEnum>, Iptables::Program *>(
@@ -119,6 +128,7 @@ Iptables::Iptables(const std::string name, const IptablesJsonObject &conf,
           new Iptables::ConntrackTableUpdate(
               ModulesConstants::CONNTRACKTABLEUPDATE_INGRESS, *this)));
 
+  logger()->info("Injecting CONNTRACKTABLEUPDATE_EGRESS");
   // CONNTRACK TABLE UPDATE EGRESS
   programs_.insert(
       std::pair<std::pair<uint8_t, ChainNameEnum>, Iptables::Program *>(

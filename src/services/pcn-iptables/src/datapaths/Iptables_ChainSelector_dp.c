@@ -76,6 +76,14 @@ BPF_TABLE("extern", int, int, forwardingDecision, 1);
 #endif
 
 #if _INGRESS_LOGIC
+static __always_inline struct packetHeaders *getPacket(struct CTXTYPE *ctx) {
+  void *data = (void *)(long)ctx->data;
+  void *data_end = (void *)(long)ctx->data_end;
+  void *meta = (void *)(unsigned long)ctx->data_meta;
+
+  return meta;
+}
+
 static __always_inline void incrementDefaultCountersInput(u32 bytes) {
   u64 *value;
   int zero = 0;
@@ -106,6 +114,12 @@ static __always_inline void incrementDefaultCountersForward(u32 bytes) {
 #endif
 
 #if _EGRESS_LOGIC
+BPF_TABLE("extern", int, struct packetHeaders, packet, 1);
+static __always_inline struct packetHeaders *getPacket(struct CTXTYPE *ctx) {
+    int key = 0;
+    return packet.lookup(&key);
+}
+
 static __always_inline void incrementDefaultCountersOutput(u32 bytes) {
   u64 *value;
   int zero = 0;
@@ -142,8 +156,15 @@ static int handle_rx(struct CTXTYPE *ctx, struct pkt_metadata *md) {
   int key = 0;
   struct elements *result;
 
-  struct packetHeaders *pkt;
-  pkt = (void *)(unsigned long)ctx->data_meta;
+  struct packetHeaders *pkt = getPacket(ctx);
+  if (pkt == NULL)
+    return RX_DROP;
+
+  void *data = (void *)(long)ctx->data;
+  void *data_end = (void *)(long)ctx->data_end;
+
+  if (pkt + 1 > data)
+    return RX_DROP;
 
 
 #if _INGRESS_LOGIC

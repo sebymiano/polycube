@@ -6,6 +6,8 @@ if (HAVE_POLYCUBE_TOOLS)
   add_definitions(-DHAVE_POLYCUBE_TOOLS)
 endif (HAVE_POLYCUBE_TOOLS)
 
+include_directories("/usr/include/bcc/compat")
+
 add_subdirectory(components)
 add_subdirectory(libs)
 

@@ -65,6 +65,24 @@ static __always_inline struct elements *getBitVect(uint32_t *key) {
 }
 #endif
 
+#if _INGRESS_LOGIC
+static __always_inline struct packetHeaders *getPacket(struct CTXTYPE *ctx) {
+  void *data = (void *)(long)ctx->data;
+  void *data_end = (void *)(long)ctx->data_end;
+  void *meta = (void *)(unsigned long)ctx->data_meta;
+
+  return meta;
+}
+#endif
+
+#if _EGRESS_LOGIC
+BPF_TABLE("extern", int, struct packetHeaders, packet, 1);
+static __always_inline struct packetHeaders *getPacket(struct CTXTYPE *ctx) {
+    int key = 0;
+    return packet.lookup(&key);
+}
+#endif
+
 BPF_TABLE("extern", int, u64, pkts_default__DIRECTION, 1);
 BPF_TABLE("extern", int, u64, bytes_default__DIRECTION, 1);
 static __always_inline void incrementDefaultCounters_DIRECTION(u32 bytes) {
@@ -86,9 +104,15 @@ static int handle_rx(struct CTXTYPE *ctx, struct pkt_metadata *md) {
 /*The struct elements and the lookup table are defined only if _NR_ELEMENTS>0,
  * so this code has to be used only in this case.*/
 #if _NR_ELEMENTS > 0
-  int key = 0;
-  struct packetHeaders *pkt;
-  pkt = (void *)(unsigned long)ctx->data_meta;
+  struct packetHeaders *pkt = getPacket(ctx);
+  if (pkt == NULL)
+    return RX_DROP;
+
+  void *data = (void *)(long)ctx->data;
+  void *data_end = (void *)(long)ctx->data_end;
+
+  if (pkt + 1 > data)
+    return RX_DROP;
 
   uint8_t connStatus = pkt->connStatus;
   uint32_t ct = connStatus;

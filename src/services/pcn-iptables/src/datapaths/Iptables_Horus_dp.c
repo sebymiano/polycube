@@ -76,6 +76,14 @@ BPF_TABLE("extern", int, int, forwardingDecision, 1);
 BPF_TABLE("percpu_array", int, u64, pkts_horus, 1024);
 BPF_TABLE("percpu_array", int, u64, bytes_horus, 1024);
 
+static __always_inline struct packetHeaders *getPacket(struct CTXTYPE *ctx) {
+  void *data = (void *)(long)ctx->data;
+  void *data_end = (void *)(long)ctx->data_end;
+  void *meta = (void *)(unsigned long)ctx->data_meta;
+
+  return meta;
+}
+
 static __always_inline void incrementHorusCounters(u32 ruleID, u32 bytes) {
   u64 *value;
   value = pkts_horus.lookup(&ruleID);
@@ -100,8 +108,15 @@ static int handle_rx(struct CTXTYPE *ctx, struct pkt_metadata *md) {
 
   int zero = 0;
 
-  struct packetHeaders *pkt;
-  pkt = (void *)(unsigned long)ctx->data_meta;
+  struct packetHeaders *pkt = getPacket(ctx);
+  if (pkt == NULL)
+    return RX_DROP;
+
+  void *data = (void *)(long)ctx->data;
+  void *data_end = (void *)(long)ctx->data_end;
+
+  if (pkt + 1 > data)
+    return RX_DROP;
 
   // build key
   struct horusKey key;
