@@ -16,6 +16,11 @@
 
 #include <bcc/helpers.h>
 #include <bcc/proto.h>
+#include <linux/in.h>
+#include <linux/if_ether.h>
+
+BPF_PERCPU_ARRAY(rxcnt, long, 1);
+
 enum {
   SLOWPATH_REASON = 1
 };
@@ -33,29 +38,46 @@ struct action {
 * that packet.
 */
 BPF_HASH(actions, uint16_t, struct action);
+
+static __always_inline
+void swap_src_dst_mac(void *data) {
+    unsigned short *p = data;
+    unsigned short dst[3];
+    dst[0] = p[0];
+    dst[1] = p[1];
+    dst[2] = p[2];
+    p[0] = p[3];
+    p[1] = p[4];
+    p[2] = p[5];
+    p[3] = dst[0];
+    p[4] = dst[1];
+    p[5] = dst[2];
+}
+
 static __always_inline
 int handle_rx(struct CTXTYPE *ctx, struct pkt_metadata *md) {
   #ifdef POLYCUBE_XDP
     pcn_log(ctx, LOG_TRACE, "XDP Cube", md->in_port);
   #endif
   pcn_log(ctx, LOG_TRACE, "Receiving packet from port %d", md->in_port);
-  struct action *x = actions.lookup(&md->in_port);
-  if (!x) {
-    pcn_log(ctx, LOG_DEBUG, "No action associated to port %d: dropping packet.", md->in_port);
-    return RX_DROP;
-  }
-  switch(x->action) {
-    case DROP:
-      pcn_log(ctx, LOG_DEBUG, "Dropping packet.");
+
+  void* data_end = (void*)(long)ctx->data_end;
+  void* data = (void*)(long)ctx->data;
+  struct ethhdr *eth = data;
+  uint32_t key = 0;
+  long *value;
+  uint64_t nh_off;
+  nh_off = sizeof(*eth);
+  if (data + nh_off  > data_end)
       return RX_DROP;
-    case SLOWPATH:
-      pcn_log(ctx, LOG_DEBUG, "Sending packet to slowpath.");
-      return pcn_pkt_controller(ctx, md, SLOWPATH_REASON);
-    case FORWARD:
-      pcn_log(ctx, LOG_DEBUG, "Forwarding packet to port %u.", x->port);
-      return pcn_pkt_redirect(ctx, md, x->port);
-    default:
-      pcn_log(ctx, LOG_DEBUG, "Bad action %d.",x->action);
-      return RX_DROP;
-  }
+
+  value = rxcnt.lookup(&key);
+  if (value)
+      *value += 1;
+  swap_src_dst_mac(data);
+  if (md->in_port == 0)
+    return pcn_pkt_redirect(ctx, md, 1);
+  else
+    return pcn_pkt_redirect(ctx, md, 0);
 }
+
