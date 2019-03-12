@@ -5,7 +5,7 @@ project(polycube)
 set (CMAKE_CXX_STANDARD 11)
 
 include(cmake/GetGitRevisionDescription.cmake)
-
+include_directories(/usr/include/bcc/compat)
 # TODO: remove --tags in following commands once we
 # have the first annotated tag version
 

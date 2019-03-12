@@ -50,35 +50,33 @@ struct pkt_metadata {
   // used to send data to controller
   u16 reason;
   u32 md[3];
-} __attribute__((packed));
+} __attribute__((packed)) __attribute__((aligned(4)));
 
 BPF_TABLE("extern", int, int, xdp_nodes, _POLYCUBE_MAX_NODES);
 BPF_TABLE("extern", u32, struct pkt_metadata, port_md, 1);
 
 int xdp_ingress(struct xdp_md *ctx) {
-    void* data_end = (void*)(long)ctx->data_end;
-    void* data = (void*)(long)ctx->data;
-    u32 key = 0;
-    u16 inport = INPORT;
-    u16 module_id = ENDPOINT;
-    struct pkt_metadata md = {};
+    struct pkt_metadata *md;
+    int ret = bpf_xdp_adjust_meta(ctx, -(int)sizeof(*md));
 
-    struct ethhdr *eth = data;
-    u64 nh_off;
+    if (ret < 0) {
+      return XDP_ABORTED;
+    }
 
-    nh_off = sizeof(*eth);
-    if (data + nh_off  > data_end)
-        return XDP_DROP;
+    void *data = (void *)(long)ctx->data;
+    void *data_end = (void *)(long)ctx->data_end;
+    md = (void *)(unsigned long)ctx->data_meta;
 
-    md.in_port = inport;
-    md.module_index = module_id;
-    md.packet_len = (u32)(data_end - data);
+    if (md + 1 > data)
+      return XDP_ABORTED;
 
-    port_md.update(&key, &md);
+    md->in_port = INPORT;
+    md->module_index = ENDPOINT;
+    md->packet_len = (u32)(data_end - data);
 
-    //bpf_trace_printk("Executing tail call for port %d\n", inport);
+    //bpf_trace_printk("Executing tail call for port %d\n", INPORT);
     xdp_nodes.call(ctx, ENDPOINT);
-    //bpf_trace_printk("Tail call not executed for port %d\n", inport);
+    //bpf_trace_printk("Tail call not executed for port %d\n", INPORT);
     return XDP_DROP;
 }
 )";

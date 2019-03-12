@@ -237,11 +237,17 @@ BPF_TABLE("extern", u32, int, xdp_devmap_, _POLYCUBE_MAX_PORTS);
 BPF_TABLE("extern", int, int, xdp_nodes, _POLYCUBE_MAX_NODES);
 
 int handle_rx_xdp_wrapper(struct CTXTYPE *ctx) {
-  u32 inport_key = 0;
   struct pkt_metadata *int_md;
+
+  void *data = (void *)(long)ctx->data;
+  void *data_end = (void *)(long)ctx->data_end;
+  int_md = (void *)(unsigned long)ctx->data_meta;
+
+  if (int_md + 1 > data)
+    return RX_DROP;
+
   struct pkt_metadata md = {};
 
-  int_md = port_md.lookup(&inport_key);
   if (int_md) {
     md.cube_id = CUBE_ID;
     md.in_port = int_md->in_port;
