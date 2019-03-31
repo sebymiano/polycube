@@ -18,6 +18,11 @@
      Chain Forarder
    ======================= */
 
+#include <uapi/linux/ip.h>
+#include <uapi/linux/bpf.h>
+
+#define AF_INET 2 /* Internet IP Protocol 	*/
+
 struct elements {
   uint64_t bits[_MAXRULES];
 };
@@ -152,18 +157,65 @@ static int handle_rx(struct CTXTYPE *ctx, struct pkt_metadata *md) {
     return RX_DROP;
   }
 
-#if _INGRESS_LOGIC
+  void *data = (void *)(long)ctx->data;
+  void *data_end = (void *)(long)ctx->data_end;
+  struct bpf_fib_lookup fib_params;
+  struct ethhdr *eth = data;
+  struct ipv6hdr *ip6h;
+  struct iphdr *iph;
+  u16 h_proto;
+  u64 nh_off;
+  int rc;
 
-  __be32 dstip = pkt->dstIp;
-  __be32 *ip_matched = localip.lookup(&dstip);
-  // __be32* ip_matched = localip.lookup(&ip->daddr);
-  if (ip_matched) {
-    pcn_log(ctx, LOG_DEBUG,
-            "INGRESS Chain Selector. Dst ip matched. -->INPUT chain. ");
-    goto INPUT;
+  nh_off = sizeof(*eth);
+  if (data + nh_off > data_end)
+      return XDP_DROP;
+
+  __builtin_memset(&fib_params, 0, sizeof(fib_params));
+
+  h_proto = eth->h_proto;
+  if (h_proto == htons(ETH_P_IP)) {
+    iph = data + nh_off;
+
+    if (iph + 1 > data_end)
+      return XDP_DROP;
+
+    if (iph->ttl <= 1)
+      return XDP_PASS;
+
+    fib_params.family = AF_INET;
+    fib_params.tos = iph->tos;
+    fib_params.l4_protocol = iph->protocol;
+    fib_params.sport = 0;
+    fib_params.dport = 0;
+    fib_params.tot_len = ntohs(iph->tot_len);
+    fib_params.ipv4_src = iph->saddr;
+    fib_params.ipv4_dst = iph->daddr;
   } else {
-    pcn_log(ctx, LOG_DEBUG,
-            "INGRESS Chain Selector. Dst ip NOT matched. -->FORWARD chain. ");
+    return RX_OK;
+  }
+
+  fib_params.ifindex = ctx->ingress_ifindex;
+
+#if _INGRESS_LOGIC
+  rc = bpf_fib_lookup(ctx, &fib_params, sizeof(fib_params), BPF_FIB_LOOKUP_DIRECT);
+  pcn_log(ctx, LOG_DEBUG, "FIB_LOOKUP on INGRESS returned: %d", rc);
+
+  if (rc == BPF_FIB_LKUP_RET_NOT_FWDED) {
+    /* Packet is destined to local ip, we can redirect it to the INPUT chain
+     * I am not sure this logic is totally sure, because looking at the code
+     * of the helper we can see that error code is returned even with other
+     * errors and not one when the packet matches a local entry.
+     */
+     pcn_log(ctx, LOG_DEBUG, "INGRESS Chain Selector. Dst ip matched. -->INPUT chain.");
+     goto INPUT;
+  } else if ((rc == BPF_FIB_LKUP_RET_BLACKHOLE) ||
+             (rc == BPF_FIB_LKUP_RET_UNREACHABLE) ||
+             (rc == BPF_FIB_LKUP_RET_PROHIBIT)) {
+      pcn_log(ctx, LOG_DEBUG, "INGRESS Chain Selector. Dropping packet. ");
+      return RX_DROP;
+  } else {
+    pcn_log(ctx, LOG_DEBUG, "INGRESS Chain Selector. Dst ip NOT matched. -->FORWARD chain.");
     goto FORWARD;
   }
 
@@ -241,6 +293,8 @@ FORWARD:;
 #endif
 
 #if _EGRESS_LOGIC
+  //rc = bpf_fib_lookup(ctx, &fib_params, sizeof(fib_params), BPF_FIB_LOOKUP_OUTPUT);
+  //pcn_log(ctx, LOG_DEBUG, "FIB_LOOKUP on EGRESS returned: %d", rc);
 
   __be32 srcip = pkt->srcIp;
   __be32 *ip_matched = localip.lookup(&srcip);
