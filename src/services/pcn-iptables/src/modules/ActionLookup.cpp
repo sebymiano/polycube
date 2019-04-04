@@ -37,6 +37,9 @@ std::string Iptables::ActionLookup::getCode() {
   replaceAll(no_macro_code, "_MAXRULES",
              std::to_string(FROM_NRULES_TO_NELEMENTS(iptables_.max_rules_)));
 
+  replaceAll(no_macro_code, "_MAX_RULES",
+             std::to_string(iptables_.max_rules_));
+
   /*Replacing nrElements*/
   replaceAll(no_macro_code, "_NR_ELEMENTS",
              std::to_string(FROM_NRULES_TO_NELEMENTS(

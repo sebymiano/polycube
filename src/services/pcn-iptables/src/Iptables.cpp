@@ -270,6 +270,21 @@ void Iptables::attachInterfaces() {
   ignored_interfaces.insert({":host", ":host"});
   ignored_interfaces.insert({"pcn_tc_cp", "pcn_tc_cp"});
   ignored_interfaces.insert({"pcn_xdp_cp", "pcn_xdp_cp"});
+  ignored_interfaces.insert({"eno1", "eno1"});
+  ignored_interfaces.insert({"eno2", "eno2"});
+  ignored_interfaces.insert({"eno3", "eno3"});
+  ignored_interfaces.insert({"eno4", "eno4"});
+  ignored_interfaces.insert({"enp180s0f0np0", "enp180s0f0np0"});
+  ignored_interfaces.insert({"enp180s0f1np1", "enp180s0f1np1"});
+  ignored_interfaces.insert({"enp180s0f2np0", "enp180s0f2np0"});
+  ignored_interfaces.insert({"enp180s0f4np0", "enp180s0f4np0"});
+  ignored_interfaces.insert({"enp180s0f5np1", "enp180s0f5np1"});
+  ignored_interfaces.insert({"enp180s0f6np0", "enp180s0f6np0"});
+  ignored_interfaces.insert({"enp180s0f7np1", "enp180s0f7np1"});
+  ignored_interfaces.insert({"enp179s0f0", "enp179s0f0"});
+  ignored_interfaces.insert({"enp179s0f1", "enp179s0f1"});
+  ignored_interfaces.insert({"enp179s0f2", "enp179s0f2"});
+  ignored_interfaces.insert({"enp179s0f3", "enp179s0f3"});
 
   std::unordered_map<std::string, std::string> connected_ports_new;
 

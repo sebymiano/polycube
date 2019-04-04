@@ -170,7 +170,7 @@ class Iptables : public polycube::service::Cube<Ports>,
 
   // max rules number, due to algorithm and bpf programs size limit.
   // in order to avoid verifier to complain, we set this limit.
-  static const int max_rules_ = 8192;
+  static const int max_rules_ = 64000;
 
   std::mutex mutex_iptables_;
 

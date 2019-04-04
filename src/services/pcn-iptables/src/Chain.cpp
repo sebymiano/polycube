@@ -462,14 +462,6 @@ void Chain::updateChain() {
       newProgramsChain;
 
   // containing various bitvector(s)
-  std::map<uint8_t, std::vector<uint64_t>> conntrack_map;
-  std::map<struct IpAddr, std::vector<uint64_t>> ipsrc_map;
-  std::map<struct IpAddr, std::vector<uint64_t>> ipdst_map;
-  std::map<uint16_t, std::vector<uint64_t>> portsrc_map;
-  std::map<uint16_t, std::vector<uint64_t>> portdst_map;
-  std::map<uint16_t, std::vector<uint64_t>> interface_map;
-  std::map<int, std::vector<uint64_t>> protocol_map;
-  std::vector<std::vector<uint64_t>> flags_map;
 
   std::map<struct HorusRule, struct HorusValue> horus;
 
@@ -566,6 +558,7 @@ void Chain::updateChain() {
       }
     }
   }
+
   if (parent_.horus_runtime_enabled_ == false) {
     // Recompile parser
     // parser should ask to Horus its index getIndex from Horus
@@ -593,26 +586,12 @@ void Chain::updateChain() {
   // if no wildcard is present, we can early break the pipeline.
   // so we put modules with _break flags, before the others in order
   // to maximize probability to early break the pipeline.
-  bool conntrack_break = conntrackFromRulesToMap(conntrack_map, getRuleList());
-  bool ipsrc_break = ipFromRulesToMap(SOURCE_TYPE, ipsrc_map, getRuleList());
-  bool ipdst_break =
-      ipFromRulesToMap(DESTINATION_TYPE, ipdst_map, getRuleList());
-  bool protocol_break =
-      transportProtoFromRulesToMap(protocol_map, getRuleList());
-  bool portsrc_break =
-      portFromRulesToMap(SOURCE_TYPE, portsrc_map, getRuleList());
-  bool portdst_break =
-      portFromRulesToMap(DESTINATION_TYPE, portdst_map, getRuleList());
-  bool interface_break = interfaceFromRulesToMap(
-      (name == ChainNameEnum::OUTPUT) ? OUT_TYPE : IN_TYPE, interface_map,
-      getRuleList(), parent_);
-  bool flags_break = flagsFromRulesToMap(flags_map, getRuleList());
 
-  logger()->debug(
+  /*logger()->debug(
       "Early break of pipeline conntrack:{0} ipsrc:{1} ipdst:{2} protocol:{3} "
       "portstc:{4} portdst:{5} interface:{6} flags:{7} ",
       conntrack_break, ipsrc_break, ipdst_break, protocol_break, portsrc_break,
-      portdst_break, interface_break, flags_break);
+      portdst_break, interface_break, flags_break);*/
 
   // first loop iteration pushes program that could early break the pipeline
   // second iteration, push others programs
@@ -623,41 +602,50 @@ void Chain::updateChain() {
     if (j == 1)
       second = true;
 
-    // Looping through conntrack
-    if (!conntrack_map.empty() && conntrack_break ^ second) {
-      // At least one rule requires a matching on conntrack, so it can be
-      // injected.
-      if (!parent_.isContrackActive()) {
-        logger()->error(
+    {
+      std::map<uint8_t, std::vector<uint64_t>> conntrack_map;
+      bool conntrack_break = conntrackFromRulesToMap(conntrack_map, getRuleList());
+      // Looping through conntrack
+      if (!conntrack_map.empty() && conntrack_break ^ second) {
+        // At least one rule requires a matching on conntrack, so it can be
+        // injected.
+        if (!parent_.isContrackActive()) {
+          logger()->error(
             "[{0}] Conntrack is not active, please remember to activate it.",
             parent_.getName());
-      }
-      newProgramsChain.insert(
+        }
+        newProgramsChain.insert(
           std::pair<std::pair<uint8_t, ChainNameEnum>, Iptables::Program *>(
               std::make_pair(ModulesConstants::CONNTRACKMATCH, name),
               new Iptables::ConntrackMatch(index, name, this->parent_)));
-      // Now the program is loaded, populate it.
-      std::dynamic_pointer_cast<Iptables::ConntrackMatch>(
+        // Now the program is loaded, populate it.
+        std::dynamic_pointer_cast<Iptables::ConntrackMatch>(
           newProgramsChain[std::make_pair(ModulesConstants::CONNTRACKMATCH,
                                           name)])
           ->updateMap(conntrack_map);
 
-      // This check is not really needed here, it will always be the first
-      // module
-      // to be injected
-      if (index == startingIndex) {
-        firstProgramLoaded = newProgramsChain[std::make_pair(
+        // This check is not really needed here, it will always be the first
+        // module
+        // to be injected
+        if (index == startingIndex) {
+          firstProgramLoaded = newProgramsChain[std::make_pair(
             ModulesConstants::CONNTRACKMATCH, name)];
+        }
+        logger()->trace("Conntrack index:{0}", index);
+        ++index;
+      } else {
+          logger()->trace("Skip Conntrack module");
       }
-      logger()->trace("Conntrack index:{0}", index);
-      ++index;
     }
+
     // conntrack_map.clear();
     // Done looping through conntrack
 
     // Looping through IP source
     // utils.h
-
+  {
+    std::map<struct IpAddr, std::vector<uint64_t>> ipsrc_map;
+    bool ipsrc_break = ipFromRulesToMap(SOURCE_TYPE, ipsrc_map, getRuleList());
     // Maps to populate
     // SRC/DST
     // map to populate
@@ -682,10 +670,15 @@ void Chain::updateChain() {
       std::dynamic_pointer_cast<Iptables::IpLookup>(
           newProgramsChain[std::make_pair(ModulesConstants::IPSOURCE, name)])
           ->updateMap(ipsrc_map);
+    } else {
+        logger()->trace("Skip IP Src module");
     }
+  }
     // ipsrc_map.clear();
     // Done looping through IP source
-
+  {
+    std::map<struct IpAddr, std::vector<uint64_t>> ipdst_map;
+    bool ipdst_break = ipFromRulesToMap(DESTINATION_TYPE, ipdst_map, getRuleList());
     // Looping through IP destination
     if (!ipdst_map.empty() && ipdst_break ^ second) {
       // At least one rule requires a matching on source ip, so inject the
@@ -708,10 +701,16 @@ void Chain::updateChain() {
           newProgramsChain[std::make_pair(ModulesConstants::IPDESTINATION,
                                           name)])
           ->updateMap(ipdst_map);
+    } else {
+        logger()->trace("Skip IP Dst module");
     }
+  }
     // ipdst_map.clear();
     // Done looping through IP destination
 
+  {
+    std::map<int, std::vector<uint64_t>> protocol_map;
+    bool protocol_break = transportProtoFromRulesToMap(protocol_map, getRuleList());
     // Looping through l4 protocol
     if (!protocol_map.empty() && protocol_break ^ second) {
       // At least one rule requires a matching on
@@ -734,10 +733,15 @@ void Chain::updateChain() {
       std::dynamic_pointer_cast<Iptables::L4ProtocolLookup>(
           newProgramsChain[std::make_pair(ModulesConstants::L4PROTO, name)])
           ->updateMap(protocol_map);
+    } else {
+        logger()->trace("Skip Protocol module");
     }
+  }
     // protocol_map.clear();
     // Done looping through l4 protocol
-
+  {
+    std::map<uint16_t, std::vector<uint64_t>> portsrc_map;
+    bool portsrc_break = portFromRulesToMap(SOURCE_TYPE, portsrc_map, getRuleList());
     // Looping through source port
     if (!portsrc_map.empty() && portsrc_break ^ second) {
       // At least one rule requires a matching on  source ports,
@@ -760,10 +764,15 @@ void Chain::updateChain() {
       std::dynamic_pointer_cast<Iptables::L4PortLookup>(
           newProgramsChain[std::make_pair(ModulesConstants::PORTSOURCE, name)])
           ->updateMap(portsrc_map);
+    } else {
+        logger()->trace("Skip Port Src module");
     }
+  }
     // portsrc_map.clear();
     // Done looping through source port
-
+  {
+    std::map<uint16_t, std::vector<uint64_t>> portdst_map;
+    bool portdst_break = portFromRulesToMap(DESTINATION_TYPE, portdst_map, getRuleList());
     // Looping through destination port
     if (!portdst_map.empty() && portdst_break ^ second) {
       // At least one rule requires a matching on source ports,
@@ -787,10 +796,18 @@ void Chain::updateChain() {
           newProgramsChain[std::make_pair(ModulesConstants::PORTDESTINATION,
                                           name)])
           ->updateMap(portdst_map);
+    } else {
+        logger()->trace("Skip Port Dst");
     }
+  }
     // portdst_map.clear();
     // Done looping through destination port
 
+  {
+    std::map<uint16_t, std::vector<uint64_t>> interface_map;
+    bool interface_break = interfaceFromRulesToMap(
+      (name == ChainNameEnum::OUTPUT) ? OUT_TYPE : IN_TYPE, interface_map,
+      getRuleList(), parent_);
     // Looping through interface
     if (!interface_map.empty() && interface_break ^ second) {
       // At least one rule requires a matching on interface,
@@ -815,9 +832,15 @@ void Chain::updateChain() {
       std::dynamic_pointer_cast<Iptables::InterfaceLookup>(
           newProgramsChain[std::make_pair(ModulesConstants::INTERFACE, name)])
           ->updateMap(interface_map);
+    } else {
+        logger()->trace("Skip Interface module");
     }
+  }
     // Done looping through interface
 
+  {
+    std::vector<std::vector<uint64_t>> flags_map;
+    bool flags_break = flagsFromRulesToMap(flags_map, getRuleList());
     // Looping through tcp flags
     if (!flags_map.empty() && flags_break ^ second) {
       // At least one rule requires a matching on flags,
@@ -839,7 +862,10 @@ void Chain::updateChain() {
       std::dynamic_pointer_cast<Iptables::TcpFlagsLookup>(
           newProgramsChain[std::make_pair(ModulesConstants::TCPFLAGS, name)])
           ->updateMap(flags_map);
+    } else {
+        logger()->trace("Skip Flags module");
     }
+  }
     // flags_map.clear();
     // Done looping through tcp flags
   }
@@ -854,6 +880,7 @@ void Chain::updateChain() {
     firstProgramLoaded =
         newProgramsChain[std::make_pair(ModulesConstants::BITSCAN, name)];
   }
+  logger()->trace("BitScan index:{0}", index);
   ++index;
 
   // Adding action taker
@@ -868,6 +895,7 @@ void Chain::updateChain() {
         ->updateTableValue(rule->getId(),
                            ChainRule::ActionEnumToInt(rule->getAction()));
   }
+  logger()->trace("ActionLookup index:{0}", index);
 
   uint8_t chainfwd;
   uint8_t chainparser;
@@ -894,7 +922,6 @@ void Chain::updateChain() {
   parent_.programs_[std::make_pair(chainselector, chainnameenum)]->reload();
 
   parent_.programs_[std::make_pair(chainparser, chainnameenum)]->reload();
-
   // Unload the programs belonging to the old chain.
   // Implicit in destructors
   // Except parser for OUTPUT chain
@@ -1005,8 +1032,6 @@ std::vector<std::shared_ptr<ChainRule>> Chain::getRuleList() {
 void Chain::addRule(const uint32_t &id, const ChainRuleJsonObject &conf) {
   auto newRule = std::make_shared<ChainRule>(*this, conf);
 
-  getStatsList();
-
   if (newRule == nullptr) {
     // Totally useless, but it is needed to avoid the compiler making wrong
     // assumptions and reordering
@@ -1022,6 +1047,7 @@ void Chain::addRule(const uint32_t &id, const ChainRuleJsonObject &conf) {
   rules_[id] = newRule;
 
   if (parent_.interactive_) {
+    getStatsList();
     updateChain();
   }
 }
@@ -1044,9 +1070,6 @@ void Chain::delRule(const uint32_t &id) {
     throw std::runtime_error("There is no rule " + id);
   }
 
-  // Forcing counters update
-  getStatsList();
-
   for (uint32_t i = id; i < rules_.size() - 1; ++i) {
     rules_[i] = rules_[i + 1];
     rules_[i]->id = i;
@@ -1062,6 +1085,8 @@ void Chain::delRule(const uint32_t &id) {
 
   if (parent_.interactive_) {
     applyRules();
+    // Forcing counters update
+    getStatsList();
   }
 }
 

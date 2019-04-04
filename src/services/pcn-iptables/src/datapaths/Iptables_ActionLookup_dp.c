@@ -31,9 +31,7 @@ struct elements {
 // TODO Use enum
 
 // _DIRECTION -> ingress/egress injected by control plane
-// TODO define 10000 as a constant
-
-BPF_ARRAY(actions_DIRECTION, int, 10000);
+BPF_ARRAY(actions_DIRECTION, int, _MAX_RULES);
 
 // Hide actions_DIRECTION name for the following datapath
 static __always_inline int *getAction(int *key) {
@@ -51,9 +49,8 @@ static __always_inline struct elements *getShared() {
 #endif
 
 // Counters
-// TODO define 8000 as a const
-BPF_TABLE("percpu_array", int, u64, pkts_DIRECTION, 8000);
-BPF_TABLE("percpu_array", int, u64, bytes_DIRECTION, 8000);
+BPF_TABLE("percpu_array", int, u64, pkts_DIRECTION, _MAX_RULES);
+BPF_TABLE("percpu_array", int, u64, bytes_DIRECTION, _MAX_RULES);
 
 static __always_inline void incrementCounters(int *action, u32 bytes) {
   u64 *value;
@@ -84,6 +81,10 @@ static int handle_rx(struct CTXTYPE *ctx, struct pkt_metadata *md) {
 
   // first element of the bitvector is the matched rule!
   key = (int)(ruleMatched->bits)[0];
+  if (key > _MAX_RULES) {
+    pcn_log(ctx, LOG_DEBUG, "Error, matched rule is larger than ruleset size: %d", key);
+    return RX_DROP;
+  }
   int *action = getAction(&key);
   if (action == NULL) {
     /*Not possible*/

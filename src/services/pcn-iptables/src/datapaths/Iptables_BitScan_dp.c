@@ -94,7 +94,7 @@ static int handle_rx(struct CTXTYPE *ctx, struct pkt_metadata *md) {
       int index = (int)(((bits ^ (bits - 1)) * 0x03f79d71b4cb0a89) >> 58);
       matchingResult = index64.lookup(&index);
       if (matchingResult == NULL) {
-        /*This can't happen*/
+        //This can't happen
         return RX_DROP;
       }
 

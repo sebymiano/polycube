@@ -262,9 +262,7 @@ bool Chain::ipFromRulesToMap(
       std::vector<uint64_t> bitVector(
           FROM_NRULES_TO_NELEMENTS(Iptables::max_rules_));
       current.rule_id = rule_id;
-      ips.insert(
-          std::pair<struct IpAddr, std::vector<uint64_t>>(current, bitVector));
-
+      ips.insert(std::make_pair(current, std::move(bitVector)));
       //   for (auto eval : ips) {
       //     std::cout << eval.first.toString() << ": ";
       //     std::cout << std::bitset<32>(eval.second[0]) << " ";
@@ -368,8 +366,7 @@ bool Chain::ipFromRulesToMap(
       }
     }
 
-    ips.insert(std::pair<struct IpAddr, std::vector<uint64_t>>(wildcard_ip,
-                                                               bitVector));
+    ips.insert(std::make_pair(wildcard_ip, std::move(bitVector)));
     brk = false;
   }
 
@@ -408,7 +405,7 @@ bool Chain::transportProtoFromRulesToMap(
       std::vector<uint64_t> bitVector(
           FROM_NRULES_TO_NELEMENTS(Iptables::max_rules_));
       SET_BIT(bitVector[rule_id / 63], rule_id % 63);
-      protocols.insert(std::pair<int, std::vector<uint64_t>>(proto, bitVector));
+      protocols.insert(std::make_pair(proto, std::move(bitVector)));
     } else {
       SET_BIT((it->second)[rule_id / 63], rule_id % 63);
     }
@@ -418,7 +415,7 @@ bool Chain::transportProtoFromRulesToMap(
   if (protocols.size() != 0 && dont_care_rules.size() != 0) {
     std::vector<uint64_t> bitVector(
         FROM_NRULES_TO_NELEMENTS(Iptables::max_rules_));
-    protocols.insert(std::pair<int, std::vector<uint64_t>>(0, bitVector));
+    protocols.insert(std::make_pair(0, std::move(bitVector)));
     for (auto const &ruleNumber : dont_care_rules) {
       for (auto &proto : protocols) {
         SET_BIT((proto.second)[ruleNumber / 63], ruleNumber % 63);
@@ -458,7 +455,7 @@ bool Chain::portFromRulesToMap(
       std::vector<uint64_t> bitVector(
           FROM_NRULES_TO_NELEMENTS(Iptables::max_rules_));
       SET_BIT(bitVector[rule_id / 63], rule_id % 63);
-      ports.insert(std::pair<uint16_t, std::vector<uint64_t>>(port, bitVector));
+      ports.insert(std::make_pair(port, std::move(bitVector)));
     } else {
       SET_BIT((it->second)[rule_id / 63], rule_id % 63);
     }
@@ -468,7 +465,7 @@ bool Chain::portFromRulesToMap(
   if (ports.size() != 0 && dont_care_rules.size() != 0) {
     std::vector<uint64_t> bitVector(
         FROM_NRULES_TO_NELEMENTS(Iptables::max_rules_));
-    ports.insert(std::pair<uint16_t, std::vector<uint64_t>>(0, bitVector));
+    ports.insert(std::make_pair(0, std::move(bitVector)));
     for (auto const &ruleNumber : dont_care_rules) {
       for (auto &port : ports) {
         SET_BIT((port.second)[ruleNumber / 63], ruleNumber % 63);
@@ -512,8 +509,7 @@ bool Chain::interfaceFromRulesToMap(
       std::vector<uint64_t> bitVector(
           FROM_NRULES_TO_NELEMENTS(Iptables::max_rules_));
       SET_BIT(bitVector[rule_id / 63], rule_id % 63);
-      interfaces.insert(
-          std::pair<uint16_t, std::vector<uint64_t>>(interface, bitVector));
+      interfaces.insert(std::make_pair(interface, std::move(bitVector)));
     } else {
       SET_BIT((it->second)[rule_id / 63], rule_id % 63);
     }
@@ -523,7 +519,7 @@ bool Chain::interfaceFromRulesToMap(
   if (interfaces.size() != 0 && dont_care_rules.size() != 0) {
     std::vector<uint64_t> bitVector(
         FROM_NRULES_TO_NELEMENTS(Iptables::max_rules_));
-    interfaces.insert(std::pair<uint16_t, std::vector<uint64_t>>(0, bitVector));
+    interfaces.insert(std::make_pair(0, std::move(bitVector)));
     for (auto const &ruleNumber : dont_care_rules) {
       for (auto &interface : interfaces) {
         SET_BIT((interface.second)[ruleNumber / 63], ruleNumber % 63);
@@ -622,7 +618,7 @@ void Chain::horusFromRulesToMap(
       break;
     }
 
-    horus.insert(std::pair<struct HorusRule, struct HorusValue>(key, value));
+    horus.insert(std::make_pair(key, value));
   }
 }
 
@@ -659,8 +655,7 @@ bool Chain::conntrackFromRulesToMap(
         SET_BIT(bitVector[rule_id / 63], rule_id % 63);
       }
     }
-    statusMap.insert(
-        std::pair<uint8_t, std::vector<uint64_t>>(state, bitVector));
+    statusMap.insert(std::make_pair(state, std::move(bitVector)));
   }
 
   return false;
