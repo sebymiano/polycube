@@ -189,6 +189,12 @@ static __always_inline void incrementAcceptEstablishedOutput(u32 bytes) {
 
 static int handle_rx(struct CTXTYPE *ctx, struct pkt_metadata *md) {
   pcn_log(ctx, LOG_DEBUG, "Conntrack label received packet");
+  pcn_log(ctx, LOG_DEBUG, "Conntrack Mode: _CONNTRACK_MAIN_MODE");
+
+#if _CONNTRACK_MAIN_MODE == 0
+  goto action;
+#else
+
   struct packetHeaders *pkt;
   int k = 0;
   pkt = packet.lookup(&k);
@@ -536,6 +542,7 @@ static int handle_rx(struct CTXTYPE *ctx, struct pkt_metadata *md) {
   // If it gets here, the protocol is not yet supported.
   pkt->connStatus = INVALID;
   goto action;
+#endif
 
 action:;
   // TODO possible optimization, inject it if needed

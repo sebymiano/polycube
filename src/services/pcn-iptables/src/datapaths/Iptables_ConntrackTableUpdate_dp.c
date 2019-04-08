@@ -140,7 +140,8 @@ static __always_inline uint64_t *time_get_ns() {
 
 static int handle_rx(struct CTXTYPE *ctx, struct pkt_metadata *md) {
 // Conntrack DISABLED
-#if _CONNTRACK_MODE == 0
+  pcn_log(ctx, LOG_DEBUG, "Conntrack Mode: _CONNTRACK_MAIN_MODE");
+#if _CONNTRACK_MAIN_MODE == 0
   return RX_OK;
 
 #else
