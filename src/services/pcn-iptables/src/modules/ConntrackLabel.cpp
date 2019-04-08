@@ -141,6 +141,9 @@ std::string Iptables::ConntrackLabel::getCode() {
   replaceAll(no_macro_code, "_MAXRULES",
              std::to_string(FROM_NRULES_TO_NELEMENTS(iptables_.max_rules_)));
 
+  replaceAll(no_macro_code, "_CONNTRACK_MAIN_MODE",
+             std::to_string(iptables_.conntrack_mode_));
+
   // /*Replacing hops*/
   // replaceAll(noMacroCode, "_NEXT_HOP_1", std::to_string(index + 1));
 
