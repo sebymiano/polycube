@@ -1005,8 +1005,6 @@ std::vector<std::shared_ptr<ChainRule>> Chain::getRuleList() {
 void Chain::addRule(const uint32_t &id, const ChainRuleJsonObject &conf) {
   auto newRule = std::make_shared<ChainRule>(*this, conf);
 
-  getStatsList();
-
   if (newRule == nullptr) {
     // Totally useless, but it is needed to avoid the compiler making wrong
     // assumptions and reordering
@@ -1022,6 +1020,7 @@ void Chain::addRule(const uint32_t &id, const ChainRuleJsonObject &conf) {
   rules_[id] = newRule;
 
   if (parent_.interactive_) {
+    getStatsList();
     updateChain();
   }
 }
@@ -1044,9 +1043,6 @@ void Chain::delRule(const uint32_t &id) {
     throw std::runtime_error("There is no rule " + id);
   }
 
-  // Forcing counters update
-  getStatsList();
-
   for (uint32_t i = id; i < rules_.size() - 1; ++i) {
     rules_[i] = rules_[i + 1];
     rules_[i]->id = i;
@@ -1061,6 +1057,8 @@ void Chain::delRule(const uint32_t &id) {
   counters_.resize(counters_.size() - 1);
 
   if (parent_.interactive_) {
+    // Forcing counters update
+    getStatsList();
     applyRules();
   }
 }
