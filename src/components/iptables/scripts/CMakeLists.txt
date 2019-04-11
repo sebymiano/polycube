@@ -3,6 +3,10 @@ set(pcn-iptables-files
   pcn-iptables-init
   pcn-iptables-clean
   pcn-iptables-init-xdp
+  bpf-iptables
+  bpf-iptables-init
+  bpf-iptables-clean
+  bpf-iptables-init-xdp
 )
 
 set(pcn-iptables-permissions
