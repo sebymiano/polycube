@@ -1,6 +1,6 @@
 [submodule "src/libs/bcc"]
 	path = src/libs/bcc
-	url = https://github.com/polycube-network/bcc.git
+	url = https://github.com/sebymiano/bcc.git
 	ignore = untracked
 	branch = polycube
 [submodule "src/components/iptables/iptables"]
