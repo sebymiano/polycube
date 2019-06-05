@@ -1,3 +1,5 @@
+include_directories(libs/bcc/src/cc/libbpf/include/uapi)
+
 find_package(LibYANG REQUIRED)
 
 option(INSTALL_CLI "installs the polycube CLI" ON)
