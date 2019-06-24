@@ -22,6 +22,8 @@ Polycube architecture adds a wrapper around the user's code, this wrapper calls 
 
 - **pcn_pkt_controller_with_metadata(struct __sk_buff *skb, struct pkt_metadata *md, u16 reason, u32 metadata[3])**: Sends the packet to the custom code running in the control path. In addition to the reason the user can also send some additional medatada.
 
+- **pcn_pkt_redirect_ns(struct __sk_buff *skb, struct pkt_metadata *md, u16 port)**: (it is only available for shadow services) sends the packet to the namespace as if it came from the port indicated as parameter
+
 Checksum calculation
 ********************
 
@@ -36,7 +38,20 @@ The L3 (IP) and L4 (TCP, UDP) checksums has to be updated when fields in the pac
 
 - **pcn_l4_csum_replace()**: wrapper of `BPF_FUNC_l4_csum_replace <https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/commit/?id=91bc4822c3d61b9bb7ef66d3b77948a4f9177954>`_
 
-Services as :scm_web_file:`nat <src/services/pcn-nat/src/Nat_dp.c>` and :scm_web_file:`nat <src/services/pcn-loadbalancer-rp/src/Lbrp_dp.c>` show how to use these functions.
+Services as :scm_web:`nat <src/services/pcn-nat/src/Nat_dp.c>` and :scm_web:`nat <src/services/pcn-loadbalancer-rp/src/Lbrp_dp.c>` show how to use these functions.
+
+Vlan Support
+************
+
+The vlan handling in TC and XDP eBPF programs is a little bit different, so polycube includes a set of helpers to uniform this accross.
+
+- bool pcn_is_vlan_present(struct CTXTYPE *pkt)
+
+- int pcn_get_vlan_id(struct CTXTYPE *pkt, uint16_t *vlan_id, uint16_t *eth_proto);
+
+- uint8_t pcn_vlan_pop_tag(struct CTXTYPE *pkt);
+
+- uint8_t pcn_vlan_push_tag(struct CTXTYPE *pkt, u16 eth_proto, u32 vlan_id);
 
 
 Known limitations:
@@ -94,4 +109,3 @@ Usage example:
 ::
 
   pcn_pkt_log(ctx, LOG_DEBUG);
-
