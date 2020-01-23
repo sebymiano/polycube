@@ -365,14 +365,14 @@ void Chain::updateChain() {
   // first loop iteration pushes program that could early break the pipeline
   // second iteration, push others programs
 
-  bool second = false;
+  bool second = true;
 
-  for (int j = 0; j < 2; j++) {
+  for (int j = 0; j < 1; j++) {
     if (j == 1)
       second = true;
 
     // Looping through conntrack
-    if (!conntrack_map.empty() && conntrack_break ^ second) {
+    if (!conntrack_map.empty()) {
       // At least one rule requires a matching on conntrack, so it can be
       // injected.
       if (!parent_.isContrackActive()) {
@@ -396,7 +396,7 @@ void Chain::updateChain() {
     // Done looping through conntrack
 
     // Looping through IP source
-    if (!ipsrc_map.empty() && (ipsrc_break ^ second)) {
+    if (!ipsrc_map.empty()) {
       // At least one rule requires a matching on ipsource, so inject
       // the module on the first available position
       Firewall::IpLookup *iplookup =
@@ -432,7 +432,7 @@ void Chain::updateChain() {
     // Done looping through IP destination
 
     // Looping through l4 protocol
-    if (!protocol_map.empty() && protocol_break ^ second) {
+    if (!protocol_map.empty()) {
       // At least one rule requires a matching on
       // source port__map, so inject the module
       // on the first available position
@@ -451,7 +451,7 @@ void Chain::updateChain() {
     // Done looping through l4 protocol
 
     // Looping through source port
-    if (!portsrc_map.empty() && portsrc_break ^ second) {
+    if (!portsrc_map.empty()) {
       // At least one rule requires a matching on  source port__map,
       // so inject the  module  on the first available position
       Firewall::L4PortLookup *portlookup =
@@ -469,7 +469,7 @@ void Chain::updateChain() {
     // Done looping through source port
 
     // Looping through destination port
-    if (!portdst_map.empty() && portdst_break ^ second) {
+    if (!portdst_map.empty()) {
       // At least one rule requires a matching on source port__map,
       // so inject the module  on the first available position
       Firewall::L4PortLookup *portlookup =
@@ -487,7 +487,7 @@ void Chain::updateChain() {
     // Done looping through destination port
 
     // Looping through tcp flags_map
-    if (!flags_map.empty() && flags_break ^ second) {
+    if (!flags_map.empty()) {
       // At least one rule requires a matching on flags_map,
       // so inject the  module in the first available position
       Firewall::TcpFlagsLookup *tcpflagslookup =
@@ -535,7 +535,17 @@ void Chain::updateChain() {
   chainforwarder->reload();
 
   // The parser has to be reloaded to account the new nmbr of elements
-  programs->at(ModulesConstants::PARSER)->reload();
+  auto parserIngress = dynamic_cast<Firewall::Parser *>(programs->at(ModulesConstants::PARSER));
+
+  bool parseSrcIp = ipsrc_map.size() > 0;
+  bool parseDstIp = ipdst_map.size() > 0;
+  bool parseL4Proto = protocol_map.size() > 0;
+  parserIngress->setParseSrcIp(parseSrcIp);
+  parserIngress->setParseDstIp(parseDstIp);
+  parserIngress->setParseL4Proto(parseL4Proto);
+  parserIngress->reload();
+
+  //programs->at(ModulesConstants::PARSER)->reload();
 
   // Unload the programs belonging to the old chain.
   for (int i = ModulesConstants::CONNTRACKMATCH;
@@ -556,10 +566,9 @@ void Chain::updateChain() {
 
   // toggle chainNumberIngress
   chainNumber = (chainNumber == 0) ? 1 : 0;
-  logger()->info("[{0}] Rules for the {1} chain have been updated in {2}s!",
+  logger()->info("[{0}] Rules for the {1} chain have been updated!",
                  parent_.get_name(),
-                 ChainJsonObject::ChainNameEnum_to_string(name),
-                 elapsed_seconds.count());
+                 ChainJsonObject::ChainNameEnum_to_string(name));
 }
 
 std::shared_ptr<ChainStats> Chain::getStats(const uint32_t &id) {

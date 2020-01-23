@@ -173,6 +173,15 @@ class Firewall : public FirewallBase {
     Parser(const int &index, const ChainNameEnum &direction, Firewall &outer);
     ~Parser();
     std::string getCode();
+
+    void setParseSrcIp(bool parseSrcIp);
+    void setParseDstIp(bool parseDstIp);
+    void setParseL4Proto(bool parseL4Proto);
+
+  private:
+      bool parseSrcIp_;
+      bool parseDstIp_;
+      bool parseL4Proto_;
   };
 
   class Horus : public Program {
@@ -344,7 +353,7 @@ class Firewall : public FirewallBase {
   bool horus_runtime_enabled_ingress_ = false;
   bool horus_runtime_enabled_egress_ = false;
 
-  bool horus_enabled = true;
+  bool horus_enabled = false;
 
   // are we on swap or regular horus program index
   bool horus_swap_ingress_ = false;

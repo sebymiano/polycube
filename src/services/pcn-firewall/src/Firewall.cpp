@@ -319,9 +319,15 @@ void Firewall::addChain(const ChainNameEnum &name,
 }
 
 void Firewall::delChain(const ChainNameEnum &name) {
-  throw std::runtime_error("Method not supported.");
+  if (chains_.count(name) == 0) {
+    throw std::runtime_error("There are no chain with this name: " + ChainJsonObject::ChainNameEnum_to_string(name));
+  }
+
+  chains_.at(name).delRuleList();
 }
 
 void Firewall::delChainList() {
-  throw std::runtime_error("Method not supported.");
+  for (auto &chain : chains_) {
+    delChain(chain.first);
+  }
 }

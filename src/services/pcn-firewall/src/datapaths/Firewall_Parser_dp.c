@@ -102,9 +102,28 @@ static int handle_rx(struct CTXTYPE *ctx, struct pkt_metadata *md) {
     return RX_DROP;
   }
 
+#if defined(_INGRESS_LOGIC)
+#if _PARSE_SRC_IP
+  pkt->srcIp = ip->saddr;
+  pcn_log(ctx, LOG_INFO, "[_CHAIN_NAME][Parser]: Parsed packet with SOURCE IP: %I", pkt->srcIp);
+#endif
+
+#if _PARSE_DST_IP
+  pkt->dstIp = ip->daddr;
+  pcn_log(ctx, LOG_INFO, "[_CHAIN_NAME][Parser]: Parsed packet with DESTINATION IP: %I", pkt->dstIp);
+#endif
+
+#if _PARSE_L4_PROTO
+  pkt->l4proto = ip->protocol;
+  pcn_log(ctx, LOG_INFO, "[_CHAIN_NAME][Parser]: Parsed packet with L4 Proto: %u", pkt->l4proto);
+#endif
+#elif defined(_EGRESS_LOGIC)
   pkt->srcIp = ip->saddr;
   pkt->dstIp = ip->daddr;
   pkt->l4proto = ip->protocol;
+#else
+#error "_INGRESS_LOGIC or _EGRESS_LOGIC should be defined"
+#endif
   pkt->forwardingDecision = FORWARDING_NOT_SET;
 
   if (ip->protocol == IPPROTO_TCP) {

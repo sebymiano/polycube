@@ -63,7 +63,7 @@ static __always_inline struct packetHeaders *getPacket() {
 }
 
 static int handle_rx(struct CTXTYPE *ctx, struct pkt_metadata *md) {
-  pcn_log(ctx, LOG_DEBUG, "[_CHAIN_NAME][IP_TYPE]: Receiving packet");
+  pcn_log(ctx, LOG_INFO, "[_CHAIN_NAME][IP_TYPE]: Receiving packet");
 
 /*The struct elements and the lookup table are defined only if NR_ELEMENTS>0, so
  * this code has to be used only in those cases.*/
@@ -78,7 +78,6 @@ static int handle_rx(struct CTXTYPE *ctx, struct pkt_metadata *md) {
   struct lpm_k lpm_key = {32, pkt->_TYPEIp};
   struct elements *ele = getBitVect(&lpm_key);
   if (ele == NULL) {
-    pcn_log(ctx, LOG_DEBUG, "[_CHAIN_NAME][IP_TYPE]: No match. (pkt->_TYPEIp: %u) ", pkt->_TYPEIp);
     _DEFAULTACTION
   } else {
     struct elements *result = getShared();

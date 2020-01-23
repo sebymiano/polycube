@@ -20,8 +20,8 @@
 
 Firewall::Parser::Parser(const int &index, const ChainNameEnum &direction,
                          Firewall &outer)
-    : Firewall::Program(firewall_code_parser, index, direction, outer) {
-
+    : Firewall::Program(firewall_code_parser, index, direction, outer),
+      parseSrcIp_(true), parseDstIp_(true), parseL4Proto_(true) {
   reload();
 }
 
@@ -79,5 +79,35 @@ std::string Firewall::Parser::getCode() {
                std::to_string(FROM_NRULES_TO_NELEMENTS(0)));
   }
 
+  if (parseSrcIp_) {
+    replaceAll(noMacroCode, "_PARSE_SRC_IP", "1");
+  } else {
+    replaceAll(noMacroCode, "_PARSE_SRC_IP", "0");
+  }
+
+  if (parseDstIp_) {
+    replaceAll(noMacroCode, "_PARSE_DST_IP", "1");
+  } else {
+    replaceAll(noMacroCode, "_PARSE_DST_IP", "0");
+  }
+
+  if (parseL4Proto_) {
+    replaceAll(noMacroCode, "_PARSE_L4_PROTO", "1");
+  } else {
+    replaceAll(noMacroCode, "_PARSE_L4_PROTO", "0");
+  }
+
   return noMacroCode;
+}
+
+void Firewall::Parser::setParseSrcIp(bool parseSrcIp) {
+  parseSrcIp_ = parseSrcIp;
+}
+
+void Firewall::Parser::setParseDstIp(bool parseDstIp) {
+  parseDstIp_ = parseDstIp;
+}
+
+void Firewall::Parser::setParseL4Proto(bool parseL4Proto) {
+  parseL4Proto_ = parseL4Proto;
 }

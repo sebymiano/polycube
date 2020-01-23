@@ -55,7 +55,7 @@ static __always_inline struct elements *getShared() {
 #endif
 
 static int handle_rx(struct CTXTYPE *ctx, struct pkt_metadata *md) {
-  pcn_log(ctx, LOG_DEBUG, "[_CHAIN_NAME][L4ProtoLookup]: Receiving packet");
+  pcn_log(ctx, LOG_INFO, "[_CHAIN_NAME][L4ProtoLookup]: Receiving packet");
 
 /*The struct elements and the lookup table are defined only if _NR_ELEMENTS>0,
  * so
@@ -75,10 +75,12 @@ static int handle_rx(struct CTXTYPE *ctx, struct pkt_metadata *md) {
     proto = 0;
     ele = getBitVect(&proto);
     if (ele == NULL) {
-      pcn_log(ctx, LOG_DEBUG, "[_CHAIN_NAME][L4ProtoLookup]: No match, dropping. proto %d .", proto);
+      pcn_log(ctx, LOG_INFO, "[_CHAIN_NAME][L4ProtoLookup]: No match. proto %d .", proto);
       _DEFAULTACTION
     }
   }
+
+  pcn_log(ctx, LOG_INFO, "[_CHAIN_NAME][L4ProtoLookup]: Match. proto %d .", proto);
   key = 0;
   struct elements *result = getShared();
   if (result == NULL) {
