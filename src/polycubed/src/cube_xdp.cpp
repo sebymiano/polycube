@@ -19,6 +19,7 @@
 #include "datapath_log.h"
 #include "exceptions.h"
 #include "patchpanel.h"
+#include "utils/utils.h"
 
 #include <iostream>
 
@@ -212,14 +213,75 @@ void CubeXDP::del_program(int index, ProgramType type) {
   }
 }
 
+void CubeXDP::update_forwarding_table(int index, int value, bool is_netdev) {
+  std::lock_guard<std::mutex> cube_guard(cube_mutex_);
+  if (forward_chain_) { // is the forward chain still active?
+    forward_chain_->update_value(index, value);
+    if (value != 0) {
+      forward_chain_cp_[index] = std::make_pair(value, is_netdev);
+    } else {
+      forward_chain_cp_.erase(index);
+    }
+  }
+  cube_mutex_.unlock();
+  reload_all();
+}
+
 std::string CubeXDP::get_wrapper_code() {
-  return Cube::get_wrapper_code() + CUBEXDP_COMMON_WRAPPER + CUBEXDP_WRAPPER +
-         CUBEXDP_HELPERS;
+  return Cube::get_wrapper_code() + CUBEXDP_COMMON_WRAPPER;
+}
+
+std::string CubeXDP::get_redirect_code() {
+  std::stringstream ss;
+  ss << CUBEXDP_REDIRECT_HELPER_BASE;
+
+  for( auto const& [index, val] : forward_chain_cp_ ) {
+    if (val.second) {
+      // It is a physical interface
+      std::string new_str(CUBEXDP_REDIRECT_HELPER_BASE_NETDEV);
+      utils::replaceStrAll(new_str, "_OUT_PORT_INDEX", std::to_string(index));
+      utils::replaceStrAll(new_str, "_IFINDEX", std::to_string(val.first >> 16));
+      ss << new_str;
+    } else {
+      std::string new_str(CUBEXDP_REDIRECT_HELPER_BASE_CUBE);
+      utils::replaceStrAll(new_str, "_OUT_PORT_INDEX", std::to_string(index));
+      utils::replaceStrAll(new_str, "_NEXT_PORT_INDEX", std::to_string(val.first >> 16));
+      utils::replaceStrAll(new_str, "_NEXT_CUBE_INDEX", std::to_string(val.first & 0xffff));
+      ss << new_str;
+    }
+  }
+
+  ss << CUBEXDP_REDIRECT_HELPER_END;
+  return ss.str();
+}
+
+std::string CubeXDP::get_redirect_tc_code() {
+  std::stringstream ss;
+  ss << CubeTC::CUBETC_REDIRECT_HELPER_BASE;
+
+  for( auto const& [index, val] : forward_chain_cp_ ) {
+    if (val.second) {
+      // It is a physical interface
+      std::string new_str(CubeTC::CUBETC_REDIRECT_HELPER_BASE_NETDEV);
+      utils::replaceStrAll(new_str, "_OUT_PORT_INDEX", std::to_string(index));
+      utils::replaceStrAll(new_str, "_IFINDEX", std::to_string(val.first >> 16));
+      ss << new_str;
+    } else {
+      std::string new_str(CubeTC::CUBETC_REDIRECT_HELPER_BASE_CUBE);
+      utils::replaceStrAll(new_str, "_OUT_PORT_INDEX", std::to_string(index));
+      utils::replaceStrAll(new_str, "_NEXT_PORT_INDEX", std::to_string(val.first));
+      utils::replaceStrAll(new_str, "_NEXT_CUBE_INDEX", std::to_string(val.first & 0xffff));
+      ss << new_str;
+    }
+  }
+
+  ss << CubeTC::CUBETC_REDIRECT_HELPER_END;
+  return ss.str();
 }
 
 void CubeXDP::compile(ebpf::BPF &bpf, const std::string &code, int index,
                       ProgramType type) {
-  std::string all_code(get_wrapper_code() +
+  std::string all_code(get_wrapper_code() + get_redirect_code() + CUBEXDP_WRAPPER + CUBEXDP_HELPERS +
                        DatapathLog::get_instance().parse_log(code));
 
   std::vector<std::string> cflags(cflags_);
@@ -252,7 +314,7 @@ void CubeXDP::unload(ebpf::BPF &bpf, ProgramType type) {
 
 void CubeXDP::compileTC(ebpf::BPF &bpf, const std::string &code) {
   // compile ebpf program
-  std::string all_code(CubeTC::get_wrapper_code() +
+  std::string all_code(CubeTC::get_wrapper_code() + get_redirect_tc_code() + CubeTC::CUBETC_WRAPPER + CubeTC::CUBETC_HELPERS +
                        DatapathLog::get_instance().parse_log(code));
 
   std::vector<std::string> cflags(cflags_);
@@ -399,19 +461,6 @@ int handle_rx_xdp_wrapper(struct CTXTYPE *ctx) {
 }
 
 static __always_inline
-int pcn_pkt_redirect(struct CTXTYPE *pkt, struct pkt_metadata *md, u32 out_port) {
-  u32 *next = forward_chain_.lookup(&out_port);
-  if (next) {
-    u32 inport_key = 0;
-    md->in_port = (*next) >> 16;  // update port_id for next module.
-    port_md.update(&inport_key, md);
-    xdp_nodes.call(pkt, *next & 0xffff);
-  }
-
-  return XDP_ABORTED;
-}
-
-static __always_inline
 int pcn_pkt_controller(struct CTXTYPE *pkt, struct pkt_metadata *md,
                        u16 reason) {
   void *data_end = (void*)(long)pkt->data_end;
@@ -422,6 +471,41 @@ int pcn_pkt_controller(struct CTXTYPE *pkt, struct pkt_metadata *md,
   md->reason = reason;
 
   return controller_xdp.perf_submit_skb(pkt, md->packet_len, md, sizeof(*md));
+}
+)";
+
+const std::string CubeXDP::CUBEXDP_REDIRECT_HELPER_BASE = R"(
+static __always_inline
+int pcn_pkt_redirect(struct CTXTYPE *pkt, struct pkt_metadata *md, u32 out_port) {
+)";
+
+const std::string CubeXDP::CUBEXDP_REDIRECT_HELPER_BASE_NETDEV = R"(
+if (out_port == _OUT_PORT_INDEX) {
+  return bpf_redirect(_IFINDEX, 0);
+}
+)";
+
+const std::string CubeXDP::CUBEXDP_REDIRECT_HELPER_BASE_CUBE = R"(
+if (out_port == _OUT_PORT_INDEX) {
+  //md->in_port = (*next) >> 16;  // update port_id for next module.
+  md->in_port = _NEXT_PORT_INDEX;  // update port_id for next module.
+  port_md.update(&inport_key, md);
+  //xdp_nodes.call(pkt, *next & 0xffff);
+  xdp_nodes.call(pkt, _NEXT_CUBE_INDEX);
+  return XDP_ABORTED;
+}
+)";
+
+const std::string CubeXDP::CUBEXDP_REDIRECT_HELPER_END = R"(
+  u32 *next = forward_chain_.lookup(&out_port);
+  if (next) {
+    u32 inport_key = 0;
+    md->in_port = (*next) >> 16;  // update port_id for next module.
+    port_md.update(&inport_key, md);
+    xdp_nodes.call(pkt, *next & 0xffff);
+  }
+
+  return XDP_ABORTED;
 }
 )";
 

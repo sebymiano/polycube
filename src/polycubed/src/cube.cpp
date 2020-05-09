@@ -278,12 +278,6 @@ std::map<std::string, std::shared_ptr<PortIface>> &Cube::get_ports() {
   return ports_by_name_;
 }
 
-void Cube::update_forwarding_table(int index, int value) {
-  std::lock_guard<std::mutex> cube_guard(cube_mutex_);
-  if (forward_chain_)  // is the forward chain still active?
-    forward_chain_->update_value(index, value);
-}
-
 void Cube::set_egress_next(int port, uint32_t index) {
   egress_next_->update_value(port, index);
 }

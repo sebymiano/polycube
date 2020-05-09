@@ -63,7 +63,7 @@ class Cube : public BaseCube, public CubeIface {
   std::shared_ptr<PortIface> get_port(const std::string &name);
   std::map<std::string, std::shared_ptr<PortIface>> &get_ports();
 
-  void update_forwarding_table(int index, int value);
+  virtual void update_forwarding_table(int index, int value, bool is_netdev) = 0;
   
   // Sets the index of the next program to call after the egress program of this
   // cube is executed.
@@ -89,6 +89,7 @@ class Cube : public BaseCube, public CubeIface {
 
   std::map<std::string, std::shared_ptr<PortIface>> ports_by_name_;
   std::map<int, std::shared_ptr<PortIface>> ports_by_index_;
+  std::map<int, std::pair<int, bool>> forward_chain_cp_;
   std::set<uint16_t> free_ports_;  // keeps track of available ports
 
   std::map<std::string, std::shared_ptr<Veth>> veth_by_name_;

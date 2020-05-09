@@ -84,7 +84,7 @@ class CubeIface : virtual public BaseCubeIface {
   virtual void remove_port(const std::string &name) = 0;
   virtual std::shared_ptr<PortIface> get_port(const std::string &name) = 0;
 
-  virtual void update_forwarding_table(int index, int value) = 0;
+  virtual void update_forwarding_table(int index, int value, bool is_netdev) = 0;
 
   virtual void set_conf(const nlohmann::json &conf) = 0;
   virtual nlohmann::json to_json() const = 0;

@@ -52,8 +52,9 @@ class CubeTC : public Cube {
 
  protected:
   static std::string get_wrapper_code();
+  std::string get_redirect_code();
 
-  static void do_compile(int module_index, ProgramType type, LogLevel level_,
+  void do_compile(int module_index, ProgramType type, LogLevel level_,
                          ebpf::BPF &bpf, const std::string &code, int index, bool shadow, bool span);
   static int do_load(ebpf::BPF &bpf);
   static void do_unload(ebpf::BPF &bpf);
@@ -62,6 +63,8 @@ class CubeTC : public Cube {
                ProgramType type);
   int load(ebpf::BPF &bpf, ProgramType type);
   void unload(ebpf::BPF &bpf, ProgramType type);
+
+  void update_forwarding_table(int index, int value, bool is_netdev) override;
 
   static void send_packet_ns_span_mode(void *cb_cookie, void *data, int data_size);
   void start_thread_span_mode();
@@ -75,6 +78,10 @@ class CubeTC : public Cube {
   static const std::string CUBE_TC_COMMON_WRAPPER;
   static const std::string CUBETC_HELPERS;
   static const std::string CUBETC_WRAPPER;
+  static const std::string CUBETC_REDIRECT_HELPER_BASE;
+  static const std::string CUBETC_REDIRECT_HELPER_BASE_NETDEV;
+  static const std::string CUBETC_REDIRECT_HELPER_BASE_CUBE;
+  static const std::string CUBETC_REDIRECT_HELPER_END;
 };
 
 }  // namespace polycubed

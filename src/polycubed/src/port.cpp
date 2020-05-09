@@ -115,19 +115,22 @@ uint16_t Port::get_egress_index() const {
 
 void Port::update_parent_fwd_table(uint16_t next) {
   uint16_t id;
+  bool is_netdev = false;
 
   if (dynamic_cast<Port *>(peer_port_)) {
     // If the peer is a port set the id of that port, it can be used by the next
     // cube to know the ingress port
     id = peer_port_->get_port_id();
-
   } else {
     // If the peer is a interface preserve the id of this port, it can be used
     // by the optional egress program to know the egress port
-    id = get_port_id();
+    auto *extiface = dynamic_cast<ExtIface *>(peer_port_);
+    id = extiface->get_port_id();
+    //id = get_port_id();
+    is_netdev = true;
   }
 
-  parent_.update_forwarding_table(index(), next | id << 16);
+  parent_.update_forwarding_table(index(), next | id << 16, is_netdev);
 }
 
 std::string Port::name() const {

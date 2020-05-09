@@ -56,8 +56,10 @@ class CubeXDP : public Cube {
                   ProgramType type) override;
   void del_program(int index, ProgramType type) override;
 
- protected:
+protected:
   static std::string get_wrapper_code();
+  std::string get_redirect_code();
+  std::string get_redirect_tc_code();
 
   void compile(ebpf::BPF &bpf, const std::string &code, int index,
                ProgramType type);
@@ -69,6 +71,7 @@ class CubeXDP : public Cube {
   static void do_unload(ebpf::BPF &bpf);
   static int do_load(ebpf::BPF &bpf);
   void compileTC(ebpf::BPF &bpf, const std::string &code);
+  void update_forwarding_table(int index, int value, bool is_netdev) override;
 
   int attach_flags_;
 
@@ -80,6 +83,10 @@ class CubeXDP : public Cube {
   static const std::string CUBEXDP_COMMON_WRAPPER;
   static const std::string CUBEXDP_WRAPPER;
   static const std::string CUBEXDP_HELPERS;
+  static const std::string CUBEXDP_REDIRECT_HELPER_BASE;
+  static const std::string CUBEXDP_REDIRECT_HELPER_BASE_NETDEV;
+  static const std::string CUBEXDP_REDIRECT_HELPER_BASE_CUBE;
+  static const std::string CUBEXDP_REDIRECT_HELPER_END;
 };
 
 }  // namespace polycubed

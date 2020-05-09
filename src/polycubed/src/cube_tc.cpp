@@ -19,6 +19,7 @@
 #include "datapath_log.h"
 #include "exceptions.h"
 #include "patchpanel.h"
+#include "utils/utils.h"
 
 #include <iostream>
 
@@ -51,15 +52,54 @@ CubeTC::~CubeTC() {
   Cube::uninit();
 }
 
+void CubeTC::update_forwarding_table(int index, int value, bool is_netdev) {
+  std::lock_guard<std::mutex> cube_guard(cube_mutex_);
+  if (forward_chain_) { // is the forward chain still active?
+    forward_chain_->update_value(index, value);
+    if (value != 0) {
+      forward_chain_cp_[index] = std::make_pair(value, is_netdev);
+    } else {
+      forward_chain_cp_.erase(index);
+    }
+  }
+  cube_mutex_.unlock();
+  reload_all();
+}
+
 std::string CubeTC::get_wrapper_code() {
-  return Cube::get_wrapper_code() + CUBE_TC_COMMON_WRAPPER + CUBETC_WRAPPER +
-         CUBETC_HELPERS;
+  return Cube::get_wrapper_code() + CUBE_TC_COMMON_WRAPPER;
+}
+
+std::string CubeTC::get_redirect_code() {
+  std::stringstream ss;
+  ss << CUBETC_REDIRECT_HELPER_BASE;
+
+  for( auto const& [index, val] : forward_chain_cp_ ) {
+    if (val.second) {
+      // It is a physical interface
+      std::string new_str(CUBETC_REDIRECT_HELPER_BASE_NETDEV);
+      utils::replaceStrAll(new_str, "_OUT_PORT_INDEX", std::to_string(index));
+      uint16_t ifindex = val.first >> 16;
+      utils::replaceStrAll(new_str, "_IFINDEX", std::to_string(ifindex));
+      ss << new_str;
+    } else {
+      std::string new_str(CUBETC_REDIRECT_HELPER_BASE_CUBE);
+      utils::replaceStrAll(new_str, "_OUT_PORT_INDEX", std::to_string(index));
+      utils::replaceStrAll(new_str, "_NEXT_PORT_INDEX", std::to_string(val.first));
+      uint16_t next = val.first & 0xffff;
+      utils::replaceStrAll(new_str, "_NEXT_CUBE_INDEX", std::to_string(next));
+      ss << new_str;
+    }
+  }
+
+  ss << CUBETC_REDIRECT_HELPER_END;
+  return ss.str();
 }
 
 void CubeTC::do_compile(int id, ProgramType type, LogLevel level_,
                         ebpf::BPF &bpf, const std::string &code, int index, bool shadow, bool span) {
   // compile ebpf program
-  std::string all_code(get_wrapper_code() +
+  std::string all_code(get_wrapper_code() + get_redirect_code() + CUBETC_WRAPPER + CUBETC_HELPERS +
                        DatapathLog::get_instance().parse_log(code));
 
   std::vector<std::string> cflags(cflags_);
@@ -302,9 +342,28 @@ int pcn_vlan_push_tag(struct CTXTYPE *ctx, u16 eth_proto, u32 vlan_id) {
 
 )";
 
-const std::string CubeTC::CUBETC_WRAPPER = R"(
+const std::string CubeTC::CUBETC_REDIRECT_HELPER_BASE = R"(
 static __always_inline
 int forward(struct CTXTYPE *skb, u32 out_port) {
+)";
+
+const std::string CubeTC::CUBETC_REDIRECT_HELPER_BASE_NETDEV = R"(
+if (out_port == _OUT_PORT_INDEX) {
+  return bpf_redirect(_IFINDEX, 0);
+}
+)";
+
+const std::string CubeTC::CUBETC_REDIRECT_HELPER_BASE_CUBE = R"(
+if (out_port == _OUT_PORT_INDEX) {
+  //skb->cb[0] = *next;
+  skb->cb[0] = _NEXT_PORT_INDEX;  // update port_id for next module.
+  //xdp_nodes.call(pkt, *next & 0xffff);
+  nodes.call(pkt, _NEXT_CUBE_INDEX);
+  return TC_ACT_SHOT;
+}
+)";
+
+const std::string CubeTC::CUBETC_REDIRECT_HELPER_END = R"(
   u32 *next = forward_chain_.lookup(&out_port);
   if (next) {
     skb->cb[0] = *next;
@@ -314,7 +373,9 @@ int forward(struct CTXTYPE *skb, u32 out_port) {
   //bpf_trace_printk("fwd:%d=0\n", out_port);
   return TC_ACT_SHOT;
 }
+)";
 
+const std::string CubeTC::CUBETC_WRAPPER = R"(
 #if defined(SHADOW) && defined(SPAN)
 static __always_inline
 void packet_span(struct CTXTYPE *skb, u32 out_port) {
