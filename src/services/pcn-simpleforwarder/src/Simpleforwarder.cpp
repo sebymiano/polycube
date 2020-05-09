@@ -18,14 +18,33 @@
 
 #include "Simpleforwarder.h"
 #include "Simpleforwarder_dp.h"
+#include "Simpleforwarder_dp_1.h"
+#include <tins/ethernetII.h>
+#include <tins/tins.h>
+
+#define CHAIN_SIZE 1
 
 Simpleforwarder::Simpleforwarder(const std::string name,
                                  const SimpleforwarderJsonObject &conf)
-    : Cube(conf.getBase(), {simpleforwarder_code}, {}),
+    : Cube(conf.getBase(), {simpleforwarder_code_last}, {}),
       SimpleforwarderBase(name) {
   logger()->info("Creating Simpleforwarder instance");
   addPortsList(conf.getPorts());
   addActionsList(conf.getActions());
+
+  for (int i = 1; i < CHAIN_SIZE - 1; i++) {
+    std::string new_code = simpleforwarder_code_1;
+    replaceAll(new_code, "_NEXT_HOP", std::to_string(i+1));
+    add_program(new_code, i);
+  }
+
+  if (CHAIN_SIZE > 1) {
+    add_program(simpleforwarder_code_last, CHAIN_SIZE - 1);
+    std::string first_prog_code = simpleforwarder_code_1;
+    replaceAll(first_prog_code, "_NEXT_HOP", "1");
+    reload(first_prog_code, 0);
+  }
+
 }
 
 Simpleforwarder::~Simpleforwarder() {
@@ -36,6 +55,22 @@ void Simpleforwarder::packet_in(Ports &port,
                                 polycube::service::PacketInMetadata &md,
                                 const std::vector<uint8_t> &packet) {
   logger()->info("Packet received from port {0}", port.name());
+
+  EthernetII p(&packet[0], packet.size());
+  get_port("p2")->send_packet_out(p);
+}
+
+// used for replace strings in datapath code
+void Simpleforwarder::replaceAll(std::string &str, const std::string &from,
+                          const std::string &to) {
+  if (from.empty())
+    return;
+  size_t start_pos = 0;
+  while ((start_pos = str.find(from, start_pos)) != std::string::npos) {
+    str.replace(start_pos, from.length(), to);
+    start_pos += to.length();  // In case 'to' contains 'from', like replacing
+                               // 'x' with 'yx'
+  }
 }
 
 std::shared_ptr<Actions> Simpleforwarder::getActions(

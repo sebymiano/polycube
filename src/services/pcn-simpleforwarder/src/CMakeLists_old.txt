@@ -22,11 +22,7 @@ add_library(pcn-simpleforwarder SHARED
 # load ebpf datapath code a variable
 load_file_as_variable(pcn-simpleforwarder
   Simpleforwarder_dp.c
-  simpleforwarder_code_last)
-
-load_file_as_variable(pcn-simpleforwarder
-  Simpleforwarder_dp_1.c
-  simpleforwarder_code_1)
+  simpleforwarder_code)
 
 # load datamodel in a variable
 load_file_as_variable(pcn-simpleforwarder

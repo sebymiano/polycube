@@ -33,6 +33,7 @@ class Simpleforwarder : public SimpleforwarderBase {
   void packet_in(Ports &port, polycube::service::PacketInMetadata &md,
                  const std::vector<uint8_t> &packet) override;
 
+  void replaceAll(std::string &str, const std::string &from, const std::string &to);
   /// <summary>
   /// Entry of the Actions table
   /// </summary>

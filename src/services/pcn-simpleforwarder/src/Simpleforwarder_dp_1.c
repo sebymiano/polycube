@@ -16,26 +16,15 @@
 
 #include <bcc/helpers.h>
 #include <bcc/proto.h>
-enum { SLOWPATH_REASON = 1 };
-enum {
-  DROP,      // drop packet
-  SLOWPATH,  // send packet to user-space
-  FORWARD,   // send packe through a port
-};
-struct action {
-  uint16_t action;  // which action? see above enum
-  uint16_t port;    // in case of redirect, to what port?
-};
-/*
-* Key is the ingress port an action is a struct that describes how to handle
-* that packet.
-*/
-BPF_HASH(actions, uint16_t, struct action);
+
 static __always_inline int handle_rx(struct CTXTYPE *ctx,
                                      struct pkt_metadata *md) {
 #ifdef POLYCUBE_XDP
   pcn_log(ctx, LOG_TRACE, "XDP Cube", md->in_port);
 #endif
-  pcn_log(ctx, LOG_TRACE, "Receiving packet from port %d", md->in_port);
-  return pcn_pkt_redirect(ctx, md, md->in_port ^ 1);
+  pcn_log(ctx, LOG_TRACE, "Receiving packet from port %d of microCube _NEXT_HOP", md->in_port);
+
+  call_ingress_program(ctx, _NEXT_HOP);
+
+  return RX_DROP;
 }
