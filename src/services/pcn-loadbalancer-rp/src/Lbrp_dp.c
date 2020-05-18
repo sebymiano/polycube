@@ -47,7 +47,7 @@
 *
 */
 
-#define MAX_SERVICES 1024
+#define MAX_SERVICES 10000
 #define MAX_SESSIONS 65536
 
 #define IP_CSUM_OFFSET (sizeof(struct eth_hdr) + offsetof(struct iphdr, check))
@@ -63,7 +63,7 @@
 #define IS_PSEUDO 0x10
 
 #ifndef BACKEND_PORT
-#define BACKEND_PORT 1
+#define BACKEND_PORT 0
 #endif
 
 #ifndef FRONTEND_PORT
@@ -147,7 +147,7 @@ struct backend {
  *
  * where 'pool_size' is 4 for VIP 1.
  */
-BPF_TABLE("hash", struct vip, struct backend, services, MAX_SERVICES);
+BPF_TABLE("percpu_hash", struct vip, struct backend, services, MAX_SERVICES);
 
 /*
  *  Keeps the sessions handled by the load balancer in this table. This is
@@ -183,7 +183,7 @@ struct src_ip_r_value {
 BPF_F_TABLE("lpm_trie", struct src_ip_r_key, struct src_ip_r_value,
             src_ip_rewrite, MAX_SERVICES, BPF_F_NO_PREALLOC);
 
-BPF_TABLE("hash", struct backend, struct vip, backend_to_service, MAX_SERVICES);
+BPF_TABLE("percpu_hash", struct backend, struct vip, backend_to_service, MAX_SERVICES);
 
 /*
  * This function is used to get the backend ip after the LoadBalancing.

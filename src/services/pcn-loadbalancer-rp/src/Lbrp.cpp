@@ -319,6 +319,38 @@ void Lbrp::addService(const std::string &vip, const uint16_t &vport,
         "ICMP Service requires 0 as virtual port. Since this parameter is "
         "useless for ICMP services");
   }
+
+  Service::ServiceKey key = Service::ServiceKey(vip, vport, Service::convertProtoToNumber(proto));
+  // The validation of Virtual IP and Port is performed automatically by the
+  // framework
+  if (service_map_.count(key) != 0) {
+    logger()->error(
+        "[Service] Key {0}, {1}, {2} already exists in the map", vip, vport,
+        ServiceJsonObject::ServiceProtoEnum_to_string(proto));
+    throw std::runtime_error("Key already exists in the service map");
+  }
+
+  try {
+    std::unordered_map<Service::ServiceKey, Service>::iterator iter;
+    bool inserted;
+    std::tie(iter, inserted) = service_map_.emplace(
+        std::piecewise_construct,
+        std::forward_as_tuple(
+            Service::ServiceKey(conf.getVip(), conf.getVport(),
+                       Service::convertProtoToNumber(conf.getProto()))),
+        std::forward_as_tuple(*this, conf));
+
+    if (!inserted) {
+      throw std::runtime_error("Unable to create the service instance");
+    } else {
+      logger()->debug("[Service] Service created successfully");
+    }
+  } catch (std::exception &e) {
+    logger()->error("[Service] Error while creating the service");
+    // We probably do not need to remove the service from the map because the
+    // constructor raised an error
+    throw;
+  }
 }
 
 void Lbrp::addServiceList(const std::vector<ServiceJsonObject> &conf) {

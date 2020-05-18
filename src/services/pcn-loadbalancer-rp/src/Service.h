@@ -110,9 +110,11 @@ class Service : public ServiceInterface {
   ServiceProtoEnum proto_;
   uint backend_size_;
 
+  std::mutex backend_mutex;
+
   void updateConsistentHashMap();
   std::vector<std::string> getConsistentArray();
-  void updateKernelServiceMap(const std::vector<std::string> consistent_array);
+  void updateKernelServiceMap(const std::vector<std::string>& consistent_array);
   void addBackendToServiceMatrix(std::string backend_ip);
   void removeBackendFromServiceMatrix(std::string backend_ip);
   std::vector<int> getRandomIntVector(int vect_size);
