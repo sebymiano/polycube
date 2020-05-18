@@ -111,9 +111,8 @@ void Lbrp::packet_in(Ports &port, polycube::service::PacketInMetadata &md,
   b_port->send_packet_out(eth);
 }
 
-void Lbrp::reloadCodeWithNewPorts() {
-  uint16_t frontend_port = 0;
-  uint16_t backend_port = 1;
+void Lbrp::reloadCode() {
+  uint16_t frontend_port = 0, backend_port = 0;
 
   for (auto &it : get_ports()) {
     switch (it->getType()) {
@@ -126,14 +125,26 @@ void Lbrp::reloadCodeWithNewPorts() {
     }
   }
 
+  std::stringstream ss;
   logger()->debug("Reloading code with frontend port: {0} and backend port {1}",
                   frontend_port, backend_port);
   std::string frontend_port_str("#define FRONTEND_PORT " +
                                 std::to_string(frontend_port));
+  ss << frontend_port_str;
+  ss << "\n";
   std::string backend_port_str("#define BACKEND_PORT " +
                                std::to_string(backend_port));
+  ss << backend_port_str;
+  ss << "\n";
 
-  reload(frontend_port_str + "\n" + backend_port_str + "\n" + lbrp_code);
+  if (getSrcIpRewrite() != nullptr) {
+    std::string srcip_rewrite_enabled("#define SRCIP_REWRITE_ENABLED " +
+                                      std::to_string(1));
+    ss << srcip_rewrite_enabled;
+    ss << "\n";
+  }
+
+  reload(ss.str() + lbrp_code);
 
   logger()->trace("New lbrp code loaded");
 }
@@ -195,7 +206,7 @@ void Lbrp::addPorts(const std::string &name, const PortsJsonObject &conf) {
 
   if (get_ports().size() == 2) {
     logger()->info("Reloading code because of the new port");
-    reloadCodeWithNewPorts();
+    reloadCode();
   }
 
   logger()->info("New port created with name {0}", name);
@@ -220,7 +231,7 @@ void Lbrp::delPorts(const std::string &name) {
 
 void Lbrp::delPortsList() {
   auto ports = get_ports();
-  for (auto it : ports) {
+  for (auto &it : ports) {
     delPorts(it->name());
   }
 }
@@ -237,15 +248,21 @@ void Lbrp::addSrcIpRewrite(const SrcIpRewriteJsonObject &value) {
 
   src_ip_rewrite_ = std::make_shared<SrcIpRewrite>(*this, value);
   src_ip_rewrite_->update(value);
+
+  reloadCode();
 }
 
 void Lbrp::replaceSrcIpRewrite(const SrcIpRewriteJsonObject &conf) {
   delSrcIpRewrite();
   addSrcIpRewrite(conf);
+
+  reloadCode();
 }
 
 void Lbrp::delSrcIpRewrite() {
-  // what the hell means to remove entry in this case?
+  // I could also use reset but the effect would be the same (I think)
+  src_ip_rewrite_ = nullptr;
+  reloadCode();
 }
 
 std::shared_ptr<Service> Lbrp::getService(const std::string &vip,

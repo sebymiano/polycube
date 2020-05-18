@@ -84,11 +84,11 @@ class Lbrp : public polycube::service::Cube<Ports>, public LbrpInterface {
   void delPorts(const std::string &name) override;
   void delPortsList() override;
 
-  void reloadCodeWithNewPorts();
+  void reloadCode();
   std::shared_ptr<Ports> getFrontendPort();
   std::shared_ptr<Ports> getBackendPort();
 
  private:
   std::unordered_map<Service::ServiceKey, Service> service_map_;
-  std::shared_ptr<SrcIpRewrite> src_ip_rewrite_;
+  std::shared_ptr<SrcIpRewrite> src_ip_rewrite_ = nullptr;
 };
