@@ -47,7 +47,7 @@
 *
 */
 
-#define MAX_SERVICES 1024
+#define MAX_SERVICES 10000
 #define MAX_SESSIONS 65536
 
 #define IP_CSUM_OFFSET (sizeof(struct eth_hdr) + offsetof(struct iphdr, check))
@@ -62,8 +62,12 @@
    offsetof(struct icmphdr, checksum))
 #define IS_PSEUDO 0x10
 
+#ifndef SRCIP_REWRITE_ENABLED
+#define SRCIP_REWRITE_ENABLED 0
+#endif
+
 #ifndef BACKEND_PORT
-#define BACKEND_PORT 1
+#define BACKEND_PORT 0
 #endif
 
 #ifndef FRONTEND_PORT
@@ -147,7 +151,7 @@ struct backend {
  *
  * where 'pool_size' is 4 for VIP 1.
  */
-BPF_TABLE("hash", struct vip, struct backend, services, MAX_SERVICES);
+BPF_TABLE("percpu_hash", struct vip, struct backend, services, MAX_SERVICES);
 
 /*
  *  Keeps the sessions handled by the load balancer in this table. This is
@@ -183,7 +187,7 @@ struct src_ip_r_value {
 BPF_F_TABLE("lpm_trie", struct src_ip_r_key, struct src_ip_r_value,
             src_ip_rewrite, MAX_SERVICES, BPF_F_NO_PREALLOC);
 
-BPF_TABLE("hash", struct backend, struct vip, backend_to_service, MAX_SERVICES);
+BPF_TABLE("percpu_hash", struct backend, struct vip, backend_to_service, MAX_SERVICES);
 
 /*
  * This function is used to get the backend ip after the LoadBalancing.
@@ -235,6 +239,7 @@ static inline struct backend *get_bck_ip(struct CTXTYPE *ctx, __be32 ip_src,
   pcn_log(ctx, LOG_TRACE, "Found backend with ip: %I and port: %P",
           bck_value->ip, bck_value->port);
 
+#if SRCIP_REWRITE_ENABLED
   // check if src ip rewrite applies for this packet, if yes,  do not create a
   // new entry in the session table
   struct src_ip_r_key k = {32, ip_dst};
@@ -242,7 +247,9 @@ static inline struct backend *get_bck_ip(struct CTXTYPE *ctx, __be32 ip_src,
   if (v1) {
     return bck_value;
   }
+#endif
 
+#if FRONTED_PORT != BACKEND_PORT
   // Calculate a second hash on the session, but this time we use the backend IP
   sessions_key.ip_dst = bck_value->ip;      // backend ip address
   sessions_key.port_dst = bck_value->port;  // backend port
@@ -264,6 +271,7 @@ static inline struct backend *get_bck_ip(struct CTXTYPE *ctx, __be32 ip_src,
   // nothing happens.
   // if the entry doesn't exist, it is added to the list
   hash_session.update(&check, &v);  // hash-vip
+#endif
 
   return bck_value;
 }
@@ -417,6 +425,7 @@ LB:;
 
     ip->daddr = bck_value->ip;
 
+#if SRC_IP_REWRITE_ENABLED
     // should we rewrite the src ip?
     struct src_ip_r_key k = {32, ip->saddr};
     struct src_ip_r_value *v = src_ip_rewrite.lookup(&k);
@@ -426,6 +435,7 @@ LB:;
       new_sip = ip->saddr;
       pcn_log(ctx, LOG_TRACE, "src ip rewritten to %I", ip->saddr);
     }
+#endif
 
     pcn_log(ctx, LOG_TRACE, "redirected to %I:%P --> %I:%P", ip->saddr, source,
             bck_value->ip, bck_value->port);
@@ -454,7 +464,7 @@ LB:;
             * else
             *     SESSION TABLE
             */
-
+    // IF FRONTED && BACKEND PORTS are equal, this code will never be executed
     pcn_log(ctx, LOG_TRACE, "Packet comes from backend port: %I", ip->daddr);
 
     __u32 dst_ip_ = ip->daddr;

@@ -28,7 +28,7 @@ using namespace polycube::service;
 const std::string Service::EBPF_SERVICE_MAP = "services";
 const std::string Service::EBPF_BACKEND_TO_SERVICE_MAP = "backend_to_service";
 const uint16_t Service::ICMP_EBPF_PORT = 0;
-const uint Service::INITIAL_BACKEND_SIZE = 10;
+const uint Service::INITIAL_BACKEND_SIZE = 100;
 const uint Service::BACKEND_REPLICAS = 3;
 
 Service::Service(Lbrp &parent, const ServiceJsonObject &conf)
@@ -119,7 +119,7 @@ uint16_t Service::getVport() {
 void Service::removeServiceFromKernelMap() {
   logger()->trace("Removing all elements from service map");
 
-  auto services_table = parent_.get_hash_table<vip, backend>(EBPF_SERVICE_MAP);
+  auto services_table = parent_.get_percpuhash_table<vip, backend>(EBPF_SERVICE_MAP);
 
   for (uint16_t index = 0; index < backend_size_ * BACKEND_REPLICAS; index++) {
     vip service_key{
@@ -169,10 +169,11 @@ void Service::updateConsistentHashMap() {
  */
 
 void Service::updateKernelServiceMap(
-    const std::vector<std::string> consistent_array) {
-  auto services_table = parent_.get_hash_table<vip, backend>(EBPF_SERVICE_MAP);
+    const std::vector<std::string>& consistent_array) {
+  logger()->debug("[Service] Updating kernel service map");
+  auto services_table = parent_.get_percpuhash_table<vip, backend>(EBPF_SERVICE_MAP);
   auto backend_to_service =
-      parent_.get_hash_table<backend, vip>(EBPF_BACKEND_TO_SERVICE_MAP);
+      parent_.get_percpuhash_table<backend, vip>(EBPF_BACKEND_TO_SERVICE_MAP);
   uint16_t index = 0;
 
   vip service_key{
@@ -196,23 +197,29 @@ void Service::updateKernelServiceMap(
   for (const auto &backend_ip : consistent_array) {
     index++;
 
-    auto bck = getBackend(backend_ip);
+    try {
+      auto &bck = service_backends_.at(backend_ip);
 
-    vip key{
-        .ip = utils::ip_string_to_nbo_uint(getVip()),
-        .port = htons(getVport()),
-        .proto = htons(Service::convertProtoToNumber(getProto())),
-        .index = index,
-    };
+      vip key{
+              .ip = utils::ip_string_to_nbo_uint(getVip()),
+              .port = htons(getVport()),
+              .proto = htons(Service::convertProtoToNumber(getProto())),
+              .index = index,
+      };
 
-    backend value{
-        .ip = utils::ip_string_to_nbo_uint(bck->getIp()),
-        .port = htons(bck->getPort()),
-        .proto = htons(Service::convertProtoToNumber(getProto())),
-    };
+      backend value{
+              .ip = utils::ip_string_to_nbo_uint(bck.getIp()),
+              .port = htons(bck.getPort()),
+              .proto = htons(Service::convertProtoToNumber(getProto())),
+      };
 
-    services_table.set(key, value);
-    backend_to_service.set(value, key);
+      services_table.set(key, value);
+      backend_to_service.set(value, key);
+    } catch (std::out_of_range &e) {
+      logger()->error(
+              "[Service] There are no backend associated with that key");
+      throw std::runtime_error("There are no entries associated with that key");
+    }
   }
 
   logger()->debug("[Service] Service map updated");
@@ -321,7 +328,7 @@ std::map<std::string, int> Service::get_weight_backend() {
     sum_weight += backend.second.getWeight();
   }
   float coeff = (static_cast<float>(vect_size) / sum_weight);
-  logger()->debug("vec size {0} sum_weight {1} coeff {2} ", vect_size,
+  logger()->debug("[Service] Vec size {0} sum_weight {1} coeff {2} ", vect_size,
                   sum_weight, coeff);
 
   // Calculate ,for each backend, its number of entries
@@ -333,7 +340,7 @@ std::map<std::string, int> Service::get_weight_backend() {
       weight_backend++;
     weight_back_pool[backend.first] = weight_backend;
     total_weight += weight_backend;
-    logger()->debug("backend {0} weight {1} ", backend.first, weight_backend);
+    logger()->debug("[Service] Backend {0} weight {1} ", backend.first, weight_backend);
   }
 
   int res = vect_size - total_weight;
@@ -347,7 +354,7 @@ std::map<std::string, int> Service::get_weight_backend() {
       weight_back_pool[backend.first]++;
       res--;
 
-      logger()->debug("backend {0} weight {1} ", backend.first,
+      logger()->debug("[Service] Backend {0} weight {1} ", backend.first,
                       weight_back_pool[backend.first]);
 
       if (res == 0)
@@ -415,15 +422,15 @@ std::shared_ptr<spdlog::logger> Service::logger() {
 
 std::shared_ptr<ServiceBackend> Service::getBackend(const std::string &ip) {
   logger()->trace(
-      "[ServiceBackend] Received request to read new backend for service {0}, "
+      "[Service] Received request to read new backend for service {0}, "
       "{1}, {2}",
       getVip(), getVport(),
       ServiceJsonObject::ServiceProtoEnum_to_string(getProto()));
-  logger()->trace("[ServiceBackend] Backend IP: {0}", ip);
+  logger()->trace("[Service] Backend IP: {0}", ip);
 
   if (service_backends_.count(ip) == 0) {
     logger()->error(
-        "[ServiceBackend] There are no entries associated with that key");
+        "[Service] There are no entries associated with that key");
     throw std::runtime_error("There are no entries associated with that key");
   }
 
@@ -441,16 +448,17 @@ std::vector<std::shared_ptr<ServiceBackend>> Service::getBackendList() {
 
 void Service::addBackend(const std::string &ip,
                          const ServiceBackendJsonObject &conf) {
+  std::lock_guard<std::mutex> guard(backend_mutex);
   logger()->debug(
-      "[ServiceBackend] Received request to create new backend for service "
+      "[Service] Received request to create new backend for service "
       "{0}, {1}, {2}",
       getVip(), getVport(),
       ServiceJsonObject::ServiceProtoEnum_to_string(getProto()));
-  logger()->debug("[ServiceBackend] Backend IP: {0}", ip);
+  logger()->debug("[Service] Backend IP: {0}", ip);
 
   if (service_backends_.count(ip) != 0) {
     logger()->error(
-        "[ServiceBackend] Key {0} already exists in the backends map", ip);
+        "[Service] Key {0} already exists in the backends map", ip);
     throw std::runtime_error("Backend " + ip +
                              " already exists in the service map");
   }
@@ -472,12 +480,9 @@ void Service::addBackend(const std::string &ip,
 
     if (!inserted) {
       throw std::runtime_error("Unable to create the backend instance");
-    } else {
-      logger()->debug("[ServiceBackend] Backend {0} created successfully",
-                      conf.getIp());
     }
   } catch (const std::exception &e) {
-    logger()->error("[ServiceBackend] Error while creating the backend {0}",
+    logger()->error("[Service] Error while creating the backend {0}",
                     conf.getIp());
     // We probably do not need to remove the service from the map because the
     // constructor raised an error
@@ -486,6 +491,9 @@ void Service::addBackend(const std::string &ip,
 
   addBackendToServiceMatrix(ip);
   updateConsistentHashMap();
+
+  logger()->debug("[Service] Backend {0} created successfully", conf.getIp());
+
 }
 
 void Service::addBackendList(
@@ -505,15 +513,15 @@ void Service::replaceBackend(const std::string &ip,
 
 void Service::delBackend(const std::string &ip) {
   logger()->trace(
-      "[ServiceBackend] Received request to remove backend for service {0}, "
+      "[Service] Received request to remove backend for service {0}, "
       "{1}, {2}",
       getVip(), getVport(),
       ServiceJsonObject::ServiceProtoEnum_to_string(getProto()));
-  logger()->trace("[ServiceBackend] Backend IP: {0}", ip);
+  logger()->trace("[Service] Backend IP: {0}", ip);
 
   if (service_backends_.count(ip) == 0) {
     logger()->error(
-        "[ServiceBackend] There are no entries associated with that key");
+        "[Service] There are no entries associated with that key");
     throw std::runtime_error("There are no entries associated with that key");
   }
 
