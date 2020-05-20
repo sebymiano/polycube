@@ -137,8 +137,8 @@ BPF_TABLE_SHARED("percpu_array", int, u64, bytes_acceptestablished_Forward, 1);
 #endif
 
 #if _EGRESS_LOGIC
-BPF_TABLE_SHARED("percpu_array", int, u64, pkts_acceptestablished_Output, 1);
-BPF_TABLE_SHARED("percpu_array", int, u64, bytes_acceptestablished_Output, 1);
+//BPF_TABLE_SHARED("percpu_array", int, u64, pkts_acceptestablished_Output, 1);
+//BPF_TABLE_SHARED("percpu_array", int, u64, bytes_acceptestablished_Output, 1);
 #endif
 
 #if _INGRESS_LOGIC
@@ -165,22 +165,6 @@ static __always_inline void incrementAcceptEstablishedForward(u32 bytes) {
   }
 
   value = bytes_acceptestablished_Forward.lookup(&zero);
-  if (value) {
-    *value += bytes;
-  }
-}
-#endif
-
-#if _EGRESS_LOGIC
-static __always_inline void incrementAcceptEstablishedOutput(u32 bytes) {
-  u64 *value;
-  int zero = 0;
-  value = pkts_acceptestablished_Output.lookup(&zero);
-  if (value) {
-    *value += 1;
-  }
-
-  value = bytes_acceptestablished_Output.lookup(&zero);
   if (value) {
     *value += bytes;
   }
@@ -607,7 +591,6 @@ action:;
     goto DISABLED;
 #elif _CONNTRACK_MODE_OUTPUT == 1
     if (pkt->connStatus == ESTABLISHED) {
-      incrementAcceptEstablishedOutput(md->packet_len);
       goto ENABLED_MATCH;
     } else {
       goto ENABLED_NOT_MATCH;
