@@ -82,7 +82,7 @@ std::string Iptables::ConntrackTableUpdate::getCode() {
   /*Replacing hops*/
   replaceAll(no_macro_code, "_NEXT_HOP_1", std::to_string(index_ + 1));
 
-  replaceAll(no_macro_code, "_CONNTRACK_MODE",
+  replaceAll(no_macro_code, "_CONNTRACK_MAIN_MODE",
              std::to_string(iptables_.conntrack_mode_));
 
   if (program_type_ == ProgramType::INGRESS) {

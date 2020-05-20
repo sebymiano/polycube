@@ -140,8 +140,9 @@ static __always_inline uint64_t *time_get_ns() {
 
 static int handle_rx(struct CTXTYPE *ctx, struct pkt_metadata *md) {
 // Conntrack DISABLED
-#if _CONNTRACK_MODE == 0
-  return RX_OK;
+pcn_log(ctx, LOG_DEBUG, "Conntrack Mode: _CONNTRACK_MAIN_MODE");
+#if _CONNTRACK_MAIN_MODE == 0
+  goto forward_action;
 
 #else
   // Conntrack ENABLED
@@ -652,6 +653,7 @@ static int handle_rx(struct CTXTYPE *ctx, struct pkt_metadata *md) {
 
     goto forward_action;
   }
+#endif
 
 forward_action:;
 
@@ -747,7 +749,5 @@ forward_action:;
   pcn_log(ctx, LOG_TRACE,
           "Conntrack Table Update: ACCEPT packet, after save in session table");
   return RX_OK;
-#endif
-
 #endif
 }
