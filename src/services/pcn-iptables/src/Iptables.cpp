@@ -446,7 +446,18 @@ void Iptables::disableAcceptEstablished(Chain &chain) {
   }
 }
 
-void Iptables::setConntrack(const IptablesConntrackEnum &value) {}
+void Iptables::setConntrack(const IptablesConntrackEnum &value) {
+  switch(value) {
+    case IptablesConntrackEnum::ON:
+      conntrack_mode_ = ConntrackModes::ON;
+      reloadAll();
+      break;
+    case IptablesConntrackEnum::OFF:
+      conntrack_mode_ = ConntrackModes::DISABLED;
+      reloadAll();
+      break;
+  }
+}
 
 bool Iptables::isContrackActive() {
   return (conntrack_mode_ == ConntrackModes::ON ||
