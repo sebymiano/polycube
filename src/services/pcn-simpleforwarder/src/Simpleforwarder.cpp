@@ -23,7 +23,7 @@ Simpleforwarder::Simpleforwarder(const std::string name,
                                  const SimpleforwarderJsonObject &conf)
     : Cube(conf.getBase(), {simpleforwarder_code}, {}),
       SimpleforwarderBase(name),
-      quit_thread_(false) {
+      quit_thread_(false), new_reloaded_code(simpleforwarder_code), num_runs(0) {
   logger()->info("Creating Simpleforwarder instance");
   addPortsList(conf.getPorts());
   addActionsList(conf.getActions());
@@ -44,9 +44,12 @@ void Simpleforwarder::quitAndJoin() {
 
 void Simpleforwarder::reloadCode() {
   do {
+    new_reloaded_code = simpleforwarder_code;
     sleep(10);
-    reload(simpleforwarder_code);
+    replaceAll(new_reloaded_code, "0", std::to_string(num_runs));
+    reload(new_reloaded_code);
     logger()->info("Code reloaded");
+    num_runs++;
   } while (!quit_thread_);
 }
 
@@ -54,6 +57,18 @@ void Simpleforwarder::packet_in(Ports &port,
                                 polycube::service::PacketInMetadata &md,
                                 const std::vector<uint8_t> &packet) {
   logger()->info("Packet received from port {0}", port.name());
+}
+
+void Simpleforwarder::replaceAll(std::string &str, const std::string &from,
+                          const std::string &to) {
+  if (from.empty())
+    return;
+  size_t start_pos = 0;
+  while ((start_pos = str.find(from, start_pos)) != std::string::npos) {
+    str.replace(start_pos, from.length(), to);
+    start_pos += to.length();  // In case 'to' contains 'from', like replacing
+                               // 'x' with 'yx'
+  }
 }
 
 std::shared_ptr<Actions> Simpleforwarder::getActions(

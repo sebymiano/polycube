@@ -43,8 +43,12 @@ class Simpleforwarder : public SimpleforwarderBase {
   void delActions(const std::string &inport) override;
   void delActionsList() override;
 
+  void replaceAll(std::string &str, const std::string &from, const std::string &to);
   void reloadCode();
   void quitAndJoin();
   std::thread reloading_thread_;
   std::atomic<bool> quit_thread_;
+  std::string new_reloaded_code;
+  int num_runs;
+
 };

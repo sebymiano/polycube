@@ -1,11 +1,11 @@
 /*
- * Copyright 2018 The Polycube Authors
+ * Copyright 18 The Polycube Authors
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -26,6 +26,7 @@ struct action {
   uint16_t action;  // which action? see above enum
   uint16_t port;    // in case of redirect, to what port?
 };
+
 /*
 * Key is the ingress port an action is a struct that describes how to handle
 * that packet.
@@ -53,7 +54,7 @@ static __always_inline int handle_rx(struct CTXTYPE *ctx,
     pcn_pkt_controller(ctx, md, SLOWPATH_REASON);
     return RX_DROP;
   case FORWARD:
-    pcn_log(ctx, LOG_DEBUG, "Forwarding packet to port %u.", x->port);
+    pcn_log(ctx, LOG_DEBUG, "Forwarding packet to port %u, run: %d", x->port, 0);
     return pcn_pkt_redirect(ctx, md, x->port);
   default:
     pcn_log(ctx, LOG_DEBUG, "Bad action %d.", x->action);
