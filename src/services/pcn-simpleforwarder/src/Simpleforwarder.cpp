@@ -22,14 +22,32 @@
 Simpleforwarder::Simpleforwarder(const std::string name,
                                  const SimpleforwarderJsonObject &conf)
     : Cube(conf.getBase(), {simpleforwarder_code}, {}),
-      SimpleforwarderBase(name) {
+      SimpleforwarderBase(name),
+      quit_thread_(false) {
   logger()->info("Creating Simpleforwarder instance");
   addPortsList(conf.getPorts());
   addActionsList(conf.getActions());
+
+  reloading_thread_ = std::thread(&Simpleforwarder::reloadCode, this);
 }
 
 Simpleforwarder::~Simpleforwarder() {
+  quitAndJoin();
   logger()->info("Destroying Simpleforwarder instance");
+}
+
+
+void Simpleforwarder::quitAndJoin() {
+  quit_thread_ = true;
+  reloading_thread_.join();
+}
+
+void Simpleforwarder::reloadCode() {
+  do {
+    sleep(10);
+    reload(simpleforwarder_code);
+    logger()->info("Code reloaded");
+  } while (!quit_thread_);
 }
 
 void Simpleforwarder::packet_in(Ports &port,

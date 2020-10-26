@@ -42,4 +42,9 @@ class Simpleforwarder : public SimpleforwarderBase {
                   const ActionsJsonObject &conf) override;
   void delActions(const std::string &inport) override;
   void delActionsList() override;
+
+  void reloadCode();
+  void quitAndJoin();
+  std::thread reloading_thread_;
+  std::atomic<bool> quit_thread_;
 };
