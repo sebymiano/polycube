@@ -52,16 +52,23 @@ echo "Use 'install.sh -h' to show advanced installation options."
 
 MODE=$1
 
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
 [ -z ${SUDO+x} ] && SUDO='sudo'
-[ -z ${WORKDIR+x} ] && WORKDIR=$HOME/dev
+[ -z ${WORKDIR+x} ] && WORKDIR=$DIR/../deps
 [ -z ${MODE+x} ] && MODE='default'
+
+if [ -d "$WORKDIR" ]; then
+  mkdir -p $WORKDIR
+fi
 
 # print bash commands and their arguments as they are executed
 set -x
 # exit immediately if a command exits with a non-zero status
 set -e
 
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+git submodule init
+git submodule update --recursive
 
 source scripts/pre-requirements.sh
 
