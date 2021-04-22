@@ -336,6 +336,7 @@ void Lbrp::addService(const std::string &vip, const uint16_t &vport,
         "ICMP Service requires 0 as virtual port. Since this parameter is "
         "useless for ICMP services");
   }
+<<<<<<< HEAD
 
   Service::ServiceKey key = Service::ServiceKey(vip, vport, Service::convertProtoToNumber(proto));
   // The validation of Virtual IP and Port is performed automatically by the
@@ -368,6 +369,18 @@ void Lbrp::addService(const std::string &vip, const uint16_t &vport,
     // constructor raised an error
     throw;
   }
+=======
+  
+  Service::ServiceKey key =
+      Service::ServiceKey(vip, vport, Service::convertProtoToNumber(proto));
+  if (service_map_.count(key) != 0) {
+    logger()->error("[Service] This service already exists");
+    throw std::runtime_error("This service already exists");
+  }
+  Service service = Service(*this,conf);
+  service_map_.insert(std::make_pair(key,service));
+
+>>>>>>> 1f532d85... lbrp addService fix (#375)
 }
 
 void Lbrp::addServiceList(const std::vector<ServiceJsonObject> &conf) {
