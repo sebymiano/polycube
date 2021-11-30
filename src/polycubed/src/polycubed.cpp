@@ -48,8 +48,7 @@ using namespace polycube::polycubed;
 using namespace configuration;
 
 static std::shared_ptr<spdlog::sinks::rotating_file_sink_mt> file;
-static std::shared_ptr<spdlog::sinks::stdout_sink_mt> console;
-static spdlog::sinks_init_list sinks;
+static std::shared_ptr<spdlog::sinks::ansicolor_stdout_sink_mt> console;
 std::shared_ptr<spdlog::logger> logger;
 
 // create core instance
@@ -95,9 +94,9 @@ void initlogger() {
   spdlog::drop("polycubed");
   file = std::make_shared<spdlog::sinks::rotating_file_sink_mt>(
       config.getLogFile(), 1048576 * 5, 3);
-  console = std::make_shared<spdlog::sinks::stdout_sink_mt>();
-  sinks = {file, console};
-  logger = std::make_shared<spdlog::logger>("polycubed", sinks);
+  console = std::make_shared<spdlog::sinks::ansicolor_stdout_sink_mt>();
+  std::vector<spdlog::sink_ptr> sinks {file, console};
+  logger = std::make_shared<spdlog::logger>("polycubed", sinks.begin(), sinks.end());
   logger->flush_on(spdlog::level::trace);
 }
 
@@ -162,9 +161,9 @@ void load_services(PolycubedCore &core);
 
 int main(int argc, char *argv[]) {
   // init logger ASAP, to print early error messages
-  console = std::make_shared<spdlog::sinks::stdout_sink_mt>();
-  sinks = {console};
-  logger = std::make_shared<spdlog::logger>("polycubed", sinks);
+  console = std::make_shared<spdlog::sinks::ansicolor_stdout_sink_mt>();
+  std::vector<spdlog::sink_ptr> sinks {console};
+  logger = std::make_shared<spdlog::logger>("polycubed", sinks.begin(), sinks.end());
   logger->flush_on(spdlog::level::trace);
   spdlog::register_logger(logger);
 
@@ -244,14 +243,14 @@ int main(int argc, char *argv[]) {
     return -1;
   }
 
-  struct sigaction sigIntHandler;
+  struct sigaction sigIntHandler{};
 
   sigIntHandler.sa_handler = shutdown_handler;
   sigemptyset(&sigIntHandler.sa_mask);
   sigIntHandler.sa_flags = 0;
 
-  sigaction(SIGINT, &sigIntHandler, NULL);
-  sigaction(SIGTERM, &sigIntHandler, NULL);
+  sigaction(SIGINT, &sigIntHandler, nullptr);
+  sigaction(SIGTERM, &sigIntHandler, nullptr);
 
   try {
     PatchPanel::get_tc_instance();
