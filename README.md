@@ -2,8 +2,7 @@
 
 # Polycube
 
-[![Build Status](http://130.192.225.104:8080/buildStatus/icon?job=polycube_netgroup/master)](http://130.192.225.104:8080/job/polycube_netgroup/)
-[![Tests Status](http://130.192.225.104:9000/tests/polycube-test/master)](http://130.192.225.104:8080/job/polycube-test/job/master/)
+[![Polycube Build](https://github.com/Morpheus-compiler/polycube/actions/workflows/polycube-test.yml/badge.svg)](https://github.com/Morpheus-compiler/polycube/actions/workflows/polycube-test.yml)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0)
 
 ``Polycube`` is an **open source** software framework that provides **fast** and **lightweight** **network functions** such as bridges, routers, firewalls, and others.
