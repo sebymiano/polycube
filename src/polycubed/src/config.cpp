@@ -41,6 +41,7 @@ namespace configuration {
 #define SERVER_IP "localhost"
 #define LOGFILE "/var/log/polycube/polycubed.log"
 #define CONFIGFILEDIR "/etc/polycube"
+#define MORPHEUS_CONFIGFILEDIR "/etc/morpheus"
 #define CONFIGFILENAME "polycubed.conf"
 #define CUBESDUMPFILENAME "cubes.yaml"
 #define CONFIGFILE (CONFIGFILEDIR "/" CONFIGFILENAME)
@@ -280,6 +281,7 @@ void Config::setCertBlacklistPath(const std::string &value) {
 
 void Config::create_configuration_file(const std::string &path) {
   mkdir(CONFIGFILEDIR, 0755);
+  mkdir(MORPHEUS_CONFIGFILEDIR, 0755);
   std::ofstream file(path);
   if (!file.good()) {
     throw std::runtime_error("error creating configuration file");
