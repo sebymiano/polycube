@@ -511,6 +511,11 @@ void Service::replaceBackend(const std::string &ip,
   addBackend(ip_, conf);
 }
 
+void Service::replaceBackendList(const std::vector<ServiceBackendJsonObject> &conf) {
+    delBackendList();
+    addBackendList(conf);
+}
+
 void Service::delBackend(const std::string &ip) {
   logger()->trace(
       "[Service] Received request to remove backend for service {0}, "
@@ -539,7 +544,9 @@ void Service::delBackend(const std::string &ip) {
 }
 
 void Service::delBackendList() {
-  service_backends_.clear();
-  backend_matrix_.clear();
-  removeServiceFromKernelMap();
+  if (!service_backends_.empty()) {
+    service_backends_.clear();
+    backend_matrix_.clear();
+    removeServiceFromKernelMap();
+  }
 }
