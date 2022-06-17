@@ -111,11 +111,16 @@ if [ "$MODE" == "update" ] ; then
   git log -1
 fi
 
+rm -rf build
 mkdir -p build && cd build
+
+CMAKE_CMD="cmake .. -DCMAKE_C_COMPILER=/usr/bin/gcc-9 \
+                    -DCMAKE_CXX_COMPILER=/usr/bin/g++-9 \
+                    -DLLVM_DIR="${WORKDIR}"/clang+llvm10/lib/cmake/llvm"
 
 # depending on the mode different services are enabled
 if [ "$MODE" == "pcn-iptables" ]; then
-  cmake .. -DENABLE_PCN_IPTABLES=ON \
+  $CMAKE_CMD .. -DENABLE_PCN_IPTABLES=ON \
     -DENABLE_SERVICE_BRIDGE=OFF \
     -DENABLE_SERVICE_DDOSMITIGATOR=OFF \
     -DENABLE_SERVICE_FIREWALL=OFF \
@@ -134,7 +139,7 @@ if [ "$MODE" == "pcn-iptables" ]; then
     -DENABLE_SERVICE_SYNFLOOD=OFF \
     -DENABLE_SERVICE_PACKETCAPTURE=OFF
 elif [ "$MODE" == "pcn-k8s" ]; then
-  cmake .. -DENABLE_SERVICE_BRIDGE=OFF \
+  $CMAKE_CMD .. -DENABLE_SERVICE_BRIDGE=OFF \
     -DENABLE_SERVICE_DDOSMITIGATOR=ON \
     -DENABLE_SERVICE_FIREWALL=ON \
     -DENABLE_SERVICE_HELLOWORLD=OFF \
@@ -152,7 +157,7 @@ elif [ "$MODE" == "pcn-k8s" ]; then
     -DENABLE_SERVICE_SYNFLOOD=OFF \
     -DENABLE_SERVICE_PACKETCAPTURE=ON
 else
-  cmake .. -DENABLE_PCN_IPTABLES=ON
+  $CMAKE_CMD .. -DENABLE_PCN_IPTABLES=ON
 fi
 make -j $(getconf _NPROCESSORS_ONLN)
 $SUDO make install
