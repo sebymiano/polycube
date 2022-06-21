@@ -49,6 +49,7 @@
 
 #define MAX_SERVICES 10000
 #define MAX_SESSIONS 65536
+#define MAX_FRONTENDS 1024
 
 #define IP_CSUM_OFFSET (sizeof(struct eth_hdr) + offsetof(struct iphdr, check))
 #define TCP_CSUM_OFFSET                            \
@@ -64,6 +65,8 @@
 
 #ifndef SRCIP_REWRITE_ENABLED
 #define SRCIP_REWRITE_ENABLED 0
+#ifndef SINGLE_PORT_MODE
+#define SINGLE_PORT_MODE 0
 #endif
 
 #ifndef BACKEND_PORT
@@ -71,8 +74,11 @@
 #endif
 
 #ifndef FRONTEND_PORT
-#define FRONTEND_PORT 0
+#define FRONTEND_PORT 1
 #endif
+
+#define REASON_ARP_REPLY 0x0
+#define REASON_FLOODING  0x1
 
 struct eth_hdr {
   __be64 dst : 48;
@@ -189,6 +195,8 @@ BPF_F_TABLE("lpm_trie", struct src_ip_r_key, struct src_ip_r_value,
 
 BPF_TABLE("percpu_hash", struct backend, struct vip, backend_to_service, MAX_SERVICES);
 
+BPF_TABLE("hash", __be32, u16, ip_to_frontend_port, MAX_FRONTENDS);
+
 /*
  * This function is used to get the backend ip after the LoadBalancing.
  * For each packet that handled by the load balancer, we save the hash of
@@ -217,8 +225,6 @@ static inline struct backend *get_bck_ip(struct CTXTYPE *ctx, __be32 ip_src,
   // select the backend id
   __u32 id = check % pool_size + 1;
 
-  pcn_log(ctx, LOG_TRACE, "Selected backend with id: %d", id);
-
   struct vip v_key = {};
 
   v_key.ip = ip_dst;
@@ -226,18 +232,27 @@ static inline struct backend *get_bck_ip(struct CTXTYPE *ctx, __be32 ip_src,
   v_key.proto = proto;
   v_key.index = id;
 
-  pcn_log(ctx, LOG_TRACE,
-          "Backend lookup ip: %I, port: %P, proto: 0x%04x, index: %d", ip_dst,
-          port_dst, proto, id);
+  pcn_log(
+      ctx, LOG_TRACE,
+      "Selected backend index for the service - (ip: %I, port: %P, proto: 0x%04x) (index: %d)",
+      ip_dst, port_dst, proto, id
+  );
 
   // Now, from the backend ID, let's get the actual backend server (IP/port)
   struct backend *bck_value = services.lookup(&v_key);
   if (!bck_value) {
+    pcn_log(
+        ctx, LOG_ERR,
+        "Failed to retrieve backend for the service - (ip: %I, port: %P, proto: 0x%04x) (index: %d)",
+        ip_dst, port_dst, proto, id
+    );
     return 0;
   }
 
-  pcn_log(ctx, LOG_TRACE, "Found backend with ip: %I and port: %P",
-          bck_value->ip, bck_value->port);
+  pcn_log(ctx, LOG_TRACE,
+          "Retrieved backend for the given index - (index: %d) (be_ip: %I, be_port: %P)",
+          id, bck_value->ip, bck_value->port
+  );
 
 #if SRCIP_REWRITE_ENABLED
   // check if src ip rewrite applies for this packet, if yes,  do not create a
@@ -289,6 +304,25 @@ static inline void checksum(struct CTXTYPE *ctx, __u16 old_port, __u16 new_port,
   }
 }
 
+static inline int send_to_frontend(struct CTXTYPE *ctx, struct pkt_metadata *md, __be32 ip_daddr) {
+  if (SINGLE_PORT_MODE) {
+    pcn_log(ctx, LOG_TRACE, "Sent pkt to the FRONTEND port - (out_port: %d)",
+            FRONTEND_PORT);
+    return pcn_pkt_redirect(ctx, md, FRONTEND_PORT);
+  }
+  u16 *fe_port = ip_to_frontend_port.lookup(&ip_daddr);
+  if (!fe_port) {
+    pcn_log(ctx, LOG_ERR, "Failed FRONTEND port lookup - (ip_dst: %I)", ip_daddr);
+    return pcn_pkt_drop(ctx, md);
+  }
+  pcn_log(
+      ctx, LOG_TRACE,
+      "Sent pkt to the FRONTEND port associated with the destination - (ip_dst: %I) (out_port: %d)",
+      ip_daddr, *fe_port
+  );
+  return pcn_pkt_redirect(ctx, md, *fe_port);
+}
+
 static __always_inline int handle_rx(struct CTXTYPE *ctx,
                                      struct pkt_metadata *md) {
   __u16 source = 0;
@@ -301,8 +335,12 @@ static __always_inline int handle_rx(struct CTXTYPE *ctx,
 
   struct eth_hdr *eth = data;
 
-  if (data + sizeof(*eth) > data_end)
-    goto DROP;
+  if (data + sizeof(*eth) > data_end) {
+    pcn_log(ctx, LOG_TRACE,
+            "Dropped Ethernet pkt - (in_port: %d) (reason: inconsistent_size)",
+            md->in_port);
+    return RX_DROP;
+  }
 
   switch (eth->proto) {
   case htons(ETH_P_IP):
@@ -315,8 +353,12 @@ static __always_inline int handle_rx(struct CTXTYPE *ctx,
 
 IP:;
   struct iphdr *ip = data + sizeof(struct eth_hdr);
-  if (data + sizeof(struct eth_hdr) + sizeof(struct iphdr) > data_end)
-    goto DROP;
+  if (data + sizeof(struct eth_hdr) + sizeof(struct iphdr) > data_end) {
+    pcn_log(ctx, LOG_TRACE,
+            "Dropped IP pkt - (in_port: %d) (reason: inconsistent_size)",
+            md->in_port);
+    return RX_DROP;
+  }
 
   struct udphdr *udp = data + sizeof(struct eth_hdr) + sizeof(struct iphdr);
   struct tcphdr *tcp = data + sizeof(struct eth_hdr) + sizeof(struct iphdr);
@@ -335,32 +377,48 @@ IP:;
   case IPPROTO_TCP:
     goto TCP;
   default:
-    goto DROP;
+    pcn_log(ctx, LOG_TRACE,
+            "Dropped IP pkt - (in_port: %d) (reason: unsupported_type) (ip_proto: %d)",
+            md->in_port, ip->protocol);
+    return RX_DROP;
   }
 
 ICMP:
-  if (data + sizeof(*eth) + sizeof(*ip) + sizeof(*icmp) > data_end)
+  if (data + sizeof(*eth) + sizeof(*ip) + sizeof(*icmp) > data_end) {
+    pcn_log(ctx, LOG_TRACE,
+            "Dropped ICMP pkt - (in_port: %d) (reason: inconsistent_size)",
+            md->in_port);
     return RX_DROP;
+  }
 
   // Only manage ICMP Request and Reply
-  if (!((icmp->type == ICMP_ECHO) || (icmp->type == ICMP_ECHOREPLY)))
-    goto DROP;
+  if (!((icmp->type == ICMP_ECHO) || (icmp->type == ICMP_ECHOREPLY))) {
+    pcn_log(ctx, LOG_TRACE,
+            "Dropped ICMP pkt - (in_port: %d) (reason: unsupported_type) (icmp_type: %d)",
+            md->in_port, icmp->type);
+    return RX_DROP;
+  }
 
   source = icmp->un.echo.id;
   dest = 0x0;
   ip_proto = htons(IPPROTO_ICMP);
 
-  pcn_log(ctx, LOG_DEBUG, "received ICMP %I --> %I", ip->saddr, ip->daddr);
+  pcn_log(ctx, LOG_DEBUG, "Received ICMP pkt - (ip_src: %I, ip_dst: %I)",
+          ip->saddr, ip->daddr);
 
   l4csum_offset = ICMP_CSUM_OFFSET;
   goto LB;
 
 UDP:
-  if (data + sizeof(*eth) + sizeof(*ip) + sizeof(*udp) > data_end)
+  if (data + sizeof(*eth) + sizeof(*ip) + sizeof(*udp) > data_end) {
+    pcn_log(ctx, LOG_TRACE,
+            "Dropped UDP pkt - (in_port: %d) (reason: inconsistent_size)",
+            md->in_port);
     return RX_DROP;
+  }
 
-  pcn_log(ctx, LOG_TRACE, "received UDP: %I:%P --> %I:%P", ip->saddr,
-          udp->source, ip->daddr, udp->dest);
+  pcn_log(ctx, LOG_TRACE, "Received UDP pkt - (src: %I:%P, dst: %I:%P)",
+          ip->saddr, udp->source, ip->daddr, udp->dest);
 
   source = udp->source;
   dest = udp->dest;
@@ -370,11 +428,15 @@ UDP:
   goto LB;
 
 TCP:
-  if (data + sizeof(*eth) + sizeof(*ip) + sizeof(*tcp) > data_end)
+  if (data + sizeof(*eth) + sizeof(*ip) + sizeof(*tcp) > data_end) {
+    pcn_log(ctx, LOG_TRACE,
+            "Dropped TCP pkt - (in_port: %d) (reason: inconsistent_size)",
+            md->in_port);
     return RX_DROP;
+  }
 
-  pcn_log(ctx, LOG_TRACE, "received TCP: %I:%P --> %I:%P", ip->saddr,
-          tcp->source, ip->daddr, tcp->dest);
+  pcn_log(ctx, LOG_TRACE, "Received TCP pkt - (src: %I:%P, dst: %I:%P)",
+          ip->saddr, tcp->source, ip->daddr, tcp->dest);
 
   source = tcp->source;
   dest = tcp->dest;
@@ -389,11 +451,12 @@ LB:;
   __u32 new_port = dest;
 
   // Currently, the "backend port" is the one connected to the backends
-  // So, this packet is coming from the fronted and is returning back to the
+  // So, this packet is coming from a frontend and is returning to the
   // originating Pod.
 
-  if (md->in_port == FRONTEND_PORT) {
-    pcn_log(ctx, LOG_TRACE, "Packet arrived in the frontend port");
+  if (md->in_port != BACKEND_PORT) {
+    pcn_log(ctx, LOG_TRACE,
+            "Received pkt is from a FRONTEND port - (in_port %d)", md->in_port);
 
     struct vip v_key = {};
 
@@ -411,7 +474,8 @@ LB:;
     // packet as is.
     if (!backend_value) {
       pcn_log(ctx, LOG_TRACE,
-              "Service lookup failed. Redirected as is to backend port");
+              "Failed service lookup: redirected as is to BACKEND port - (out_port: %d)",
+              BACKEND_PORT);
       return pcn_pkt_redirect(ctx, md, BACKEND_PORT);
     }
 
@@ -420,7 +484,10 @@ LB:;
                                            dest, ip_proto, backend_value->port);
 
     if (!bck_value) {
-      goto DROP;
+      pcn_log(ctx, LOG_TRACE,
+              "Dropped pkt from FRONTEND port - (in_port: %d) (reason: failed_bck_lookup)",
+              md->in_port);
+      return RX_DROP;
     }
 
     ip->daddr = bck_value->ip;
@@ -433,12 +500,12 @@ LB:;
       ip->saddr &= bpf_htonl(v->mask);
       ip->saddr |= bpf_htonl(v->net);
       new_sip = ip->saddr;
-      pcn_log(ctx, LOG_TRACE, "src ip rewritten to %I", ip->saddr);
     }
 #endif
 
-    pcn_log(ctx, LOG_TRACE, "redirected to %I:%P --> %I:%P", ip->saddr, source,
-            bck_value->ip, bck_value->port);
+    pcn_log(ctx, LOG_TRACE,
+            "Pkt DNATted and redirected to BACKEND port - (src: %I:%P, new_dst: %I:%P)",
+            ip->saddr, source, bck_value->ip, bck_value->port);
 
     // We are using l4csum_offset here, since it is equivalent of the protocol
     if (l4csum_offset == TCP_CSUM_OFFSET) {
@@ -450,7 +517,8 @@ LB:;
       checksum(ctx, old_port, bck_value->port, old_ip, bck_value->ip, old_sip,
                new_sip, UDP_CSUM_OFFSET);
     } else {
-      pcn_log(ctx, LOG_TRACE, "translated existing ICMP session as %I --> %I",
+      pcn_log(ctx, LOG_TRACE,
+              "Translated existing ICMP session - (old_ip: %I, new_ip: %I)",
               new_ip, ip->daddr);
       pcn_l3_csum_replace(ctx, IP_CSUM_OFFSET, old_ip, bck_value->ip, 4);
     }
@@ -464,8 +532,10 @@ LB:;
             * else
             *     SESSION TABLE
             */
-    // IF FRONTED && BACKEND PORTS are equal, this code will never be executed
-    pcn_log(ctx, LOG_TRACE, "Packet comes from backend port: %I", ip->daddr);
+
+    pcn_log(ctx, LOG_TRACE,
+            "Received pkt is from the BACKEND port - (in_port %d)",
+            md->in_port);
 
     __u32 dst_ip_ = ip->daddr;
 
@@ -479,8 +549,10 @@ LB:;
 
       struct vip *vip_v = backend_to_service.lookup(&key);
       if (!vip_v) {
-        pcn_log(ctx, LOG_ERR, "Reverse backend lookup failed");
-        goto DROP;
+        pcn_log(ctx, LOG_TRACE,
+                "Dropped pkt from BACKEND port - (in_port: %d) (reason: failed_rev_bck_lookup)",
+                md->in_port);
+        return RX_DROP;
       }
 
       old_ip = ip->daddr;
@@ -492,10 +564,9 @@ LB:;
       new_sip = vip_v->ip;
       new_ip = ip->daddr;
       new_port = vip_v->port;
-      pcn_log(
-          ctx, LOG_TRACE,
-          "srcIpRewrite found. translate ip src %I dst %I --> src %I dst %I",
-          old_sip, old_ip, new_sip, new_ip);
+      pcn_log(ctx, LOG_TRACE,
+              "Found SrcIpRewrite: translation - (src: %I, dst: %I) (new_src: %I, new_dst: %I)",
+              old_sip, old_ip, new_sip, new_ip);
     } else {
       struct sessions sessions_key = {};
       sessions_key.ip_src = ip->daddr;
@@ -512,7 +583,8 @@ LB:;
       __u32 check = jhash((const void *)&sessions_key, sizeof(struct sessions),
                           JHASH_INITVAL);
 
-      pcn_log(ctx, LOG_TRACE, "Check in session table %lu", check);
+      pcn_log(ctx, LOG_TRACE, "Check in session table - (session_id: %lu)",
+              check);
 
       // Let's check if the this session is present in the session table
       struct vip *rev_proxy = hash_session.lookup(&check);
@@ -521,8 +593,9 @@ LB:;
       // LB,
       //    we have to  translate IP addresses back to their original value
       if (!rev_proxy) {
-        pcn_log(ctx, LOG_TRACE, "redirected as is to frontend port");
-        return pcn_pkt_redirect(ctx, md, FRONTEND_PORT);
+        pcn_log(ctx, LOG_TRACE,
+                "Failed session lookup: trying to redirect to a proper FRONTEND port");
+        return send_to_frontend(ctx, md, ip->daddr);
       }
 
       old_ip = ip->saddr;
@@ -531,41 +604,74 @@ LB:;
       new_port = rev_proxy->port;
     }
 
+    u16 fe_port;
+    if (SINGLE_PORT_MODE)
+      fe_port = FRONTEND_PORT;
+    else {
+      __be32 fe_ip = ip->daddr;
+      u16 *fe_port_ptr = ip_to_frontend_port.lookup(&fe_ip);
+      if (!fe_port_ptr) {
+        pcn_log(ctx, LOG_ERR,
+                "Dropped packet from BACKEND port - (in_port: %d) (reason: failed_frontend_port_lookup",
+                md->in_port);
+        return RX_DROP;
+      }
+
+      fe_port = *fe_port_ptr;
+    }
+
+    pcn_log(
+        ctx, LOG_TRACE,
+        "Found FRONTEND port for pkt destination - (dst_ip: %I) (out_port: %d)",
+        ip->daddr, fe_port);
+
     if (l4csum_offset == TCP_CSUM_OFFSET) {
       old_port = tcp->source;
       tcp->source = new_port;
       pcn_log(ctx, LOG_TRACE,
-              "translated existing TCP session as %I:%P --> %I:%P", new_ip,
-              tcp->source, ip->daddr, dest);
+              "Translated existing TCP session - (new_src: %I:%P, dst: %I:%P)",
+              new_ip, tcp->source, ip->daddr, dest);
       checksum(ctx, old_port, new_port, old_ip, new_ip, old_sip, new_sip,
                TCP_CSUM_OFFSET);
     } else if (l4csum_offset == UDP_CSUM_OFFSET) {
       old_port = udp->source;
       udp->source = new_port;
       pcn_log(ctx, LOG_TRACE,
-              "translated existing UDP session as %I:%P --> %I:%P", new_ip,
-              new_port, ip->daddr, dest);
+              "Translated existing UDP session - (new_src: %I:%P, dst: %I:%P)",
+              new_ip, new_port, ip->daddr, dest);
       checksum(ctx, old_port, new_port, old_ip, new_ip, old_sip, new_sip,
                UDP_CSUM_OFFSET);
     } else {
-      pcn_log(ctx, LOG_TRACE, "translated existing ICMP session as %I --> %I",
+      pcn_log(ctx, LOG_TRACE,
+              "Translated existing ICMP session - (new_ip_src: %I, ip_dst: %I)",
               new_ip, ip->daddr);
       pcn_l3_csum_replace(ctx, IP_CSUM_OFFSET, old_ip, new_ip, 4);
     }
-
-    return pcn_pkt_redirect(ctx, md, FRONTEND_PORT);
+    pcn_log(ctx, LOG_TRACE, "Redirected pkt to FRONTEND port - (out_port: %d)",
+            fe_port);
+    return pcn_pkt_redirect(ctx, md, fe_port);
   }
 
 ARP:;
   struct arp_hdr *arp = data + sizeof(*eth);
-  if (data + sizeof(*eth) + sizeof(*arp) > data_end)
-    goto DROP;
+  if (data + sizeof(*eth) + sizeof(*arp) > data_end) {
+    pcn_log(ctx, LOG_TRACE,
+            "Dropped ARP pkt - (in_port: %d) (reason: inconsistent_size)",
+            md->in_port);
+    return RX_DROP;
+  }
 
   // if the packet comes from the backend port, check if this
   // is an ARP request for one of the virtual src IPs, if yes, change
   // it and send to the frontend port
   if (md->in_port == BACKEND_PORT) {
+    pcn_log(ctx, LOG_TRACE,
+            "Received ARP pkt from BACKEND port - (in_port: %d)", md->in_port);
     if (arp->ar_op == bpf_htons(ARPOP_REQUEST)) {
+      pcn_log(
+          ctx, LOG_TRACE,
+          "Received ARP pkt is an ARP request - (in_port: %d) (arp_opcode: %d)",
+          md->in_port, bpf_htons(arp->ar_op));
       struct src_ip_r_key k = {32, arp->ar_tip};
       struct src_ip_r_value *v = src_ip_rewrite.lookup(&k);
       if (v && v->sense == FROM_BACKEND) {
@@ -573,34 +679,52 @@ ARP:;
         arp->ar_tip |= bpf_htonl(v->net);
       }
     }
-    return pcn_pkt_redirect(ctx, md, FRONTEND_PORT);
-  } else if (md->in_port == FRONTEND_PORT) {
+    return send_to_frontend(ctx, md, arp->ar_tip);
+  } else {
+    pcn_log(ctx, LOG_TRACE,
+            "Received ARP pkt from FRONTEND port - (in_port: %d)", md->in_port);
     if (arp->ar_op == bpf_htons(ARPOP_REPLY)) {
+      pcn_log(
+          ctx, LOG_TRACE,
+          "Received ARP pkt is an ARP reply - (in_port: %d) (arp_opcode: %d)",
+          md->in_port, arp->ar_op);
       struct src_ip_r_key k = {32, arp->ar_sip};
       struct src_ip_r_value *v = src_ip_rewrite.lookup(&k);
       if (v && v->sense == FROM_FRONTEND) {
-        // send to the slowpath, it'll send to copies of this
+        // send to the slowpath, it'll send two copies of this
         // - the original one
         // - one for the virtual IPs
-        pcn_pkt_controller(ctx, md, 0);
+        pcn_log(ctx, LOG_TRACE,
+                "Sent received ARP reply to slowpath - (in_port: %d)",
+                md->in_port);
+        pcn_pkt_controller(ctx, md, REASON_ARP_REPLY);
         return RX_DROP;
       }
     }
+    pcn_log(ctx, LOG_TRACE,
+            "Redirected ARP pkt to BACKEND port - (in_port: %d) (out_port: %d)",
+            md->in_port, BACKEND_PORT);
     return pcn_pkt_redirect(ctx, md, BACKEND_PORT);
-  } else {
-    goto DROP;
   }
 
 NOIP:
-  pcn_log(ctx, LOG_TRACE, "received a non-ip packet (in_port %d) (proto 0x%x)",
-          md->in_port, bpf_htons(eth->proto));
-
-  if (md->in_port == BACKEND_PORT)
-    return pcn_pkt_redirect(ctx, md, FRONTEND_PORT);
-  else if (md->in_port == FRONTEND_PORT)
+  if (md->in_port == BACKEND_PORT) {
+    if (SINGLE_PORT_MODE) {
+      pcn_log(ctx, LOG_TRACE,
+              "Received non-ip pkt from BACKEND port: redirected to FRONTEND port - (in_port: %d) (proto: 0x%x) (out_port: %d)",
+              md->in_port, bpf_htons(eth->proto), FRONTEND_PORT);
+      return pcn_pkt_redirect(ctx, md, FRONTEND_PORT);
+    }
+    pcn_log(ctx, LOG_TRACE,
+            "Received non-ip pkt from BACKEND port: sent to slowpath - (in_port: %d) (proto: 0x%x)",
+            md->in_port, bpf_htons(eth->proto));
+    return pcn_pkt_controller(ctx, md, REASON_FLOODING);
+  } else {
+    pcn_log(ctx, LOG_TRACE,
+            "Received non-ip pkt from FRONTEND port: redirected to BACKEND port - (in_port: %d) (proto: 0x%x) (out_port: %d)",
+            md->in_port, bpf_htons(eth->proto), BACKEND_PORT);
     return pcn_pkt_redirect(ctx, md, BACKEND_PORT);
+  }
 
-DROP:
-  pcn_log(ctx, LOG_TRACE, "DROP packet (port = %d)", md->in_port);
   return RX_DROP;
 }
