@@ -14,7 +14,4 @@ deps
 
 cmake-build-debug/
 Debug/*
-<<<<<<< HEAD
 compile_commands.json
-=======
->>>>>>> 753fd846... Documentation and comments to code to solve #42 (#387)

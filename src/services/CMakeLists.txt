@@ -26,6 +26,7 @@ add_service(router pcn-router)
 add_service(iptables pcn-iptables)
 add_service(katran pcn-katran)
 #add_service(bmc pcn-bmc)
+add_service(k8sdispatcher pcn-k8sdispatcher)
 
 # save string to create code that load the services
 SET_PROPERTY(GLOBAL PROPERTY LOAD_SERVICES_ ${LOAD_SERVICES})
