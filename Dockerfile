@@ -1,11 +1,11 @@
 # syntax = tonistiigi/dockerfile:runmount20180618
 ###############################################
-# STEP 1: using an Ubuntu 18.04 image to install the entire Polycube framework with all dependencies.
+# STEP 1: using an Ubuntu 20.04 image to install the entire Polycube framework with all dependencies.
 # 
 # During this step an ubuntu image is used to compile Polycube with all its dependencies.
 # This dockerfile is reused for all the DEFAULT_MODE (default, pcn-iptables, pcn-k8s) which, thanks to install.sh and pre-requirements.sh scripts,
 # enable/disable Polycube services and install specific tools.
-FROM ubuntu:18.04 AS builder
+FROM ubuntu:20.04 AS builder
 
 ARG DEFAULT_MODE=default
 ENV MODE=$DEFAULT_MODE
@@ -30,14 +30,14 @@ fi
 ADD src/components/k8s/cni/cni-install.sh src/components/k8s/cni/cni-uninstall.sh src/components/k8s/pcn_k8s/cleanup.sh src/components/k8s/pcn_k8s/init.sh /
 
 ###############################################
-# STEP 2: using an Ubuntu 18.04 image and extracting executables obtained by the image created at STEP 1.
+# STEP 2: using an Ubuntu 20.04 image and extracting executables obtained by the image created at STEP 1.
 # 
 # During this final step a new fresh ubuntu image is used and all the previously generated executables/libraries are copied.
 # This way, this final image contains only the result of the compilation and NOT the entire softwares/scripts needed at compile-time.
 # Moreover, depending on the DEFAULT_MODE, some tools that are needed at runtime (like iptables and iproute2 for the DEFAULT_MODE=pcn-k8s) are
 # installed.
 
-FROM ubuntu:18.04
+FROM ubuntu:20.04
 
 ARG DEFAULT_MODE=default
 ENV MODE=$DEFAULT_MODE

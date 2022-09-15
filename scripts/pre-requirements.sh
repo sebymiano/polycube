@@ -6,7 +6,7 @@ fi
 mkdir -p $WORKDIR
 
 $SUDO apt update
-$SUDO bash -c "apt install --allow-unauthenticated -y wget gnupg2 software-properties-common"
+$SUDO bash -c "DEBIAN_FRONTEND=noninteractive apt install --allow-unauthenticated -y wget gnupg2 software-properties-common"
 
 # Release in which has been natively introduced support for golang-go (Ubuntu >= 20.04)
 os_limit_major="20"
@@ -254,7 +254,7 @@ get_folly() {
   fi
 
   rm -rf "$FOLLY_DIR"
-  $SUDO apt-get install -y       \
+  DEBIAN_FRONTEND=noninteractive $SUDO apt-get install -y       \
       g++                       \
       automake                  \
       autoconf                  \
