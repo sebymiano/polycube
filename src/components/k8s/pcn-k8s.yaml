@@ -41,18 +41,18 @@ spec:
   selector:
     matchLabels:
       k8s-app: polycube
-      kubernetes.io/cluster-service: "true"     
+      # kubernetes.io/cluster-service: "true"     
   template:
     metadata:
       labels:
         k8s-app: polycube
-        kubernetes.io/cluster-service: "true"
-      annotations:
-        # Mark polycube as critical, gets priority
-        # https://kubernetes.io/docs/tasks/administer-cluster/guaranteed-scheduling-critical-addon-pods/
-        scheduler.alpha.kubernetes.io/critical-pod: ''
-        scheduler.alpha.kubernetes.io/tolerations: >-
-          [{"key":"dedicated","operator":"Equal","value":"master","effect":"NoSchedule"}]
+        # kubernetes.io/cluster-service: "true"
+      # annotations:
+      #   # Mark polycube as critical, gets priority
+      #   # https://kubernetes.io/docs/tasks/administer-cluster/guaranteed-scheduling-critical-addon-pods/
+      #   scheduler.alpha.kubernetes.io/critical-pod: ''
+      #   scheduler.alpha.kubernetes.io/tolerations: >-
+      #     [{"key":"dedicated","operator":"Equal","value":"master","effect":"NoSchedule"}]
     spec:
       #serviceAccountName: polycube
       containers:
@@ -196,16 +196,16 @@ spec:
           configMap:
             name: kube-proxy
             #namespace: kube-public
-      tolerations:
-      - effect: NoSchedule
-        key: node.kubernetes.io/not-ready
-      - effect: NoSchedule
-        key: node-role.kubernetes.io/master
-      - effect: NoSchedule
-        key: node.cloudprovider.kubernetes.io/uninitialized
-        value: "true"
-      - key: CriticalAddonsOnly
-        operator: "Exists"
+      # tolerations:
+      # - effect: NoSchedule
+      #   key: node.kubernetes.io/not-ready
+      # - effect: NoSchedule
+      #   key: node-role.kubernetes.io/master
+      # - effect: NoSchedule
+      #   key: node.cloudprovider.kubernetes.io/uninitialized
+      #   value: "true"
+      # - key: CriticalAddonsOnly
+      #   operator: "Exists"
 ---
 # give access to api to polycube
 # TODO: this access should be more granular
