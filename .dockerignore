@@ -1,1 +1,4 @@
 build
+.github
+.vscode
+deps

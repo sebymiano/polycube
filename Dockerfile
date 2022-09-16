@@ -5,24 +5,39 @@
 # During this step an ubuntu image is used to compile Polycube with all its dependencies.
 # This dockerfile is reused for all the DEFAULT_MODE (default, pcn-iptables, pcn-k8s) which, thanks to install.sh and pre-requirements.sh scripts,
 # enable/disable Polycube services and install specific tools.
-FROM ubuntu:20.04 AS builder
+ARG DEFAULT_CLONE_MODE=git
+
+FROM ubuntu:20.04 AS tmp-builder
 
 ARG DEFAULT_MODE=default
+ARG DEBIAN_FRONTEND=noninteractive
 ENV MODE=$DEFAULT_MODE
-RUN --mount=target=/polycube cp -r /polycube /tmp/polycube && cd /tmp/polycube && \
-mkdir -p /usr/local/share/polycube /usr/local/include/polycube /opt/cni/bin /cni && touch /cni-conf /pcn_k8s /opt/cni/bin/polycube && \
-SUDO="" USER="root" WORKDIR="/tmp/dev" ./scripts/install.sh $MODE && \
-# install pcn-k8s only components
-if [ "$MODE" = "pcn-k8s" ] ; then \
+
+WORKDIR /
+RUN mkdir -p /polycube
+
+FROM tmp-builder AS branch-version-local
+COPY . /polycube
+
+FROM tmp-builder AS branch-version-git
+ARG POLYCUBE_BRANCH=morpheus-k8s
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -y install git
+RUN git -C / clone --branch ${POLYCUBE_BRANCH} https://github.com/Morpheus-compiler/polycube.git
+
+FROM branch-version-${DEFAULT_CLONE_MODE} AS builder
+RUN mkdir -p /usr/local/share/polycube /usr/local/include/polycube /opt/cni/bin /cni && touch /cni-conf /pcn_k8s /opt/cni/bin/polycube
+WORKDIR /polycube
+RUN SUDO="" USER="root" ./scripts/install.sh $MODE
+RUN if [ "$MODE" = "pcn-k8s" ] ; then \
     cd /tmp && mkdir -p tmp && cd tmp && \
     curl -sS -L https://storage.googleapis.com/kubernetes-release/network-plugins/cni-0799f5732f2a11b329d9e3d51b9c8f2e3759f2ff.tar.gz -o cni.tar.gz && \
     tar -xvf cni.tar.gz && \
     cp bin/loopback /cni && \
-    cd /tmp/polycube/src/components/k8s/cni/polycube && \
+    cd /polycube/src/components/k8s/cni/polycube && \
     GOOS=linux go build -o /opt/cni/bin/polycube . && \
-    cd /tmp/polycube/src/components/k8s/cni/conf && \
+    cd /polycube/src/components/k8s/cni/conf && \
     GOOS=linux go build -o /cni-conf . && \
-    cd /tmp/polycube/src/components/k8s/pcn_k8s/ && \
+    cd /polycube/src/components/k8s/pcn_k8s/ && \
     GOOS=linux go build -o /pcn_k8s . ; \
 fi
 
@@ -40,6 +55,7 @@ ADD src/components/k8s/cni/cni-install.sh src/components/k8s/cni/cni-uninstall.s
 FROM ubuntu:20.04
 
 ARG DEFAULT_MODE=default
+ARG DEBIAN_FRONTEND=noninteractive
 ENV MODE=$DEFAULT_MODE
 # copying binaries
 COPY --from=builder /usr/local/bin /usr/local/bin
@@ -51,9 +67,11 @@ COPY --from=builder /usr/local/lib/lib*.so /usr/local/lib/
 # copying libyang folder containing plugins (needed for yanglint)
 COPY --from=builder /usr/local/lib/libyang /usr/local/lib/libyang 
 # copying main OS libraries
-COPY --from=builder /usr/lib/x86_64-linux-gnu/libnl*.so /usr/lib/x86_64-linux-gnu/libcrypto*.so\
-	/usr/lib/x86_64-linux-gnu/libelf*.so /usr/lib/x86_64-linux-gnu/libssl*.so \
-	/usr/lib/x86_64-linux-gnu/libpcap*.so /usr/lib/x86_64-linux-gnu/
+COPY --from=builder /usr/lib/x86_64-linux-gnu/libnl*.so* /usr/lib/x86_64-linux-gnu/libcrypto*.so*\
+	/usr/lib/x86_64-linux-gnu/libelf*.so* /usr/lib/x86_64-linux-gnu/libssl*.so* \
+	/usr/lib/x86_64-linux-gnu/libpcap*.so* /usr/lib/x86_64-linux-gnu/libdouble-conversion*.so* \
+    /usr/lib/x86_64-linux-gnu/libglog*.so* /usr/lib/x86_64-linux-gnu/libunwind*.so* \
+    /usr/lib/x86_64-linux-gnu/
 COPY --from=builder /lib/x86_64-linux-gnu/libnl*.so /lib/x86_64-linux-gnu/
 # copying base yang model
 COPY --from=builder /usr/local/include/polycube /usr/local/include/polycube
@@ -69,6 +87,9 @@ if [ "$MODE" = "pcn-k8s" ] ; then \
 else \
     rm -rf /opt/cni/bin/polycube /*.sh /pcn_k8s /cni*; \
 fi && ldconfig
+
+RUN apt-get update && \
+    DEBIAN_FRONTEND=noninteractive apt-get -y install linux-headers-$(uname -r)
 
 # by running nsenter --mount=/host/proc/1/ns/mnt polycubed, the daemon has a complete view of the namespaces of the host and it is able to manipulate them (needed for shadow services)
 CMD ["nsenter","--mount=/host/proc/1/ns/mnt","polycubed"]
