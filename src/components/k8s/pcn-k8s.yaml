@@ -196,16 +196,20 @@ spec:
           configMap:
             name: kube-proxy
             #namespace: kube-public
-      # tolerations:
-      # - effect: NoSchedule
-      #   key: node.kubernetes.io/not-ready
-      # - effect: NoSchedule
-      #   key: node-role.kubernetes.io/master
-      # - effect: NoSchedule
-      #   key: node.cloudprovider.kubernetes.io/uninitialized
-      #   value: "true"
-      # - key: CriticalAddonsOnly
-      #   operator: "Exists"
+      tolerations:
+      # these tolerations are to have the daemonset runnable on control plane nodes
+      # remove them if your control plane nodes should not run pods
+      - key: node-role.kubernetes.io/control-plane
+        operator: Exists
+        effect: NoSchedule
+      - key: node-role.kubernetes.io/master
+        operator: Exists
+        effect: NoSchedule
+      - key: node.cloudprovider.kubernetes.io/uninitialized
+        effect: NoSchedule
+        value: "true"
+      - key: CriticalAddonsOnly
+        operator: "Exists"
 ---
 # give access to api to polycube
 # TODO: this access should be more granular
