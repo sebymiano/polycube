@@ -41,20 +41,25 @@ spec:
   selector:
     matchLabels:
       k8s-app: polycube
-      # kubernetes.io/cluster-service: "true"     
   template:
     metadata:
       labels:
         k8s-app: polycube
-        # kubernetes.io/cluster-service: "true"
-      # annotations:
-      #   # Mark polycube as critical, gets priority
-      #   # https://kubernetes.io/docs/tasks/administer-cluster/guaranteed-scheduling-critical-addon-pods/
-      #   scheduler.alpha.kubernetes.io/critical-pod: ''
-      #   scheduler.alpha.kubernetes.io/tolerations: >-
-      #     [{"key":"dedicated","operator":"Equal","value":"master","effect":"NoSchedule"}]
     spec:
-      #serviceAccountName: polycube
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: kubernetes.io/os
+                operator: In
+                values:
+                - linux
+      hostNetwork: true
+      priorityClassName: system-node-critical
+      tolerations:
+      - operator: Exists
+        effect: NoSchedule
       containers:
       - name: polycubed
         image: polycubenets/polycube-k8s:latest
@@ -168,7 +173,6 @@ spec:
           initialDelaySeconds: 60
           timeoutSeconds: 10
           periodSeconds: 20
-      hostNetwork: true
       #restartPolicy: Never
       volumes:
         - name: lib-modules
@@ -196,20 +200,6 @@ spec:
           configMap:
             name: kube-proxy
             #namespace: kube-public
-      tolerations:
-      # these tolerations are to have the daemonset runnable on control plane nodes
-      # remove them if your control plane nodes should not run pods
-      - key: node-role.kubernetes.io/control-plane
-        operator: Exists
-        effect: NoSchedule
-      - key: node-role.kubernetes.io/master
-        operator: Exists
-        effect: NoSchedule
-      - key: node.cloudprovider.kubernetes.io/uninitialized
-        effect: NoSchedule
-        value: "true"
-      - key: CriticalAddonsOnly
-        operator: "Exists"
 ---
 # give access to api to polycube
 # TODO: this access should be more granular
