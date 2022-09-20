@@ -40,7 +40,7 @@ install_docker() {
     $SUDO systemctl restart containerd
 }
 
-kubeadm init
+$SUDO apt update && $SUDO apt upgrade -y
 
 install_kubeadm
 install_docker
