@@ -159,8 +159,9 @@ void Lbrp::packet_in(Ports &port, polycube::service::PacketInMetadata &md,
   }
 }
 
-void Lbrp::reloadCode() {
-  uint16_t frontend_port = 0, backend_port = 0;
+void Lbrp::reloadCodeWithNewPorts() {
+  uint16_t frontend_port = 0;
+  uint16_t backend_port = 1;
 
   for (auto &it: get_ports()) {
     if (it->getType() == PortsTypeEnum::FRONTEND) {
@@ -168,24 +169,12 @@ void Lbrp::reloadCode() {
     } else backend_port = it->index();
   }
 
-  std::stringstream ss;
-  logger()->debug("Reloading code with frontend port: {0} and backend port {1}",
+  logger()->debug("Reloading code with FRONTEND port {0} and BACKEND port {1}",
                   frontend_port, backend_port);
   std::string frontend_port_str("#define FRONTEND_PORT " +
                                 std::to_string(frontend_port));
-  ss << frontend_port_str;
-  ss << "\n";
   std::string backend_port_str("#define BACKEND_PORT " +
                                std::to_string(backend_port));
-  ss << backend_port_str;
-  ss << "\n";
-
-  if (getSrcIpRewrite() != nullptr) {
-    std::string srcip_rewrite_enabled("#define SRCIP_REWRITE_ENABLED " +
-                                      std::to_string(1));
-    ss << srcip_rewrite_enabled;
-    ss << "\n";
-  }
 
   reload(frontend_port_str + "\n" + backend_port_str + "\n" + lbrp_code_);
 
@@ -353,7 +342,7 @@ void Lbrp::delPorts(const std::string &name) {
 
 void Lbrp::delPortsList() {
   auto ports = get_ports();
-  for (auto &it : ports) {
+  for (auto it : ports) {
     delPorts(it->name());
   }
 }
@@ -379,21 +368,16 @@ void Lbrp::addSrcIpRewrite(const SrcIpRewriteJsonObject &value) {
 
   src_ip_rewrite_ = std::make_shared<SrcIpRewrite>(*this, value);
   src_ip_rewrite_->update(value);
-
-  reloadCode();
 }
 
 void Lbrp::replaceSrcIpRewrite(const SrcIpRewriteJsonObject &conf) {
   delSrcIpRewrite();
   addSrcIpRewrite(conf);
-
-  reloadCode();
 }
 
 void Lbrp::delSrcIpRewrite() {
   // I could also use reset but the effect would be the same (I think)
   src_ip_rewrite_ = nullptr;
-  reloadCode();
 }
 
 std::shared_ptr<Service> Lbrp::getService(const std::string &vip,
@@ -474,9 +458,8 @@ void Lbrp::addService(const std::string &vip, const uint16_t &vport,
     logger()->error("[Service] This service already exists");
     throw std::runtime_error("This service already exists");
   }
-  Service service = Service(*this,conf);
-  service_map_.insert(std::make_pair(key,service));
-
+  service_map_.emplace(std::piecewise_construct, std::forward_as_tuple(key), 
+                       std::forward_as_tuple(*this, conf));
 }
 
 void Lbrp::addServiceList(const std::vector<ServiceJsonObject> &conf) {
