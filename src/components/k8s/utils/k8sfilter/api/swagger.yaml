@@ -1,0 +1,1399 @@
+---
+swagger: "2.0"
+info:
+  description: "k8sfilter API generated from k8sfilter.yang"
+  version: "1.0.0"
+  title: "k8sfilter API"
+  x-yang-path: "/home/smiano/dev/polycube-morpheus/src/services/pcn-k8sfilter/datamodel/k8sfilter.yang"
+host: "localhost:8080"
+basePath: "/"
+tags:
+- name: "k8sfilter"
+schemes:
+- "http"
+paths:
+  /k8sfilter/{name}/:
+    get:
+      tags:
+      - "k8sfilter"
+      summary: "Read k8sfilter by ID"
+      description: "Read operation of resource: k8sfilter"
+      operationId: "readK8sfilterByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      responses:
+        "200":
+          description: "OK: Successful operation"
+          schema:
+            $ref: "#/definitions/K8sfilter"
+        "400":
+          description: "Bad request"
+        "404":
+          description: "Not found"
+        "405":
+          description: "Method not allowed: Use POST to invoke operations"
+    post:
+      tags:
+      - "k8sfilter"
+      summary: "Create k8sfilter by ID"
+      description: "Create operation of resource: k8sfilter"
+      operationId: "createK8sfilterByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      - in: "body"
+        name: "k8sfilter"
+        description: "k8sfilterbody object"
+        required: true
+        schema:
+          $ref: "#/definitions/K8sfilter"
+        x-exportParamName: "K8sfilter"
+      responses:
+        "201":
+          description: "Created: Successful operation"
+        "403":
+          description: "Forbidden: User not authorized"
+        "404":
+          description: "Not found: Resource not created"
+        "409":
+          description: "Conflict: Resource not created"
+      x-has-default-impl: true
+    put:
+      tags:
+      - "k8sfilter"
+      summary: "Replace k8sfilter by ID"
+      description: "Replace operation of resource: k8sfilter"
+      operationId: "replaceK8sfilterByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      - in: "body"
+        name: "k8sfilter"
+        description: "k8sfilterbody object"
+        required: true
+        schema:
+          $ref: "#/definitions/K8sfilter"
+        x-exportParamName: "K8sfilter"
+      responses:
+        "201":
+          description: "OK: Resource replaced successfully"
+        "204":
+          description: "No content: Resource modified successfully"
+        "400":
+          description: "Bad request: resource not replaced"
+        "404":
+          description: "Resource not found"
+      x-has-default-impl: true
+    delete:
+      tags:
+      - "k8sfilter"
+      summary: "Delete k8sfilter by ID"
+      description: "Delete operation of resource: k8sfilter"
+      operationId: "deleteK8sfilterByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      responses:
+        "204":
+          description: "No content: Resource deleted"
+        "403":
+          description: "Forbidden: User not authorized"
+        "404":
+          description: "Resource not found"
+      x-has-default-impl: true
+    patch:
+      tags:
+      - "k8sfilter"
+      summary: "Update k8sfilter by ID"
+      description: "Update operation of resource: k8sfilter"
+      operationId: "updateK8sfilterByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      - in: "body"
+        name: "k8sfilter"
+        description: "k8sfilterbody object"
+        required: true
+        schema:
+          $ref: "#/definitions/K8sfilter"
+        x-exportParamName: "K8sfilter"
+      responses:
+        "200":
+          description: "OK: Successful update"
+        "204":
+          description: "No content: Successful update"
+        "403":
+          description: "Forbidden: User not authorized"
+        "404":
+          description: "Not found: Resource not found"
+  /k8sfilter/:
+    get:
+      tags:
+      - "k8sfilter"
+      summary: "Read k8sfilter by ID"
+      description: "Read operation of resource: k8sfilter"
+      operationId: "readK8sfilterListByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        "200":
+          description: "OK: Successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/K8sfilter"
+        "400":
+          description: "Bad request"
+        "404":
+          description: "Not found"
+        "405":
+          description: "Method not allowed: Use POST to invoke operations"
+      x-has-default-impl: true
+    patch:
+      tags:
+      - "k8sfilter"
+      summary: "Update k8sfilter by ID"
+      description: "Update operation of resource: k8sfilter"
+      operationId: "updateK8sfilterListByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "k8sfilter"
+        description: "k8sfilterbody object"
+        required: true
+        schema:
+          type: "array"
+          items:
+            $ref: "#/definitions/K8sfilter"
+        x-exportParamName: "K8sfilter"
+      responses:
+        "200":
+          description: "OK: Successful update"
+        "204":
+          description: "No content: Successful update"
+        "403":
+          description: "Forbidden: User not authorized"
+        "404":
+          description: "Not found: Resource not found"
+  /k8sfilter/{name}/uuid/:
+    get:
+      tags:
+      - "k8sfilter"
+      summary: "Read uuid by ID"
+      description: "Read operation of resource: uuid"
+      operationId: "readK8sfilterUuidByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      responses:
+        "200":
+          description: "OK: Successful operation"
+          schema:
+            type: "string"
+            format: "[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}"
+            description: "UUID of the Cube"
+        "400":
+          description: "Bad request"
+        "404":
+          description: "Not found"
+        "405":
+          description: "Method not allowed: Use POST to invoke operations"
+      x-is-base-datamodel: true
+  /k8sfilter/{name}/type/:
+    get:
+      tags:
+      - "k8sfilter"
+      summary: "Read type by ID"
+      description: "Read operation of resource: type"
+      operationId: "readK8sfilterTypeByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      responses:
+        "200":
+          description: "OK: Successful operation"
+          schema:
+            type: "string"
+            description: "Type of the Cube (TC, XDP_SKB, XDP_DRV)"
+            example: "TC"
+            enum:
+            - "TC"
+            - "XDP_SKB"
+            - "XDP_DRV"
+            default: "TC"
+          x-is-enum: "true"
+        "400":
+          description: "Bad request"
+        "404":
+          description: "Not found"
+        "405":
+          description: "Method not allowed: Use POST to invoke operations"
+      x-is-base-datamodel: true
+  /k8sfilter/{name}/service-name/:
+    get:
+      tags:
+      - "k8sfilter"
+      summary: "Read service-name by ID"
+      description: "Read operation of resource: service-name"
+      operationId: "readK8sfilterServiceNameByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      responses:
+        "200":
+          description: "OK: Successful operation"
+          schema:
+            type: "string"
+            example: "helloworld"
+        "400":
+          description: "Bad request"
+        "404":
+          description: "Not found"
+        "405":
+          description: "Method not allowed: Use POST to invoke operations"
+      x-is-base-datamodel: true
+  /k8sfilter/{name}/loglevel/:
+    get:
+      tags:
+      - "k8sfilter"
+      summary: "Read loglevel by ID"
+      description: "Read operation of resource: loglevel"
+      operationId: "readK8sfilterLoglevelByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      responses:
+        "200":
+          description: "OK: Successful operation"
+          schema:
+            type: "string"
+            description: "Logging level of a cube, from none (OFF) to the most verbose\
+              \ (TRACE)"
+            example: "INFO"
+            enum:
+            - "TRACE"
+            - "DEBUG"
+            - "INFO"
+            - "WARN"
+            - "ERR"
+            - "CRITICAL"
+            - "OFF"
+            default: "INFO"
+          x-is-enum: "true"
+        "400":
+          description: "Bad request"
+        "404":
+          description: "Not found"
+        "405":
+          description: "Method not allowed: Use POST to invoke operations"
+      x-is-base-datamodel: true
+    patch:
+      tags:
+      - "k8sfilter"
+      summary: "Update loglevel by ID"
+      description: "Update operation of resource: loglevel"
+      operationId: "updateK8sfilterLoglevelByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      - in: "body"
+        name: "loglevel"
+        description: "Logging level of a cube, from none (OFF) to the most verbose\
+          \ (TRACE)"
+        required: true
+        schema:
+          type: "string"
+          description: "Logging level of a cube, from none (OFF) to the most verbose\
+            \ (TRACE)"
+          example: "INFO"
+          enum:
+          - "TRACE"
+          - "DEBUG"
+          - "INFO"
+          - "WARN"
+          - "ERR"
+          - "CRITICAL"
+          - "OFF"
+          default: "INFO"
+        x-is-enum: "true"
+        x-exportParamName: "Loglevel"
+      responses:
+        "200":
+          description: "OK: Successful update"
+        "204":
+          description: "No content: Successful update"
+        "403":
+          description: "Forbidden: User not authorized"
+        "404":
+          description: "Not found: Resource not found"
+      x-is-base-datamodel: true
+  /k8sfilter/{name}/dyn-opt/:
+    get:
+      tags:
+      - "k8sfilter"
+      summary: "Read dyn-opt by ID"
+      description: "Read operation of resource: dyn-opt"
+      operationId: "readK8sfilterDynOptByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      responses:
+        "200":
+          description: "OK: Successful operation"
+          schema:
+            type: "boolean"
+            description: "Defines if the service should be automatically optimized\
+              \ by Morpheus"
+            default: "false"
+        "400":
+          description: "Bad request"
+        "404":
+          description: "Not found"
+        "405":
+          description: "Method not allowed: Use POST to invoke operations"
+  /k8sfilter/{name}/start-morpheus/:
+    get:
+      tags:
+      - "k8sfilter"
+      summary: "Read start-morpheus by ID"
+      description: "Read operation of resource: start-morpheus"
+      operationId: "readK8sfilterStartMorpheusByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      responses:
+        "200":
+          description: "OK: Successful operation"
+          schema:
+            type: "boolean"
+            description: "Set this flag if you want to start Morpheus compiler"
+            default: "false"
+        "400":
+          description: "Bad request"
+        "404":
+          description: "Not found"
+        "405":
+          description: "Method not allowed: Use POST to invoke operations"
+    patch:
+      tags:
+      - "k8sfilter"
+      summary: "Update start-morpheus by ID"
+      description: "Update operation of resource: start-morpheus"
+      operationId: "updateK8sfilterStartMorpheusByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      - in: "body"
+        name: "start-morpheus"
+        description: "Set this flag if you want to start Morpheus compiler"
+        required: true
+        schema:
+          type: "boolean"
+          description: "Set this flag if you want to start Morpheus compiler"
+          default: "false"
+        x-exportParamName: "StartMorpheus"
+      responses:
+        "200":
+          description: "OK: Successful update"
+        "204":
+          description: "No content: Successful update"
+        "403":
+          description: "Forbidden: User not authorized"
+        "404":
+          description: "Not found: Resource not found"
+  /k8sfilter/{name}/ports/{ports_name}/:
+    get:
+      tags:
+      - "k8sfilter"
+      summary: "Read ports by ID"
+      description: "Read operation of resource: ports"
+      operationId: "readK8sfilterPortsByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      - name: "ports_name"
+        in: "path"
+        description: "ID of ports_name"
+        required: true
+        type: "string"
+        x-exportParamName: "PortsName"
+      responses:
+        "200":
+          description: "OK: Successful operation"
+          schema:
+            $ref: "#/definitions/Ports"
+        "400":
+          description: "Bad request"
+        "404":
+          description: "Not found"
+        "405":
+          description: "Method not allowed: Use POST to invoke operations"
+    post:
+      tags:
+      - "k8sfilter"
+      summary: "Create ports by ID"
+      description: "Create operation of resource: ports"
+      operationId: "createK8sfilterPortsByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      - name: "ports_name"
+        in: "path"
+        description: "ID of ports_name"
+        required: true
+        type: "string"
+        x-exportParamName: "PortsName"
+      - in: "body"
+        name: "ports"
+        description: "portsbody object"
+        required: true
+        schema:
+          $ref: "#/definitions/Ports"
+        x-exportParamName: "Ports"
+      responses:
+        "201":
+          description: "Created: Successful operation"
+        "403":
+          description: "Forbidden: User not authorized"
+        "404":
+          description: "Not found: Resource not created"
+        "409":
+          description: "Conflict: Resource not created"
+    put:
+      tags:
+      - "k8sfilter"
+      summary: "Replace ports by ID"
+      description: "Replace operation of resource: ports"
+      operationId: "replaceK8sfilterPortsByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      - name: "ports_name"
+        in: "path"
+        description: "ID of ports_name"
+        required: true
+        type: "string"
+        x-exportParamName: "PortsName"
+      - in: "body"
+        name: "ports"
+        description: "portsbody object"
+        required: true
+        schema:
+          $ref: "#/definitions/Ports"
+        x-exportParamName: "Ports"
+      responses:
+        "201":
+          description: "OK: Resource replaced successfully"
+        "204":
+          description: "No content: Resource modified successfully"
+        "400":
+          description: "Bad request: resource not replaced"
+        "404":
+          description: "Resource not found"
+    delete:
+      tags:
+      - "k8sfilter"
+      summary: "Delete ports by ID"
+      description: "Delete operation of resource: ports"
+      operationId: "deleteK8sfilterPortsByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      - name: "ports_name"
+        in: "path"
+        description: "ID of ports_name"
+        required: true
+        type: "string"
+        x-exportParamName: "PortsName"
+      responses:
+        "204":
+          description: "No content: Resource deleted"
+        "403":
+          description: "Forbidden: User not authorized"
+        "404":
+          description: "Resource not found"
+    patch:
+      tags:
+      - "k8sfilter"
+      summary: "Update ports by ID"
+      description: "Update operation of resource: ports"
+      operationId: "updateK8sfilterPortsByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      - name: "ports_name"
+        in: "path"
+        description: "ID of ports_name"
+        required: true
+        type: "string"
+        x-exportParamName: "PortsName"
+      - in: "body"
+        name: "ports"
+        description: "portsbody object"
+        required: true
+        schema:
+          $ref: "#/definitions/Ports"
+        x-exportParamName: "Ports"
+      responses:
+        "200":
+          description: "OK: Successful update"
+        "204":
+          description: "No content: Successful update"
+        "403":
+          description: "Forbidden: User not authorized"
+        "404":
+          description: "Not found: Resource not found"
+  /k8sfilter/{name}/ports/:
+    get:
+      tags:
+      - "k8sfilter"
+      summary: "Read ports by ID"
+      description: "Read operation of resource: ports"
+      operationId: "readK8sfilterPortsListByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      responses:
+        "200":
+          description: "OK: Successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Ports"
+        "400":
+          description: "Bad request"
+        "404":
+          description: "Not found"
+        "405":
+          description: "Method not allowed: Use POST to invoke operations"
+    post:
+      tags:
+      - "k8sfilter"
+      summary: "Create ports by ID"
+      description: "Create operation of resource: ports"
+      operationId: "createK8sfilterPortsListByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      - in: "body"
+        name: "ports"
+        description: "portsbody object"
+        required: true
+        schema:
+          type: "array"
+          items:
+            $ref: "#/definitions/Ports"
+        x-exportParamName: "Ports"
+      responses:
+        "201":
+          description: "Created: Successful operation"
+        "403":
+          description: "Forbidden: User not authorized"
+        "404":
+          description: "Not found: Resource not created"
+        "409":
+          description: "Conflict: Resource not created"
+    put:
+      tags:
+      - "k8sfilter"
+      summary: "Replace ports by ID"
+      description: "Replace operation of resource: ports"
+      operationId: "replaceK8sfilterPortsListByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      - in: "body"
+        name: "ports"
+        description: "portsbody object"
+        required: true
+        schema:
+          type: "array"
+          items:
+            $ref: "#/definitions/Ports"
+        x-exportParamName: "Ports"
+      responses:
+        "201":
+          description: "OK: Resource replaced successfully"
+        "204":
+          description: "No content: Resource modified successfully"
+        "400":
+          description: "Bad request: resource not replaced"
+        "404":
+          description: "Resource not found"
+    delete:
+      tags:
+      - "k8sfilter"
+      summary: "Delete ports by ID"
+      description: "Delete operation of resource: ports"
+      operationId: "deleteK8sfilterPortsListByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      responses:
+        "204":
+          description: "No content: Resource deleted"
+        "403":
+          description: "Forbidden: User not authorized"
+        "404":
+          description: "Resource not found"
+    patch:
+      tags:
+      - "k8sfilter"
+      summary: "Update ports by ID"
+      description: "Update operation of resource: ports"
+      operationId: "updateK8sfilterPortsListByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      - in: "body"
+        name: "ports"
+        description: "portsbody object"
+        required: true
+        schema:
+          type: "array"
+          items:
+            $ref: "#/definitions/Ports"
+        x-exportParamName: "Ports"
+      responses:
+        "200":
+          description: "OK: Successful update"
+        "204":
+          description: "No content: Successful update"
+        "403":
+          description: "Forbidden: User not authorized"
+        "404":
+          description: "Not found: Resource not found"
+  /k8sfilter/{name}/ports/{ports_name}/uuid/:
+    get:
+      tags:
+      - "k8sfilter"
+      summary: "Read uuid by ID"
+      description: "Read operation of resource: uuid"
+      operationId: "readK8sfilterPortsUuidByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      - name: "ports_name"
+        in: "path"
+        description: "ID of ports_name"
+        required: true
+        type: "string"
+        x-exportParamName: "PortsName"
+      responses:
+        "200":
+          description: "OK: Successful operation"
+          schema:
+            type: "string"
+            format: "[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}"
+            description: "UUID of the port"
+        "400":
+          description: "Bad request"
+        "404":
+          description: "Not found"
+        "405":
+          description: "Method not allowed: Use POST to invoke operations"
+      x-is-base-datamodel: true
+  /k8sfilter/{name}/ports/{ports_name}/status/:
+    get:
+      tags:
+      - "k8sfilter"
+      summary: "Read status by ID"
+      description: "Read operation of resource: status"
+      operationId: "readK8sfilterPortsStatusByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      - name: "ports_name"
+        in: "path"
+        description: "ID of ports_name"
+        required: true
+        type: "string"
+        x-exportParamName: "PortsName"
+      responses:
+        "200":
+          description: "OK: Successful operation"
+          schema:
+            type: "string"
+            description: "Status of the port (UP or DOWN)"
+            enum:
+            - "UP"
+            - "DOWN"
+          x-is-enum: "true"
+        "400":
+          description: "Bad request"
+        "404":
+          description: "Not found"
+        "405":
+          description: "Method not allowed: Use POST to invoke operations"
+      x-is-base-datamodel: true
+  /k8sfilter/{name}/ports/{ports_name}/peer/:
+    get:
+      tags:
+      - "k8sfilter"
+      summary: "Read peer by ID"
+      description: "Read operation of resource: peer"
+      operationId: "readK8sfilterPortsPeerByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      - name: "ports_name"
+        in: "path"
+        description: "ID of ports_name"
+        required: true
+        type: "string"
+        x-exportParamName: "PortsName"
+      responses:
+        "200":
+          description: "OK: Successful operation"
+          schema:
+            type: "string"
+            description: "Peer name, such as a network interfaces (e.g., 'veth0')\
+              \ or another cube (e.g., 'br1:port2')"
+            example: "r0:port1"
+        "400":
+          description: "Bad request"
+        "404":
+          description: "Not found"
+        "405":
+          description: "Method not allowed: Use POST to invoke operations"
+      x-is-base-datamodel: true
+    patch:
+      tags:
+      - "k8sfilter"
+      summary: "Update peer by ID"
+      description: "Update operation of resource: peer"
+      operationId: "updateK8sfilterPortsPeerByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      - name: "ports_name"
+        in: "path"
+        description: "ID of ports_name"
+        required: true
+        type: "string"
+        x-exportParamName: "PortsName"
+      - in: "body"
+        name: "peer"
+        description: "Peer name, such as a network interfaces (e.g., 'veth0') or another\
+          \ cube (e.g., 'br1:port2')"
+        required: true
+        schema:
+          type: "string"
+          description: "Peer name, such as a network interfaces (e.g., 'veth0') or\
+            \ another cube (e.g., 'br1:port2')"
+          example: "r0:port1"
+        x-exportParamName: "Peer"
+      responses:
+        "200":
+          description: "OK: Successful update"
+        "204":
+          description: "No content: Successful update"
+        "403":
+          description: "Forbidden: User not authorized"
+        "404":
+          description: "Not found: Resource not found"
+      x-is-base-datamodel: true
+  /k8sfilter/{name}/ports/{ports_name}/type/:
+    get:
+      tags:
+      - "k8sfilter"
+      summary: "Read type by ID"
+      description: "Read operation of resource: type"
+      operationId: "readK8sfilterPortsTypeByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      - name: "ports_name"
+        in: "path"
+        description: "ID of ports_name"
+        required: true
+        type: "string"
+        x-exportParamName: "PortsName"
+      responses:
+        "200":
+          description: "OK: Successful operation"
+          schema:
+            type: "string"
+            description: "..."
+            enum:
+            - "EXTERNAL"
+            - "INTERNAL"
+            x-is-required: true
+          x-is-enum: "true"
+        "400":
+          description: "Bad request"
+        "404":
+          description: "Not found"
+        "405":
+          description: "Method not allowed: Use POST to invoke operations"
+  /k8sfilter/{name}/shadow/:
+    get:
+      tags:
+      - "k8sfilter"
+      summary: "Read shadow by ID"
+      description: "Read operation of resource: shadow"
+      operationId: "readK8sfilterShadowByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      responses:
+        "200":
+          description: "OK: Successful operation"
+          schema:
+            type: "boolean"
+            description: "Defines if the service is visible in Linux"
+            default: "false"
+        "400":
+          description: "Bad request"
+        "404":
+          description: "Not found"
+        "405":
+          description: "Method not allowed: Use POST to invoke operations"
+      x-is-base-datamodel: true
+  /k8sfilter/{name}/span/:
+    get:
+      tags:
+      - "k8sfilter"
+      summary: "Read span by ID"
+      description: "Read operation of resource: span"
+      operationId: "readK8sfilterSpanByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      responses:
+        "200":
+          description: "OK: Successful operation"
+          schema:
+            type: "boolean"
+            description: "Defines if all traffic is sent to Linux"
+            default: "false"
+        "400":
+          description: "Bad request"
+        "404":
+          description: "Not found"
+        "405":
+          description: "Method not allowed: Use POST to invoke operations"
+      x-is-base-datamodel: true
+    patch:
+      tags:
+      - "k8sfilter"
+      summary: "Update span by ID"
+      description: "Update operation of resource: span"
+      operationId: "updateK8sfilterSpanByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      - in: "body"
+        name: "span"
+        description: "Defines if all traffic is sent to Linux"
+        required: true
+        schema:
+          type: "boolean"
+          description: "Defines if all traffic is sent to Linux"
+          default: "false"
+        x-exportParamName: "Span"
+      responses:
+        "200":
+          description: "OK: Successful update"
+        "204":
+          description: "No content: Successful update"
+        "403":
+          description: "Forbidden: User not authorized"
+        "404":
+          description: "Not found: Resource not found"
+      x-is-base-datamodel: true
+  /k8sfilter/{name}/nodeport-range/:
+    get:
+      tags:
+      - "k8sfilter"
+      summary: "Read nodeport-range by ID"
+      description: "Read operation of resource: nodeport-range"
+      operationId: "readK8sfilterNodeportRangeByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      responses:
+        "200":
+          description: "OK: Successful operation"
+          schema:
+            type: "string"
+            description: "Port range used for NodePort services"
+            example: "30000-32767"
+            default: "30000-32767"
+        "400":
+          description: "Bad request"
+        "404":
+          description: "Not found"
+        "405":
+          description: "Method not allowed: Use POST to invoke operations"
+    patch:
+      tags:
+      - "k8sfilter"
+      summary: "Update nodeport-range by ID"
+      description: "Update operation of resource: nodeport-range"
+      operationId: "updateK8sfilterNodeportRangeByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      - in: "body"
+        name: "nodeport-range"
+        description: "Port range used for NodePort services"
+        required: true
+        schema:
+          type: "string"
+          description: "Port range used for NodePort services"
+          example: "30000-32767"
+          default: "30000-32767"
+        x-exportParamName: "NodeportRange"
+      responses:
+        "200":
+          description: "OK: Successful update"
+        "204":
+          description: "No content: Successful update"
+        "403":
+          description: "Forbidden: User not authorized"
+        "404":
+          description: "Not found: Resource not found"
+definitions:
+  Ports:
+    properties:
+      name:
+        type: "string"
+        example: "port1"
+        description: "Port Name"
+        x-has-default-impl: true
+        x-is-required: true
+        x-is-key: true
+      uuid:
+        type: "string"
+        format: "[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}"
+        description: "UUID of the port"
+        readOnly: true
+        x-is-base-datamodel: true
+      status:
+        type: "string"
+        description: "Status of the port (UP or DOWN)"
+        readOnly: true
+        enum:
+        - "UP"
+        - "DOWN"
+        x-is-base-datamodel: true
+      peer:
+        type: "string"
+        example: "r0:port1"
+        description: "Peer name, such as a network interfaces (e.g., 'veth0') or another\
+          \ cube (e.g., 'br1:port2')"
+        x-is-base-datamodel: true
+      tcubes:
+        type: "array"
+        items:
+          type: "string"
+          description: "List of transparent cubes attached to this port"
+          readOnly: true
+        x-is-base-datamodel: true
+      type:
+        type: "string"
+        description: "..."
+        readOnly: true
+        enum:
+        - "EXTERNAL"
+        - "INTERNAL"
+        x-is-required: true
+    example:
+      tcubes:
+      - "tcubes"
+      - "tcubes"
+      peer: "r0:port1"
+      name: "port1"
+      type: "EXTERNAL"
+      uuid: "uuid"
+      status: "UP"
+    x-inherits-from: "polycube::service::Port"
+    x-is-list: "true"
+    x-parent: "K8sfilter"
+  K8sfilter:
+    properties:
+      name:
+        type: "string"
+        example: "k8sfilter1"
+        description: "Name of the k8sfilter service"
+        x-has-default-impl: true
+        x-is-required: true
+        x-is-key: true
+        x-is-cube-name: true
+      uuid:
+        type: "string"
+        format: "[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}"
+        description: "UUID of the Cube"
+        readOnly: true
+        x-is-base-datamodel: true
+      type:
+        type: "string"
+        example: "TC"
+        description: "Type of the Cube (TC, XDP_SKB, XDP_DRV)"
+        readOnly: true
+        enum:
+        - "TC"
+        - "XDP_SKB"
+        - "XDP_DRV"
+        default: "TC"
+        x-is-base-datamodel: true
+      service-name:
+        type: "string"
+        example: "helloworld"
+        readOnly: true
+        x-is-base-datamodel: true
+      loglevel:
+        type: "string"
+        example: "INFO"
+        description: "Logging level of a cube, from none (OFF) to the most verbose\
+          \ (TRACE)"
+        enum:
+        - "TRACE"
+        - "DEBUG"
+        - "INFO"
+        - "WARN"
+        - "ERR"
+        - "CRITICAL"
+        - "OFF"
+        default: "INFO"
+        x-is-base-datamodel: true
+      dyn-opt:
+        type: "boolean"
+        description: "Defines if the service should be automatically optimized by\
+          \ Morpheus"
+        readOnly: true
+        default: false
+      start-morpheus:
+        type: "boolean"
+        description: "Set this flag if you want to start Morpheus compiler"
+        default: false
+      ports:
+        type: "array"
+        description: "Entry of the ports table"
+        items:
+          $ref: "#/definitions/Ports"
+        x-is-port-class: true
+        x-key:
+        - "name"
+        x-key-list:
+        - name: "name"
+          type: "string"
+      shadow:
+        type: "boolean"
+        description: "Defines if the service is visible in Linux"
+        readOnly: true
+        default: false
+        x-is-base-datamodel: true
+      span:
+        type: "boolean"
+        description: "Defines if all traffic is sent to Linux"
+        default: false
+        x-is-base-datamodel: true
+      nodeport-range:
+        type: "string"
+        example: "30000-32767"
+        description: "Port range used for NodePort services"
+        default: "30000-32767"
+    example:
+      service-name: "helloworld"
+      dyn-opt: false
+      nodeport-range: "30000-32767"
+      shadow: false
+      loglevel: "INFO"
+      name: "k8sfilter1"
+      start-morpheus: false
+      type: "TC"
+      ports:
+      - tcubes:
+        - "tcubes"
+        - "tcubes"
+        peer: "r0:port1"
+        name: "port1"
+        type: "EXTERNAL"
+        uuid: "uuid"
+        status: "UP"
+      - tcubes:
+        - "tcubes"
+        - "tcubes"
+        peer: "r0:port1"
+        name: "port1"
+        type: "EXTERNAL"
+        uuid: "uuid"
+        status: "UP"
+      uuid: "uuid"
+      span: false
+    x-is-list: "true"
+    x-is-standard: true
+    x-parent: "K8sfilter"

@@ -15,7 +15,7 @@ type K8switch struct {
 	// UUID of the Cube
 	Uuid string `json:"uuid,omitempty"`
 	// Type of the Cube (TC, XDP_SKB, XDP_DRV)
-	Type_       string `json:"type,omitempty"`
+	Type_ string `json:"type,omitempty"`
 	ServiceName string `json:"service-name,omitempty"`
 	// Logging level of a cube, from none (OFF) to the most verbose (TRACE)
 	Loglevel string `json:"loglevel,omitempty"`

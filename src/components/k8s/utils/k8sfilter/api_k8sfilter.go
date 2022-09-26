@@ -1,3 +1,4 @@
+
 /*
  * k8sfilter API
  *
@@ -11,11 +12,11 @@ package swagger
 
 import (
 	"context"
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strings"
+	"fmt"
 )
 
 // Linger please
@@ -26,11 +27,11 @@ var (
 type K8sfilterApiService service
 
 /*
- K8sfilterApiService Create k8sfilter by ID
- Create operation of resource: k8sfilter
-  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-  * @param name ID of name
-  * @param k8sfilter k8sfilterbody object
+K8sfilterApiService Create k8sfilter by ID
+Create operation of resource: k8sfilter
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param name ID of name
+ * @param k8sfilter k8sfilterbody object
 
 
 */
@@ -40,6 +41,7 @@ func (a *K8sfilterApiService) CreateK8sfilterByID(ctx context.Context, name stri
 		localVarPostBody   interface{}
 		localVarFileName   string
 		localVarFileBytes  []byte
+		
 	)
 
 	// create path and map variables
@@ -85,12 +87,13 @@ func (a *K8sfilterApiService) CreateK8sfilterByID(ctx context.Context, name stri
 		return localVarHttpResponse, err
 	}
 
+
 	if localVarHttpResponse.StatusCode >= 300 {
 		newErr := GenericSwaggerError{
-			body:  localVarBody,
+			body: localVarBody,
 			error: localVarHttpResponse.Status,
 		}
-
+		
 		return localVarHttpResponse, newErr
 	}
 
@@ -98,12 +101,12 @@ func (a *K8sfilterApiService) CreateK8sfilterByID(ctx context.Context, name stri
 }
 
 /*
- K8sfilterApiService Create ports by ID
- Create operation of resource: ports
-  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-  * @param name ID of name
-  * @param portsName ID of ports_name
-  * @param ports portsbody object
+K8sfilterApiService Create ports by ID
+Create operation of resource: ports
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param name ID of name
+ * @param portsName ID of ports_name
+ * @param ports portsbody object
 
 
 */
@@ -113,6 +116,7 @@ func (a *K8sfilterApiService) CreateK8sfilterPortsByID(ctx context.Context, name
 		localVarPostBody   interface{}
 		localVarFileName   string
 		localVarFileBytes  []byte
+		
 	)
 
 	// create path and map variables
@@ -159,12 +163,13 @@ func (a *K8sfilterApiService) CreateK8sfilterPortsByID(ctx context.Context, name
 		return localVarHttpResponse, err
 	}
 
+
 	if localVarHttpResponse.StatusCode >= 300 {
 		newErr := GenericSwaggerError{
-			body:  localVarBody,
+			body: localVarBody,
 			error: localVarHttpResponse.Status,
 		}
-
+		
 		return localVarHttpResponse, newErr
 	}
 
@@ -172,11 +177,11 @@ func (a *K8sfilterApiService) CreateK8sfilterPortsByID(ctx context.Context, name
 }
 
 /*
- K8sfilterApiService Create ports by ID
- Create operation of resource: ports
-  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-  * @param name ID of name
-  * @param ports portsbody object
+K8sfilterApiService Create ports by ID
+Create operation of resource: ports
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param name ID of name
+ * @param ports portsbody object
 
 
 */
@@ -186,6 +191,7 @@ func (a *K8sfilterApiService) CreateK8sfilterPortsListByID(ctx context.Context, 
 		localVarPostBody   interface{}
 		localVarFileName   string
 		localVarFileBytes  []byte
+		
 	)
 
 	// create path and map variables
@@ -231,12 +237,13 @@ func (a *K8sfilterApiService) CreateK8sfilterPortsListByID(ctx context.Context, 
 		return localVarHttpResponse, err
 	}
 
+
 	if localVarHttpResponse.StatusCode >= 300 {
 		newErr := GenericSwaggerError{
-			body:  localVarBody,
+			body: localVarBody,
 			error: localVarHttpResponse.Status,
 		}
-
+		
 		return localVarHttpResponse, newErr
 	}
 
@@ -244,10 +251,10 @@ func (a *K8sfilterApiService) CreateK8sfilterPortsListByID(ctx context.Context, 
 }
 
 /*
- K8sfilterApiService Delete k8sfilter by ID
- Delete operation of resource: k8sfilter
-  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-  * @param name ID of name
+K8sfilterApiService Delete k8sfilter by ID
+Delete operation of resource: k8sfilter
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param name ID of name
 
 
 */
@@ -257,6 +264,7 @@ func (a *K8sfilterApiService) DeleteK8sfilterByID(ctx context.Context, name stri
 		localVarPostBody   interface{}
 		localVarFileName   string
 		localVarFileBytes  []byte
+		
 	)
 
 	// create path and map variables
@@ -300,12 +308,13 @@ func (a *K8sfilterApiService) DeleteK8sfilterByID(ctx context.Context, name stri
 		return localVarHttpResponse, err
 	}
 
+
 	if localVarHttpResponse.StatusCode >= 300 {
 		newErr := GenericSwaggerError{
-			body:  localVarBody,
+			body: localVarBody,
 			error: localVarHttpResponse.Status,
 		}
-
+		
 		return localVarHttpResponse, newErr
 	}
 
@@ -313,11 +322,11 @@ func (a *K8sfilterApiService) DeleteK8sfilterByID(ctx context.Context, name stri
 }
 
 /*
- K8sfilterApiService Delete ports by ID
- Delete operation of resource: ports
-  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-  * @param name ID of name
-  * @param portsName ID of ports_name
+K8sfilterApiService Delete ports by ID
+Delete operation of resource: ports
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param name ID of name
+ * @param portsName ID of ports_name
 
 
 */
@@ -327,6 +336,7 @@ func (a *K8sfilterApiService) DeleteK8sfilterPortsByID(ctx context.Context, name
 		localVarPostBody   interface{}
 		localVarFileName   string
 		localVarFileBytes  []byte
+		
 	)
 
 	// create path and map variables
@@ -371,12 +381,13 @@ func (a *K8sfilterApiService) DeleteK8sfilterPortsByID(ctx context.Context, name
 		return localVarHttpResponse, err
 	}
 
+
 	if localVarHttpResponse.StatusCode >= 300 {
 		newErr := GenericSwaggerError{
-			body:  localVarBody,
+			body: localVarBody,
 			error: localVarHttpResponse.Status,
 		}
-
+		
 		return localVarHttpResponse, newErr
 	}
 
@@ -384,10 +395,10 @@ func (a *K8sfilterApiService) DeleteK8sfilterPortsByID(ctx context.Context, name
 }
 
 /*
- K8sfilterApiService Delete ports by ID
- Delete operation of resource: ports
-  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-  * @param name ID of name
+K8sfilterApiService Delete ports by ID
+Delete operation of resource: ports
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param name ID of name
 
 
 */
@@ -397,6 +408,7 @@ func (a *K8sfilterApiService) DeleteK8sfilterPortsListByID(ctx context.Context, 
 		localVarPostBody   interface{}
 		localVarFileName   string
 		localVarFileBytes  []byte
+		
 	)
 
 	// create path and map variables
@@ -440,12 +452,13 @@ func (a *K8sfilterApiService) DeleteK8sfilterPortsListByID(ctx context.Context, 
 		return localVarHttpResponse, err
 	}
 
+
 	if localVarHttpResponse.StatusCode >= 300 {
 		newErr := GenericSwaggerError{
-			body:  localVarBody,
+			body: localVarBody,
 			error: localVarHttpResponse.Status,
 		}
-
+		
 		return localVarHttpResponse, newErr
 	}
 
@@ -453,19 +466,19 @@ func (a *K8sfilterApiService) DeleteK8sfilterPortsListByID(ctx context.Context, 
 }
 
 /*
- K8sfilterApiService Read k8sfilter by ID
- Read operation of resource: k8sfilter
-  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-  * @param name ID of name
+K8sfilterApiService Read k8sfilter by ID
+Read operation of resource: k8sfilter
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param name ID of name
 
- @return K8sfilter
+@return K8sfilter
 */
 func (a *K8sfilterApiService) ReadK8sfilterByID(ctx context.Context, name string) (K8sfilter, *http.Response, error) {
 	var (
-		localVarHttpMethod  = strings.ToUpper("Get")
-		localVarPostBody    interface{}
-		localVarFileName    string
-		localVarFileBytes   []byte
+		localVarHttpMethod = strings.ToUpper("Get")
+		localVarPostBody   interface{}
+		localVarFileName   string
+		localVarFileBytes  []byte
 		localVarReturnValue K8sfilter
 	)
 
@@ -512,27 +525,27 @@ func (a *K8sfilterApiService) ReadK8sfilterByID(ctx context.Context, name string
 
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
 		return localVarReturnValue, localVarHttpResponse, err
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
 		newErr := GenericSwaggerError{
-			body:  localVarBody,
+			body: localVarBody,
 			error: localVarHttpResponse.Status,
 		}
-
+		
 		if localVarHttpResponse.StatusCode == 200 {
 			var v K8sfilter
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
+				if err != nil {
+					newErr.error = err.Error()
+					return localVarReturnValue, localVarHttpResponse, newErr
+				}
+				newErr.model = v
 				return localVarReturnValue, localVarHttpResponse, newErr
-			}
-			newErr.model = v
-			return localVarReturnValue, localVarHttpResponse, newErr
 		}
-
+		
 		return localVarReturnValue, localVarHttpResponse, newErr
 	}
 
@@ -540,19 +553,19 @@ func (a *K8sfilterApiService) ReadK8sfilterByID(ctx context.Context, name string
 }
 
 /*
- K8sfilterApiService Read dyn-opt by ID
- Read operation of resource: dyn-opt
-  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-  * @param name ID of name
+K8sfilterApiService Read dyn-opt by ID
+Read operation of resource: dyn-opt
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param name ID of name
 
- @return bool
+@return bool
 */
 func (a *K8sfilterApiService) ReadK8sfilterDynOptByID(ctx context.Context, name string) (bool, *http.Response, error) {
 	var (
-		localVarHttpMethod  = strings.ToUpper("Get")
-		localVarPostBody    interface{}
-		localVarFileName    string
-		localVarFileBytes   []byte
+		localVarHttpMethod = strings.ToUpper("Get")
+		localVarPostBody   interface{}
+		localVarFileName   string
+		localVarFileBytes  []byte
 		localVarReturnValue bool
 	)
 
@@ -599,27 +612,27 @@ func (a *K8sfilterApiService) ReadK8sfilterDynOptByID(ctx context.Context, name 
 
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
 		return localVarReturnValue, localVarHttpResponse, err
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
 		newErr := GenericSwaggerError{
-			body:  localVarBody,
+			body: localVarBody,
 			error: localVarHttpResponse.Status,
 		}
-
+		
 		if localVarHttpResponse.StatusCode == 200 {
 			var v bool
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
+				if err != nil {
+					newErr.error = err.Error()
+					return localVarReturnValue, localVarHttpResponse, newErr
+				}
+				newErr.model = v
 				return localVarReturnValue, localVarHttpResponse, newErr
-			}
-			newErr.model = v
-			return localVarReturnValue, localVarHttpResponse, newErr
 		}
-
+		
 		return localVarReturnValue, localVarHttpResponse, newErr
 	}
 
@@ -627,18 +640,18 @@ func (a *K8sfilterApiService) ReadK8sfilterDynOptByID(ctx context.Context, name 
 }
 
 /*
- K8sfilterApiService Read k8sfilter by ID
- Read operation of resource: k8sfilter
-  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+K8sfilterApiService Read k8sfilter by ID
+Read operation of resource: k8sfilter
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
- @return []K8sfilter
+@return []K8sfilter
 */
 func (a *K8sfilterApiService) ReadK8sfilterListByID(ctx context.Context) ([]K8sfilter, *http.Response, error) {
 	var (
-		localVarHttpMethod  = strings.ToUpper("Get")
-		localVarPostBody    interface{}
-		localVarFileName    string
-		localVarFileBytes   []byte
+		localVarHttpMethod = strings.ToUpper("Get")
+		localVarPostBody   interface{}
+		localVarFileName   string
+		localVarFileBytes  []byte
 		localVarReturnValue []K8sfilter
 	)
 
@@ -684,27 +697,27 @@ func (a *K8sfilterApiService) ReadK8sfilterListByID(ctx context.Context) ([]K8sf
 
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
 		return localVarReturnValue, localVarHttpResponse, err
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
 		newErr := GenericSwaggerError{
-			body:  localVarBody,
+			body: localVarBody,
 			error: localVarHttpResponse.Status,
 		}
-
+		
 		if localVarHttpResponse.StatusCode == 200 {
 			var v []K8sfilter
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
+				if err != nil {
+					newErr.error = err.Error()
+					return localVarReturnValue, localVarHttpResponse, newErr
+				}
+				newErr.model = v
 				return localVarReturnValue, localVarHttpResponse, newErr
-			}
-			newErr.model = v
-			return localVarReturnValue, localVarHttpResponse, newErr
 		}
-
+		
 		return localVarReturnValue, localVarHttpResponse, newErr
 	}
 
@@ -712,19 +725,19 @@ func (a *K8sfilterApiService) ReadK8sfilterListByID(ctx context.Context) ([]K8sf
 }
 
 /*
- K8sfilterApiService Read loglevel by ID
- Read operation of resource: loglevel
-  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-  * @param name ID of name
+K8sfilterApiService Read loglevel by ID
+Read operation of resource: loglevel
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param name ID of name
 
- @return string
+@return string
 */
 func (a *K8sfilterApiService) ReadK8sfilterLoglevelByID(ctx context.Context, name string) (string, *http.Response, error) {
 	var (
-		localVarHttpMethod  = strings.ToUpper("Get")
-		localVarPostBody    interface{}
-		localVarFileName    string
-		localVarFileBytes   []byte
+		localVarHttpMethod = strings.ToUpper("Get")
+		localVarPostBody   interface{}
+		localVarFileName   string
+		localVarFileBytes  []byte
 		localVarReturnValue string
 	)
 
@@ -771,27 +784,27 @@ func (a *K8sfilterApiService) ReadK8sfilterLoglevelByID(ctx context.Context, nam
 
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
 		return localVarReturnValue, localVarHttpResponse, err
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
 		newErr := GenericSwaggerError{
-			body:  localVarBody,
+			body: localVarBody,
 			error: localVarHttpResponse.Status,
 		}
-
+		
 		if localVarHttpResponse.StatusCode == 200 {
 			var v string
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
+				if err != nil {
+					newErr.error = err.Error()
+					return localVarReturnValue, localVarHttpResponse, newErr
+				}
+				newErr.model = v
 				return localVarReturnValue, localVarHttpResponse, newErr
-			}
-			newErr.model = v
-			return localVarReturnValue, localVarHttpResponse, newErr
 		}
-
+		
 		return localVarReturnValue, localVarHttpResponse, newErr
 	}
 
@@ -799,19 +812,19 @@ func (a *K8sfilterApiService) ReadK8sfilterLoglevelByID(ctx context.Context, nam
 }
 
 /*
- K8sfilterApiService Read nodeport-range by ID
- Read operation of resource: nodeport-range
-  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-  * @param name ID of name
+K8sfilterApiService Read nodeport-range by ID
+Read operation of resource: nodeport-range
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param name ID of name
 
- @return string
+@return string
 */
 func (a *K8sfilterApiService) ReadK8sfilterNodeportRangeByID(ctx context.Context, name string) (string, *http.Response, error) {
 	var (
-		localVarHttpMethod  = strings.ToUpper("Get")
-		localVarPostBody    interface{}
-		localVarFileName    string
-		localVarFileBytes   []byte
+		localVarHttpMethod = strings.ToUpper("Get")
+		localVarPostBody   interface{}
+		localVarFileName   string
+		localVarFileBytes  []byte
 		localVarReturnValue string
 	)
 
@@ -858,27 +871,27 @@ func (a *K8sfilterApiService) ReadK8sfilterNodeportRangeByID(ctx context.Context
 
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
 		return localVarReturnValue, localVarHttpResponse, err
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
 		newErr := GenericSwaggerError{
-			body:  localVarBody,
+			body: localVarBody,
 			error: localVarHttpResponse.Status,
 		}
-
+		
 		if localVarHttpResponse.StatusCode == 200 {
 			var v string
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
+				if err != nil {
+					newErr.error = err.Error()
+					return localVarReturnValue, localVarHttpResponse, newErr
+				}
+				newErr.model = v
 				return localVarReturnValue, localVarHttpResponse, newErr
-			}
-			newErr.model = v
-			return localVarReturnValue, localVarHttpResponse, newErr
 		}
-
+		
 		return localVarReturnValue, localVarHttpResponse, newErr
 	}
 
@@ -886,20 +899,20 @@ func (a *K8sfilterApiService) ReadK8sfilterNodeportRangeByID(ctx context.Context
 }
 
 /*
- K8sfilterApiService Read ports by ID
- Read operation of resource: ports
-  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-  * @param name ID of name
-  * @param portsName ID of ports_name
+K8sfilterApiService Read ports by ID
+Read operation of resource: ports
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param name ID of name
+ * @param portsName ID of ports_name
 
- @return Ports
+@return Ports
 */
 func (a *K8sfilterApiService) ReadK8sfilterPortsByID(ctx context.Context, name string, portsName string) (Ports, *http.Response, error) {
 	var (
-		localVarHttpMethod  = strings.ToUpper("Get")
-		localVarPostBody    interface{}
-		localVarFileName    string
-		localVarFileBytes   []byte
+		localVarHttpMethod = strings.ToUpper("Get")
+		localVarPostBody   interface{}
+		localVarFileName   string
+		localVarFileBytes  []byte
 		localVarReturnValue Ports
 	)
 
@@ -947,27 +960,27 @@ func (a *K8sfilterApiService) ReadK8sfilterPortsByID(ctx context.Context, name s
 
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
 		return localVarReturnValue, localVarHttpResponse, err
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
 		newErr := GenericSwaggerError{
-			body:  localVarBody,
+			body: localVarBody,
 			error: localVarHttpResponse.Status,
 		}
-
+		
 		if localVarHttpResponse.StatusCode == 200 {
 			var v Ports
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
+				if err != nil {
+					newErr.error = err.Error()
+					return localVarReturnValue, localVarHttpResponse, newErr
+				}
+				newErr.model = v
 				return localVarReturnValue, localVarHttpResponse, newErr
-			}
-			newErr.model = v
-			return localVarReturnValue, localVarHttpResponse, newErr
 		}
-
+		
 		return localVarReturnValue, localVarHttpResponse, newErr
 	}
 
@@ -975,19 +988,19 @@ func (a *K8sfilterApiService) ReadK8sfilterPortsByID(ctx context.Context, name s
 }
 
 /*
- K8sfilterApiService Read ports by ID
- Read operation of resource: ports
-  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-  * @param name ID of name
+K8sfilterApiService Read ports by ID
+Read operation of resource: ports
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param name ID of name
 
- @return []Ports
+@return []Ports
 */
 func (a *K8sfilterApiService) ReadK8sfilterPortsListByID(ctx context.Context, name string) ([]Ports, *http.Response, error) {
 	var (
-		localVarHttpMethod  = strings.ToUpper("Get")
-		localVarPostBody    interface{}
-		localVarFileName    string
-		localVarFileBytes   []byte
+		localVarHttpMethod = strings.ToUpper("Get")
+		localVarPostBody   interface{}
+		localVarFileName   string
+		localVarFileBytes  []byte
 		localVarReturnValue []Ports
 	)
 
@@ -1034,27 +1047,27 @@ func (a *K8sfilterApiService) ReadK8sfilterPortsListByID(ctx context.Context, na
 
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
 		return localVarReturnValue, localVarHttpResponse, err
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
 		newErr := GenericSwaggerError{
-			body:  localVarBody,
+			body: localVarBody,
 			error: localVarHttpResponse.Status,
 		}
-
+		
 		if localVarHttpResponse.StatusCode == 200 {
 			var v []Ports
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
+				if err != nil {
+					newErr.error = err.Error()
+					return localVarReturnValue, localVarHttpResponse, newErr
+				}
+				newErr.model = v
 				return localVarReturnValue, localVarHttpResponse, newErr
-			}
-			newErr.model = v
-			return localVarReturnValue, localVarHttpResponse, newErr
 		}
-
+		
 		return localVarReturnValue, localVarHttpResponse, newErr
 	}
 
@@ -1062,20 +1075,20 @@ func (a *K8sfilterApiService) ReadK8sfilterPortsListByID(ctx context.Context, na
 }
 
 /*
- K8sfilterApiService Read peer by ID
- Read operation of resource: peer
-  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-  * @param name ID of name
-  * @param portsName ID of ports_name
+K8sfilterApiService Read peer by ID
+Read operation of resource: peer
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param name ID of name
+ * @param portsName ID of ports_name
 
- @return string
+@return string
 */
 func (a *K8sfilterApiService) ReadK8sfilterPortsPeerByID(ctx context.Context, name string, portsName string) (string, *http.Response, error) {
 	var (
-		localVarHttpMethod  = strings.ToUpper("Get")
-		localVarPostBody    interface{}
-		localVarFileName    string
-		localVarFileBytes   []byte
+		localVarHttpMethod = strings.ToUpper("Get")
+		localVarPostBody   interface{}
+		localVarFileName   string
+		localVarFileBytes  []byte
 		localVarReturnValue string
 	)
 
@@ -1123,27 +1136,27 @@ func (a *K8sfilterApiService) ReadK8sfilterPortsPeerByID(ctx context.Context, na
 
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
 		return localVarReturnValue, localVarHttpResponse, err
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
 		newErr := GenericSwaggerError{
-			body:  localVarBody,
+			body: localVarBody,
 			error: localVarHttpResponse.Status,
 		}
-
+		
 		if localVarHttpResponse.StatusCode == 200 {
 			var v string
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
+				if err != nil {
+					newErr.error = err.Error()
+					return localVarReturnValue, localVarHttpResponse, newErr
+				}
+				newErr.model = v
 				return localVarReturnValue, localVarHttpResponse, newErr
-			}
-			newErr.model = v
-			return localVarReturnValue, localVarHttpResponse, newErr
 		}
-
+		
 		return localVarReturnValue, localVarHttpResponse, newErr
 	}
 
@@ -1151,20 +1164,20 @@ func (a *K8sfilterApiService) ReadK8sfilterPortsPeerByID(ctx context.Context, na
 }
 
 /*
- K8sfilterApiService Read status by ID
- Read operation of resource: status
-  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-  * @param name ID of name
-  * @param portsName ID of ports_name
+K8sfilterApiService Read status by ID
+Read operation of resource: status
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param name ID of name
+ * @param portsName ID of ports_name
 
- @return string
+@return string
 */
 func (a *K8sfilterApiService) ReadK8sfilterPortsStatusByID(ctx context.Context, name string, portsName string) (string, *http.Response, error) {
 	var (
-		localVarHttpMethod  = strings.ToUpper("Get")
-		localVarPostBody    interface{}
-		localVarFileName    string
-		localVarFileBytes   []byte
+		localVarHttpMethod = strings.ToUpper("Get")
+		localVarPostBody   interface{}
+		localVarFileName   string
+		localVarFileBytes  []byte
 		localVarReturnValue string
 	)
 
@@ -1212,27 +1225,27 @@ func (a *K8sfilterApiService) ReadK8sfilterPortsStatusByID(ctx context.Context, 
 
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
 		return localVarReturnValue, localVarHttpResponse, err
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
 		newErr := GenericSwaggerError{
-			body:  localVarBody,
+			body: localVarBody,
 			error: localVarHttpResponse.Status,
 		}
-
+		
 		if localVarHttpResponse.StatusCode == 200 {
 			var v string
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
+				if err != nil {
+					newErr.error = err.Error()
+					return localVarReturnValue, localVarHttpResponse, newErr
+				}
+				newErr.model = v
 				return localVarReturnValue, localVarHttpResponse, newErr
-			}
-			newErr.model = v
-			return localVarReturnValue, localVarHttpResponse, newErr
 		}
-
+		
 		return localVarReturnValue, localVarHttpResponse, newErr
 	}
 
@@ -1240,20 +1253,20 @@ func (a *K8sfilterApiService) ReadK8sfilterPortsStatusByID(ctx context.Context, 
 }
 
 /*
- K8sfilterApiService Read type by ID
- Read operation of resource: type
-  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-  * @param name ID of name
-  * @param portsName ID of ports_name
+K8sfilterApiService Read type by ID
+Read operation of resource: type
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param name ID of name
+ * @param portsName ID of ports_name
 
- @return string
+@return string
 */
 func (a *K8sfilterApiService) ReadK8sfilterPortsTypeByID(ctx context.Context, name string, portsName string) (string, *http.Response, error) {
 	var (
-		localVarHttpMethod  = strings.ToUpper("Get")
-		localVarPostBody    interface{}
-		localVarFileName    string
-		localVarFileBytes   []byte
+		localVarHttpMethod = strings.ToUpper("Get")
+		localVarPostBody   interface{}
+		localVarFileName   string
+		localVarFileBytes  []byte
 		localVarReturnValue string
 	)
 
@@ -1301,27 +1314,27 @@ func (a *K8sfilterApiService) ReadK8sfilterPortsTypeByID(ctx context.Context, na
 
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
 		return localVarReturnValue, localVarHttpResponse, err
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
 		newErr := GenericSwaggerError{
-			body:  localVarBody,
+			body: localVarBody,
 			error: localVarHttpResponse.Status,
 		}
-
+		
 		if localVarHttpResponse.StatusCode == 200 {
 			var v string
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
+				if err != nil {
+					newErr.error = err.Error()
+					return localVarReturnValue, localVarHttpResponse, newErr
+				}
+				newErr.model = v
 				return localVarReturnValue, localVarHttpResponse, newErr
-			}
-			newErr.model = v
-			return localVarReturnValue, localVarHttpResponse, newErr
 		}
-
+		
 		return localVarReturnValue, localVarHttpResponse, newErr
 	}
 
@@ -1329,20 +1342,20 @@ func (a *K8sfilterApiService) ReadK8sfilterPortsTypeByID(ctx context.Context, na
 }
 
 /*
- K8sfilterApiService Read uuid by ID
- Read operation of resource: uuid
-  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-  * @param name ID of name
-  * @param portsName ID of ports_name
+K8sfilterApiService Read uuid by ID
+Read operation of resource: uuid
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param name ID of name
+ * @param portsName ID of ports_name
 
- @return string
+@return string
 */
 func (a *K8sfilterApiService) ReadK8sfilterPortsUuidByID(ctx context.Context, name string, portsName string) (string, *http.Response, error) {
 	var (
-		localVarHttpMethod  = strings.ToUpper("Get")
-		localVarPostBody    interface{}
-		localVarFileName    string
-		localVarFileBytes   []byte
+		localVarHttpMethod = strings.ToUpper("Get")
+		localVarPostBody   interface{}
+		localVarFileName   string
+		localVarFileBytes  []byte
 		localVarReturnValue string
 	)
 
@@ -1390,27 +1403,27 @@ func (a *K8sfilterApiService) ReadK8sfilterPortsUuidByID(ctx context.Context, na
 
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
 		return localVarReturnValue, localVarHttpResponse, err
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
 		newErr := GenericSwaggerError{
-			body:  localVarBody,
+			body: localVarBody,
 			error: localVarHttpResponse.Status,
 		}
-
+		
 		if localVarHttpResponse.StatusCode == 200 {
 			var v string
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
+				if err != nil {
+					newErr.error = err.Error()
+					return localVarReturnValue, localVarHttpResponse, newErr
+				}
+				newErr.model = v
 				return localVarReturnValue, localVarHttpResponse, newErr
-			}
-			newErr.model = v
-			return localVarReturnValue, localVarHttpResponse, newErr
 		}
-
+		
 		return localVarReturnValue, localVarHttpResponse, newErr
 	}
 
@@ -1418,19 +1431,19 @@ func (a *K8sfilterApiService) ReadK8sfilterPortsUuidByID(ctx context.Context, na
 }
 
 /*
- K8sfilterApiService Read service-name by ID
- Read operation of resource: service-name
-  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-  * @param name ID of name
+K8sfilterApiService Read service-name by ID
+Read operation of resource: service-name
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param name ID of name
 
- @return string
+@return string
 */
 func (a *K8sfilterApiService) ReadK8sfilterServiceNameByID(ctx context.Context, name string) (string, *http.Response, error) {
 	var (
-		localVarHttpMethod  = strings.ToUpper("Get")
-		localVarPostBody    interface{}
-		localVarFileName    string
-		localVarFileBytes   []byte
+		localVarHttpMethod = strings.ToUpper("Get")
+		localVarPostBody   interface{}
+		localVarFileName   string
+		localVarFileBytes  []byte
 		localVarReturnValue string
 	)
 
@@ -1477,27 +1490,27 @@ func (a *K8sfilterApiService) ReadK8sfilterServiceNameByID(ctx context.Context, 
 
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
 		return localVarReturnValue, localVarHttpResponse, err
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
 		newErr := GenericSwaggerError{
-			body:  localVarBody,
+			body: localVarBody,
 			error: localVarHttpResponse.Status,
 		}
-
+		
 		if localVarHttpResponse.StatusCode == 200 {
 			var v string
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
+				if err != nil {
+					newErr.error = err.Error()
+					return localVarReturnValue, localVarHttpResponse, newErr
+				}
+				newErr.model = v
 				return localVarReturnValue, localVarHttpResponse, newErr
-			}
-			newErr.model = v
-			return localVarReturnValue, localVarHttpResponse, newErr
 		}
-
+		
 		return localVarReturnValue, localVarHttpResponse, newErr
 	}
 
@@ -1505,19 +1518,19 @@ func (a *K8sfilterApiService) ReadK8sfilterServiceNameByID(ctx context.Context, 
 }
 
 /*
- K8sfilterApiService Read shadow by ID
- Read operation of resource: shadow
-  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-  * @param name ID of name
+K8sfilterApiService Read shadow by ID
+Read operation of resource: shadow
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param name ID of name
 
- @return bool
+@return bool
 */
 func (a *K8sfilterApiService) ReadK8sfilterShadowByID(ctx context.Context, name string) (bool, *http.Response, error) {
 	var (
-		localVarHttpMethod  = strings.ToUpper("Get")
-		localVarPostBody    interface{}
-		localVarFileName    string
-		localVarFileBytes   []byte
+		localVarHttpMethod = strings.ToUpper("Get")
+		localVarPostBody   interface{}
+		localVarFileName   string
+		localVarFileBytes  []byte
 		localVarReturnValue bool
 	)
 
@@ -1564,27 +1577,27 @@ func (a *K8sfilterApiService) ReadK8sfilterShadowByID(ctx context.Context, name 
 
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
 		return localVarReturnValue, localVarHttpResponse, err
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
 		newErr := GenericSwaggerError{
-			body:  localVarBody,
+			body: localVarBody,
 			error: localVarHttpResponse.Status,
 		}
-
+		
 		if localVarHttpResponse.StatusCode == 200 {
 			var v bool
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
+				if err != nil {
+					newErr.error = err.Error()
+					return localVarReturnValue, localVarHttpResponse, newErr
+				}
+				newErr.model = v
 				return localVarReturnValue, localVarHttpResponse, newErr
-			}
-			newErr.model = v
-			return localVarReturnValue, localVarHttpResponse, newErr
 		}
-
+		
 		return localVarReturnValue, localVarHttpResponse, newErr
 	}
 
@@ -1592,19 +1605,19 @@ func (a *K8sfilterApiService) ReadK8sfilterShadowByID(ctx context.Context, name 
 }
 
 /*
- K8sfilterApiService Read span by ID
- Read operation of resource: span
-  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-  * @param name ID of name
+K8sfilterApiService Read span by ID
+Read operation of resource: span
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param name ID of name
 
- @return bool
+@return bool
 */
 func (a *K8sfilterApiService) ReadK8sfilterSpanByID(ctx context.Context, name string) (bool, *http.Response, error) {
 	var (
-		localVarHttpMethod  = strings.ToUpper("Get")
-		localVarPostBody    interface{}
-		localVarFileName    string
-		localVarFileBytes   []byte
+		localVarHttpMethod = strings.ToUpper("Get")
+		localVarPostBody   interface{}
+		localVarFileName   string
+		localVarFileBytes  []byte
 		localVarReturnValue bool
 	)
 
@@ -1651,27 +1664,27 @@ func (a *K8sfilterApiService) ReadK8sfilterSpanByID(ctx context.Context, name st
 
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
 		return localVarReturnValue, localVarHttpResponse, err
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
 		newErr := GenericSwaggerError{
-			body:  localVarBody,
+			body: localVarBody,
 			error: localVarHttpResponse.Status,
 		}
-
+		
 		if localVarHttpResponse.StatusCode == 200 {
 			var v bool
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
+				if err != nil {
+					newErr.error = err.Error()
+					return localVarReturnValue, localVarHttpResponse, newErr
+				}
+				newErr.model = v
 				return localVarReturnValue, localVarHttpResponse, newErr
-			}
-			newErr.model = v
-			return localVarReturnValue, localVarHttpResponse, newErr
 		}
-
+		
 		return localVarReturnValue, localVarHttpResponse, newErr
 	}
 
@@ -1679,19 +1692,19 @@ func (a *K8sfilterApiService) ReadK8sfilterSpanByID(ctx context.Context, name st
 }
 
 /*
- K8sfilterApiService Read start-morpheus by ID
- Read operation of resource: start-morpheus
-  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-  * @param name ID of name
+K8sfilterApiService Read start-morpheus by ID
+Read operation of resource: start-morpheus
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param name ID of name
 
- @return bool
+@return bool
 */
 func (a *K8sfilterApiService) ReadK8sfilterStartMorpheusByID(ctx context.Context, name string) (bool, *http.Response, error) {
 	var (
-		localVarHttpMethod  = strings.ToUpper("Get")
-		localVarPostBody    interface{}
-		localVarFileName    string
-		localVarFileBytes   []byte
+		localVarHttpMethod = strings.ToUpper("Get")
+		localVarPostBody   interface{}
+		localVarFileName   string
+		localVarFileBytes  []byte
 		localVarReturnValue bool
 	)
 
@@ -1738,27 +1751,27 @@ func (a *K8sfilterApiService) ReadK8sfilterStartMorpheusByID(ctx context.Context
 
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
 		return localVarReturnValue, localVarHttpResponse, err
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
 		newErr := GenericSwaggerError{
-			body:  localVarBody,
+			body: localVarBody,
 			error: localVarHttpResponse.Status,
 		}
-
+		
 		if localVarHttpResponse.StatusCode == 200 {
 			var v bool
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
+				if err != nil {
+					newErr.error = err.Error()
+					return localVarReturnValue, localVarHttpResponse, newErr
+				}
+				newErr.model = v
 				return localVarReturnValue, localVarHttpResponse, newErr
-			}
-			newErr.model = v
-			return localVarReturnValue, localVarHttpResponse, newErr
 		}
-
+		
 		return localVarReturnValue, localVarHttpResponse, newErr
 	}
 
@@ -1766,19 +1779,19 @@ func (a *K8sfilterApiService) ReadK8sfilterStartMorpheusByID(ctx context.Context
 }
 
 /*
- K8sfilterApiService Read type by ID
- Read operation of resource: type
-  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-  * @param name ID of name
+K8sfilterApiService Read type by ID
+Read operation of resource: type
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param name ID of name
 
- @return string
+@return string
 */
 func (a *K8sfilterApiService) ReadK8sfilterTypeByID(ctx context.Context, name string) (string, *http.Response, error) {
 	var (
-		localVarHttpMethod  = strings.ToUpper("Get")
-		localVarPostBody    interface{}
-		localVarFileName    string
-		localVarFileBytes   []byte
+		localVarHttpMethod = strings.ToUpper("Get")
+		localVarPostBody   interface{}
+		localVarFileName   string
+		localVarFileBytes  []byte
 		localVarReturnValue string
 	)
 
@@ -1825,27 +1838,27 @@ func (a *K8sfilterApiService) ReadK8sfilterTypeByID(ctx context.Context, name st
 
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
 		return localVarReturnValue, localVarHttpResponse, err
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
 		newErr := GenericSwaggerError{
-			body:  localVarBody,
+			body: localVarBody,
 			error: localVarHttpResponse.Status,
 		}
-
+		
 		if localVarHttpResponse.StatusCode == 200 {
 			var v string
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
+				if err != nil {
+					newErr.error = err.Error()
+					return localVarReturnValue, localVarHttpResponse, newErr
+				}
+				newErr.model = v
 				return localVarReturnValue, localVarHttpResponse, newErr
-			}
-			newErr.model = v
-			return localVarReturnValue, localVarHttpResponse, newErr
 		}
-
+		
 		return localVarReturnValue, localVarHttpResponse, newErr
 	}
 
@@ -1853,19 +1866,19 @@ func (a *K8sfilterApiService) ReadK8sfilterTypeByID(ctx context.Context, name st
 }
 
 /*
- K8sfilterApiService Read uuid by ID
- Read operation of resource: uuid
-  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-  * @param name ID of name
+K8sfilterApiService Read uuid by ID
+Read operation of resource: uuid
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param name ID of name
 
- @return string
+@return string
 */
 func (a *K8sfilterApiService) ReadK8sfilterUuidByID(ctx context.Context, name string) (string, *http.Response, error) {
 	var (
-		localVarHttpMethod  = strings.ToUpper("Get")
-		localVarPostBody    interface{}
-		localVarFileName    string
-		localVarFileBytes   []byte
+		localVarHttpMethod = strings.ToUpper("Get")
+		localVarPostBody   interface{}
+		localVarFileName   string
+		localVarFileBytes  []byte
 		localVarReturnValue string
 	)
 
@@ -1912,27 +1925,27 @@ func (a *K8sfilterApiService) ReadK8sfilterUuidByID(ctx context.Context, name st
 
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
 		return localVarReturnValue, localVarHttpResponse, err
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
 		newErr := GenericSwaggerError{
-			body:  localVarBody,
+			body: localVarBody,
 			error: localVarHttpResponse.Status,
 		}
-
+		
 		if localVarHttpResponse.StatusCode == 200 {
 			var v string
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"));
+				if err != nil {
+					newErr.error = err.Error()
+					return localVarReturnValue, localVarHttpResponse, newErr
+				}
+				newErr.model = v
 				return localVarReturnValue, localVarHttpResponse, newErr
-			}
-			newErr.model = v
-			return localVarReturnValue, localVarHttpResponse, newErr
 		}
-
+		
 		return localVarReturnValue, localVarHttpResponse, newErr
 	}
 
@@ -1940,11 +1953,11 @@ func (a *K8sfilterApiService) ReadK8sfilterUuidByID(ctx context.Context, name st
 }
 
 /*
- K8sfilterApiService Replace k8sfilter by ID
- Replace operation of resource: k8sfilter
-  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-  * @param name ID of name
-  * @param k8sfilter k8sfilterbody object
+K8sfilterApiService Replace k8sfilter by ID
+Replace operation of resource: k8sfilter
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param name ID of name
+ * @param k8sfilter k8sfilterbody object
 
 
 */
@@ -1954,6 +1967,7 @@ func (a *K8sfilterApiService) ReplaceK8sfilterByID(ctx context.Context, name str
 		localVarPostBody   interface{}
 		localVarFileName   string
 		localVarFileBytes  []byte
+		
 	)
 
 	// create path and map variables
@@ -1999,12 +2013,13 @@ func (a *K8sfilterApiService) ReplaceK8sfilterByID(ctx context.Context, name str
 		return localVarHttpResponse, err
 	}
 
+
 	if localVarHttpResponse.StatusCode >= 300 {
 		newErr := GenericSwaggerError{
-			body:  localVarBody,
+			body: localVarBody,
 			error: localVarHttpResponse.Status,
 		}
-
+		
 		return localVarHttpResponse, newErr
 	}
 
@@ -2012,12 +2027,12 @@ func (a *K8sfilterApiService) ReplaceK8sfilterByID(ctx context.Context, name str
 }
 
 /*
- K8sfilterApiService Replace ports by ID
- Replace operation of resource: ports
-  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-  * @param name ID of name
-  * @param portsName ID of ports_name
-  * @param ports portsbody object
+K8sfilterApiService Replace ports by ID
+Replace operation of resource: ports
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param name ID of name
+ * @param portsName ID of ports_name
+ * @param ports portsbody object
 
 
 */
@@ -2027,6 +2042,7 @@ func (a *K8sfilterApiService) ReplaceK8sfilterPortsByID(ctx context.Context, nam
 		localVarPostBody   interface{}
 		localVarFileName   string
 		localVarFileBytes  []byte
+		
 	)
 
 	// create path and map variables
@@ -2073,12 +2089,13 @@ func (a *K8sfilterApiService) ReplaceK8sfilterPortsByID(ctx context.Context, nam
 		return localVarHttpResponse, err
 	}
 
+
 	if localVarHttpResponse.StatusCode >= 300 {
 		newErr := GenericSwaggerError{
-			body:  localVarBody,
+			body: localVarBody,
 			error: localVarHttpResponse.Status,
 		}
-
+		
 		return localVarHttpResponse, newErr
 	}
 
@@ -2086,11 +2103,11 @@ func (a *K8sfilterApiService) ReplaceK8sfilterPortsByID(ctx context.Context, nam
 }
 
 /*
- K8sfilterApiService Replace ports by ID
- Replace operation of resource: ports
-  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-  * @param name ID of name
-  * @param ports portsbody object
+K8sfilterApiService Replace ports by ID
+Replace operation of resource: ports
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param name ID of name
+ * @param ports portsbody object
 
 
 */
@@ -2100,6 +2117,7 @@ func (a *K8sfilterApiService) ReplaceK8sfilterPortsListByID(ctx context.Context,
 		localVarPostBody   interface{}
 		localVarFileName   string
 		localVarFileBytes  []byte
+		
 	)
 
 	// create path and map variables
@@ -2145,12 +2163,13 @@ func (a *K8sfilterApiService) ReplaceK8sfilterPortsListByID(ctx context.Context,
 		return localVarHttpResponse, err
 	}
 
+
 	if localVarHttpResponse.StatusCode >= 300 {
 		newErr := GenericSwaggerError{
-			body:  localVarBody,
+			body: localVarBody,
 			error: localVarHttpResponse.Status,
 		}
-
+		
 		return localVarHttpResponse, newErr
 	}
 
@@ -2158,11 +2177,11 @@ func (a *K8sfilterApiService) ReplaceK8sfilterPortsListByID(ctx context.Context,
 }
 
 /*
- K8sfilterApiService Update k8sfilter by ID
- Update operation of resource: k8sfilter
-  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-  * @param name ID of name
-  * @param k8sfilter k8sfilterbody object
+K8sfilterApiService Update k8sfilter by ID
+Update operation of resource: k8sfilter
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param name ID of name
+ * @param k8sfilter k8sfilterbody object
 
 
 */
@@ -2172,6 +2191,7 @@ func (a *K8sfilterApiService) UpdateK8sfilterByID(ctx context.Context, name stri
 		localVarPostBody   interface{}
 		localVarFileName   string
 		localVarFileBytes  []byte
+		
 	)
 
 	// create path and map variables
@@ -2217,12 +2237,13 @@ func (a *K8sfilterApiService) UpdateK8sfilterByID(ctx context.Context, name stri
 		return localVarHttpResponse, err
 	}
 
+
 	if localVarHttpResponse.StatusCode >= 300 {
 		newErr := GenericSwaggerError{
-			body:  localVarBody,
+			body: localVarBody,
 			error: localVarHttpResponse.Status,
 		}
-
+		
 		return localVarHttpResponse, newErr
 	}
 
@@ -2230,10 +2251,10 @@ func (a *K8sfilterApiService) UpdateK8sfilterByID(ctx context.Context, name stri
 }
 
 /*
- K8sfilterApiService Update k8sfilter by ID
- Update operation of resource: k8sfilter
-  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-  * @param k8sfilter k8sfilterbody object
+K8sfilterApiService Update k8sfilter by ID
+Update operation of resource: k8sfilter
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param k8sfilter k8sfilterbody object
 
 
 */
@@ -2243,6 +2264,7 @@ func (a *K8sfilterApiService) UpdateK8sfilterListByID(ctx context.Context, k8sfi
 		localVarPostBody   interface{}
 		localVarFileName   string
 		localVarFileBytes  []byte
+		
 	)
 
 	// create path and map variables
@@ -2287,12 +2309,13 @@ func (a *K8sfilterApiService) UpdateK8sfilterListByID(ctx context.Context, k8sfi
 		return localVarHttpResponse, err
 	}
 
+
 	if localVarHttpResponse.StatusCode >= 300 {
 		newErr := GenericSwaggerError{
-			body:  localVarBody,
+			body: localVarBody,
 			error: localVarHttpResponse.Status,
 		}
-
+		
 		return localVarHttpResponse, newErr
 	}
 
@@ -2300,11 +2323,11 @@ func (a *K8sfilterApiService) UpdateK8sfilterListByID(ctx context.Context, k8sfi
 }
 
 /*
- K8sfilterApiService Update loglevel by ID
- Update operation of resource: loglevel
-  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-  * @param name ID of name
-  * @param loglevel Logging level of a cube, from none (OFF) to the most verbose (TRACE)
+K8sfilterApiService Update loglevel by ID
+Update operation of resource: loglevel
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param name ID of name
+ * @param loglevel Logging level of a cube, from none (OFF) to the most verbose (TRACE)
 
 
 */
@@ -2314,6 +2337,7 @@ func (a *K8sfilterApiService) UpdateK8sfilterLoglevelByID(ctx context.Context, n
 		localVarPostBody   interface{}
 		localVarFileName   string
 		localVarFileBytes  []byte
+		
 	)
 
 	// create path and map variables
@@ -2359,12 +2383,13 @@ func (a *K8sfilterApiService) UpdateK8sfilterLoglevelByID(ctx context.Context, n
 		return localVarHttpResponse, err
 	}
 
+
 	if localVarHttpResponse.StatusCode >= 300 {
 		newErr := GenericSwaggerError{
-			body:  localVarBody,
+			body: localVarBody,
 			error: localVarHttpResponse.Status,
 		}
-
+		
 		return localVarHttpResponse, newErr
 	}
 
@@ -2372,11 +2397,11 @@ func (a *K8sfilterApiService) UpdateK8sfilterLoglevelByID(ctx context.Context, n
 }
 
 /*
- K8sfilterApiService Update nodeport-range by ID
- Update operation of resource: nodeport-range
-  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-  * @param name ID of name
-  * @param nodeportRange Port range used for NodePort services
+K8sfilterApiService Update nodeport-range by ID
+Update operation of resource: nodeport-range
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param name ID of name
+ * @param nodeportRange Port range used for NodePort services
 
 
 */
@@ -2386,6 +2411,7 @@ func (a *K8sfilterApiService) UpdateK8sfilterNodeportRangeByID(ctx context.Conte
 		localVarPostBody   interface{}
 		localVarFileName   string
 		localVarFileBytes  []byte
+		
 	)
 
 	// create path and map variables
@@ -2431,12 +2457,13 @@ func (a *K8sfilterApiService) UpdateK8sfilterNodeportRangeByID(ctx context.Conte
 		return localVarHttpResponse, err
 	}
 
+
 	if localVarHttpResponse.StatusCode >= 300 {
 		newErr := GenericSwaggerError{
-			body:  localVarBody,
+			body: localVarBody,
 			error: localVarHttpResponse.Status,
 		}
-
+		
 		return localVarHttpResponse, newErr
 	}
 
@@ -2444,12 +2471,12 @@ func (a *K8sfilterApiService) UpdateK8sfilterNodeportRangeByID(ctx context.Conte
 }
 
 /*
- K8sfilterApiService Update ports by ID
- Update operation of resource: ports
-  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-  * @param name ID of name
-  * @param portsName ID of ports_name
-  * @param ports portsbody object
+K8sfilterApiService Update ports by ID
+Update operation of resource: ports
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param name ID of name
+ * @param portsName ID of ports_name
+ * @param ports portsbody object
 
 
 */
@@ -2459,6 +2486,7 @@ func (a *K8sfilterApiService) UpdateK8sfilterPortsByID(ctx context.Context, name
 		localVarPostBody   interface{}
 		localVarFileName   string
 		localVarFileBytes  []byte
+		
 	)
 
 	// create path and map variables
@@ -2505,12 +2533,13 @@ func (a *K8sfilterApiService) UpdateK8sfilterPortsByID(ctx context.Context, name
 		return localVarHttpResponse, err
 	}
 
+
 	if localVarHttpResponse.StatusCode >= 300 {
 		newErr := GenericSwaggerError{
-			body:  localVarBody,
+			body: localVarBody,
 			error: localVarHttpResponse.Status,
 		}
-
+		
 		return localVarHttpResponse, newErr
 	}
 
@@ -2518,11 +2547,11 @@ func (a *K8sfilterApiService) UpdateK8sfilterPortsByID(ctx context.Context, name
 }
 
 /*
- K8sfilterApiService Update ports by ID
- Update operation of resource: ports
-  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-  * @param name ID of name
-  * @param ports portsbody object
+K8sfilterApiService Update ports by ID
+Update operation of resource: ports
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param name ID of name
+ * @param ports portsbody object
 
 
 */
@@ -2532,6 +2561,7 @@ func (a *K8sfilterApiService) UpdateK8sfilterPortsListByID(ctx context.Context, 
 		localVarPostBody   interface{}
 		localVarFileName   string
 		localVarFileBytes  []byte
+		
 	)
 
 	// create path and map variables
@@ -2577,12 +2607,13 @@ func (a *K8sfilterApiService) UpdateK8sfilterPortsListByID(ctx context.Context, 
 		return localVarHttpResponse, err
 	}
 
+
 	if localVarHttpResponse.StatusCode >= 300 {
 		newErr := GenericSwaggerError{
-			body:  localVarBody,
+			body: localVarBody,
 			error: localVarHttpResponse.Status,
 		}
-
+		
 		return localVarHttpResponse, newErr
 	}
 
@@ -2590,12 +2621,12 @@ func (a *K8sfilterApiService) UpdateK8sfilterPortsListByID(ctx context.Context, 
 }
 
 /*
- K8sfilterApiService Update peer by ID
- Update operation of resource: peer
-  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-  * @param name ID of name
-  * @param portsName ID of ports_name
-  * @param peer Peer name, such as a network interfaces (e.g., &#39;veth0&#39;) or another cube (e.g., &#39;br1:port2&#39;)
+K8sfilterApiService Update peer by ID
+Update operation of resource: peer
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param name ID of name
+ * @param portsName ID of ports_name
+ * @param peer Peer name, such as a network interfaces (e.g., &#39;veth0&#39;) or another cube (e.g., &#39;br1:port2&#39;)
 
 
 */
@@ -2605,6 +2636,7 @@ func (a *K8sfilterApiService) UpdateK8sfilterPortsPeerByID(ctx context.Context, 
 		localVarPostBody   interface{}
 		localVarFileName   string
 		localVarFileBytes  []byte
+		
 	)
 
 	// create path and map variables
@@ -2651,12 +2683,13 @@ func (a *K8sfilterApiService) UpdateK8sfilterPortsPeerByID(ctx context.Context, 
 		return localVarHttpResponse, err
 	}
 
+
 	if localVarHttpResponse.StatusCode >= 300 {
 		newErr := GenericSwaggerError{
-			body:  localVarBody,
+			body: localVarBody,
 			error: localVarHttpResponse.Status,
 		}
-
+		
 		return localVarHttpResponse, newErr
 	}
 
@@ -2664,11 +2697,11 @@ func (a *K8sfilterApiService) UpdateK8sfilterPortsPeerByID(ctx context.Context, 
 }
 
 /*
- K8sfilterApiService Update span by ID
- Update operation of resource: span
-  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-  * @param name ID of name
-  * @param span Defines if all traffic is sent to Linux
+K8sfilterApiService Update span by ID
+Update operation of resource: span
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param name ID of name
+ * @param span Defines if all traffic is sent to Linux
 
 
 */
@@ -2678,6 +2711,7 @@ func (a *K8sfilterApiService) UpdateK8sfilterSpanByID(ctx context.Context, name 
 		localVarPostBody   interface{}
 		localVarFileName   string
 		localVarFileBytes  []byte
+		
 	)
 
 	// create path and map variables
@@ -2723,12 +2757,13 @@ func (a *K8sfilterApiService) UpdateK8sfilterSpanByID(ctx context.Context, name 
 		return localVarHttpResponse, err
 	}
 
+
 	if localVarHttpResponse.StatusCode >= 300 {
 		newErr := GenericSwaggerError{
-			body:  localVarBody,
+			body: localVarBody,
 			error: localVarHttpResponse.Status,
 		}
-
+		
 		return localVarHttpResponse, newErr
 	}
 
@@ -2736,11 +2771,11 @@ func (a *K8sfilterApiService) UpdateK8sfilterSpanByID(ctx context.Context, name 
 }
 
 /*
- K8sfilterApiService Update start-morpheus by ID
- Update operation of resource: start-morpheus
-  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-  * @param name ID of name
-  * @param startMorpheus Set this flag if you want to start Morpheus compiler
+K8sfilterApiService Update start-morpheus by ID
+Update operation of resource: start-morpheus
+ * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param name ID of name
+ * @param startMorpheus Set this flag if you want to start Morpheus compiler
 
 
 */
@@ -2750,6 +2785,7 @@ func (a *K8sfilterApiService) UpdateK8sfilterStartMorpheusByID(ctx context.Conte
 		localVarPostBody   interface{}
 		localVarFileName   string
 		localVarFileBytes  []byte
+		
 	)
 
 	// create path and map variables
@@ -2795,14 +2831,16 @@ func (a *K8sfilterApiService) UpdateK8sfilterStartMorpheusByID(ctx context.Conte
 		return localVarHttpResponse, err
 	}
 
+
 	if localVarHttpResponse.StatusCode >= 300 {
 		newErr := GenericSwaggerError{
-			body:  localVarBody,
+			body: localVarBody,
 			error: localVarHttpResponse.Status,
 		}
-
+		
 		return localVarHttpResponse, newErr
 	}
 
 	return localVarHttpResponse, nil
 }
+

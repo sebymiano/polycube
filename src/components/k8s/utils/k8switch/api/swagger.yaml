@@ -1,0 +1,3708 @@
+---
+swagger: "2.0"
+info:
+  description: "k8switch API generated from k8switch.yang"
+  version: "1.0.0"
+  title: "k8switch API"
+  x-yang-path: "/home/smiano/dev/polycube-morpheus/src/services/pcn-k8switch/datamodel/k8switch.yang"
+host: "localhost:8080"
+basePath: "/"
+tags:
+- name: "k8switch"
+schemes:
+- "http"
+paths:
+  /k8switch/{name}/:
+    get:
+      tags:
+      - "k8switch"
+      summary: "Read k8switch by ID"
+      description: "Read operation of resource: k8switch"
+      operationId: "readK8switchByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      responses:
+        "200":
+          description: "OK: Successful operation"
+          schema:
+            $ref: "#/definitions/K8switch"
+        "400":
+          description: "Bad request"
+        "404":
+          description: "Not found"
+        "405":
+          description: "Method not allowed: Use POST to invoke operations"
+    post:
+      tags:
+      - "k8switch"
+      summary: "Create k8switch by ID"
+      description: "Create operation of resource: k8switch"
+      operationId: "createK8switchByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      - in: "body"
+        name: "k8switch"
+        description: "k8switchbody object"
+        required: true
+        schema:
+          $ref: "#/definitions/K8switch"
+        x-exportParamName: "K8switch"
+      responses:
+        "201":
+          description: "Created: Successful operation"
+        "403":
+          description: "Forbidden: User not authorized"
+        "404":
+          description: "Not found: Resource not created"
+        "409":
+          description: "Conflict: Resource not created"
+      x-has-default-impl: true
+    put:
+      tags:
+      - "k8switch"
+      summary: "Replace k8switch by ID"
+      description: "Replace operation of resource: k8switch"
+      operationId: "replaceK8switchByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      - in: "body"
+        name: "k8switch"
+        description: "k8switchbody object"
+        required: true
+        schema:
+          $ref: "#/definitions/K8switch"
+        x-exportParamName: "K8switch"
+      responses:
+        "201":
+          description: "OK: Resource replaced successfully"
+        "204":
+          description: "No content: Resource modified successfully"
+        "400":
+          description: "Bad request: resource not replaced"
+        "404":
+          description: "Resource not found"
+      x-has-default-impl: true
+    delete:
+      tags:
+      - "k8switch"
+      summary: "Delete k8switch by ID"
+      description: "Delete operation of resource: k8switch"
+      operationId: "deleteK8switchByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      responses:
+        "204":
+          description: "No content: Resource deleted"
+        "403":
+          description: "Forbidden: User not authorized"
+        "404":
+          description: "Resource not found"
+      x-has-default-impl: true
+    patch:
+      tags:
+      - "k8switch"
+      summary: "Update k8switch by ID"
+      description: "Update operation of resource: k8switch"
+      operationId: "updateK8switchByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      - in: "body"
+        name: "k8switch"
+        description: "k8switchbody object"
+        required: true
+        schema:
+          $ref: "#/definitions/K8switch"
+        x-exportParamName: "K8switch"
+      responses:
+        "200":
+          description: "OK: Successful update"
+        "204":
+          description: "No content: Successful update"
+        "403":
+          description: "Forbidden: User not authorized"
+        "404":
+          description: "Not found: Resource not found"
+  /k8switch/:
+    get:
+      tags:
+      - "k8switch"
+      summary: "Read k8switch by ID"
+      description: "Read operation of resource: k8switch"
+      operationId: "readK8switchListByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        "200":
+          description: "OK: Successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/K8switch"
+        "400":
+          description: "Bad request"
+        "404":
+          description: "Not found"
+        "405":
+          description: "Method not allowed: Use POST to invoke operations"
+      x-has-default-impl: true
+    patch:
+      tags:
+      - "k8switch"
+      summary: "Update k8switch by ID"
+      description: "Update operation of resource: k8switch"
+      operationId: "updateK8switchListByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "k8switch"
+        description: "k8switchbody object"
+        required: true
+        schema:
+          type: "array"
+          items:
+            $ref: "#/definitions/K8switch"
+        x-exportParamName: "K8switch"
+      responses:
+        "200":
+          description: "OK: Successful update"
+        "204":
+          description: "No content: Successful update"
+        "403":
+          description: "Forbidden: User not authorized"
+        "404":
+          description: "Not found: Resource not found"
+  /k8switch/{name}/uuid/:
+    get:
+      tags:
+      - "k8switch"
+      summary: "Read uuid by ID"
+      description: "Read operation of resource: uuid"
+      operationId: "readK8switchUuidByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      responses:
+        "200":
+          description: "OK: Successful operation"
+          schema:
+            type: "string"
+            format: "[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}"
+            description: "UUID of the Cube"
+        "400":
+          description: "Bad request"
+        "404":
+          description: "Not found"
+        "405":
+          description: "Method not allowed: Use POST to invoke operations"
+      x-is-base-datamodel: true
+  /k8switch/{name}/type/:
+    get:
+      tags:
+      - "k8switch"
+      summary: "Read type by ID"
+      description: "Read operation of resource: type"
+      operationId: "readK8switchTypeByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      responses:
+        "200":
+          description: "OK: Successful operation"
+          schema:
+            type: "string"
+            description: "Type of the Cube (TC, XDP_SKB, XDP_DRV)"
+            example: "TC"
+            enum:
+            - "TC"
+            - "XDP_SKB"
+            - "XDP_DRV"
+            default: "TC"
+          x-is-enum: "true"
+        "400":
+          description: "Bad request"
+        "404":
+          description: "Not found"
+        "405":
+          description: "Method not allowed: Use POST to invoke operations"
+      x-is-base-datamodel: true
+  /k8switch/{name}/service-name/:
+    get:
+      tags:
+      - "k8switch"
+      summary: "Read service-name by ID"
+      description: "Read operation of resource: service-name"
+      operationId: "readK8switchServiceNameByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      responses:
+        "200":
+          description: "OK: Successful operation"
+          schema:
+            type: "string"
+            example: "helloworld"
+        "400":
+          description: "Bad request"
+        "404":
+          description: "Not found"
+        "405":
+          description: "Method not allowed: Use POST to invoke operations"
+      x-is-base-datamodel: true
+  /k8switch/{name}/loglevel/:
+    get:
+      tags:
+      - "k8switch"
+      summary: "Read loglevel by ID"
+      description: "Read operation of resource: loglevel"
+      operationId: "readK8switchLoglevelByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      responses:
+        "200":
+          description: "OK: Successful operation"
+          schema:
+            type: "string"
+            description: "Logging level of a cube, from none (OFF) to the most verbose\
+              \ (TRACE)"
+            example: "INFO"
+            enum:
+            - "TRACE"
+            - "DEBUG"
+            - "INFO"
+            - "WARN"
+            - "ERR"
+            - "CRITICAL"
+            - "OFF"
+            default: "INFO"
+          x-is-enum: "true"
+        "400":
+          description: "Bad request"
+        "404":
+          description: "Not found"
+        "405":
+          description: "Method not allowed: Use POST to invoke operations"
+      x-is-base-datamodel: true
+    patch:
+      tags:
+      - "k8switch"
+      summary: "Update loglevel by ID"
+      description: "Update operation of resource: loglevel"
+      operationId: "updateK8switchLoglevelByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      - in: "body"
+        name: "loglevel"
+        description: "Logging level of a cube, from none (OFF) to the most verbose\
+          \ (TRACE)"
+        required: true
+        schema:
+          type: "string"
+          description: "Logging level of a cube, from none (OFF) to the most verbose\
+            \ (TRACE)"
+          example: "INFO"
+          enum:
+          - "TRACE"
+          - "DEBUG"
+          - "INFO"
+          - "WARN"
+          - "ERR"
+          - "CRITICAL"
+          - "OFF"
+          default: "INFO"
+        x-is-enum: "true"
+        x-exportParamName: "Loglevel"
+      responses:
+        "200":
+          description: "OK: Successful update"
+        "204":
+          description: "No content: Successful update"
+        "403":
+          description: "Forbidden: User not authorized"
+        "404":
+          description: "Not found: Resource not found"
+      x-is-base-datamodel: true
+  /k8switch/{name}/dyn-opt/:
+    get:
+      tags:
+      - "k8switch"
+      summary: "Read dyn-opt by ID"
+      description: "Read operation of resource: dyn-opt"
+      operationId: "readK8switchDynOptByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      responses:
+        "200":
+          description: "OK: Successful operation"
+          schema:
+            type: "boolean"
+            description: "Defines if the service should be automatically optimized\
+              \ by Morpheus"
+            default: "false"
+        "400":
+          description: "Bad request"
+        "404":
+          description: "Not found"
+        "405":
+          description: "Method not allowed: Use POST to invoke operations"
+  /k8switch/{name}/start-morpheus/:
+    get:
+      tags:
+      - "k8switch"
+      summary: "Read start-morpheus by ID"
+      description: "Read operation of resource: start-morpheus"
+      operationId: "readK8switchStartMorpheusByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      responses:
+        "200":
+          description: "OK: Successful operation"
+          schema:
+            type: "boolean"
+            description: "Set this flag if you want to start Morpheus compiler"
+            default: "false"
+        "400":
+          description: "Bad request"
+        "404":
+          description: "Not found"
+        "405":
+          description: "Method not allowed: Use POST to invoke operations"
+    patch:
+      tags:
+      - "k8switch"
+      summary: "Update start-morpheus by ID"
+      description: "Update operation of resource: start-morpheus"
+      operationId: "updateK8switchStartMorpheusByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      - in: "body"
+        name: "start-morpheus"
+        description: "Set this flag if you want to start Morpheus compiler"
+        required: true
+        schema:
+          type: "boolean"
+          description: "Set this flag if you want to start Morpheus compiler"
+          default: "false"
+        x-exportParamName: "StartMorpheus"
+      responses:
+        "200":
+          description: "OK: Successful update"
+        "204":
+          description: "No content: Successful update"
+        "403":
+          description: "Forbidden: User not authorized"
+        "404":
+          description: "Not found: Resource not found"
+  /k8switch/{name}/ports/{ports_name}/:
+    get:
+      tags:
+      - "k8switch"
+      summary: "Read ports by ID"
+      description: "Read operation of resource: ports"
+      operationId: "readK8switchPortsByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      - name: "ports_name"
+        in: "path"
+        description: "ID of ports_name"
+        required: true
+        type: "string"
+        x-exportParamName: "PortsName"
+      responses:
+        "200":
+          description: "OK: Successful operation"
+          schema:
+            $ref: "#/definitions/Ports"
+        "400":
+          description: "Bad request"
+        "404":
+          description: "Not found"
+        "405":
+          description: "Method not allowed: Use POST to invoke operations"
+    post:
+      tags:
+      - "k8switch"
+      summary: "Create ports by ID"
+      description: "Create operation of resource: ports"
+      operationId: "createK8switchPortsByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      - name: "ports_name"
+        in: "path"
+        description: "ID of ports_name"
+        required: true
+        type: "string"
+        x-exportParamName: "PortsName"
+      - in: "body"
+        name: "ports"
+        description: "portsbody object"
+        required: true
+        schema:
+          $ref: "#/definitions/Ports"
+        x-exportParamName: "Ports"
+      responses:
+        "201":
+          description: "Created: Successful operation"
+        "403":
+          description: "Forbidden: User not authorized"
+        "404":
+          description: "Not found: Resource not created"
+        "409":
+          description: "Conflict: Resource not created"
+    put:
+      tags:
+      - "k8switch"
+      summary: "Replace ports by ID"
+      description: "Replace operation of resource: ports"
+      operationId: "replaceK8switchPortsByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      - name: "ports_name"
+        in: "path"
+        description: "ID of ports_name"
+        required: true
+        type: "string"
+        x-exportParamName: "PortsName"
+      - in: "body"
+        name: "ports"
+        description: "portsbody object"
+        required: true
+        schema:
+          $ref: "#/definitions/Ports"
+        x-exportParamName: "Ports"
+      responses:
+        "201":
+          description: "OK: Resource replaced successfully"
+        "204":
+          description: "No content: Resource modified successfully"
+        "400":
+          description: "Bad request: resource not replaced"
+        "404":
+          description: "Resource not found"
+    delete:
+      tags:
+      - "k8switch"
+      summary: "Delete ports by ID"
+      description: "Delete operation of resource: ports"
+      operationId: "deleteK8switchPortsByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      - name: "ports_name"
+        in: "path"
+        description: "ID of ports_name"
+        required: true
+        type: "string"
+        x-exportParamName: "PortsName"
+      responses:
+        "204":
+          description: "No content: Resource deleted"
+        "403":
+          description: "Forbidden: User not authorized"
+        "404":
+          description: "Resource not found"
+    patch:
+      tags:
+      - "k8switch"
+      summary: "Update ports by ID"
+      description: "Update operation of resource: ports"
+      operationId: "updateK8switchPortsByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      - name: "ports_name"
+        in: "path"
+        description: "ID of ports_name"
+        required: true
+        type: "string"
+        x-exportParamName: "PortsName"
+      - in: "body"
+        name: "ports"
+        description: "portsbody object"
+        required: true
+        schema:
+          $ref: "#/definitions/Ports"
+        x-exportParamName: "Ports"
+      responses:
+        "200":
+          description: "OK: Successful update"
+        "204":
+          description: "No content: Successful update"
+        "403":
+          description: "Forbidden: User not authorized"
+        "404":
+          description: "Not found: Resource not found"
+  /k8switch/{name}/ports/:
+    get:
+      tags:
+      - "k8switch"
+      summary: "Read ports by ID"
+      description: "Read operation of resource: ports"
+      operationId: "readK8switchPortsListByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      responses:
+        "200":
+          description: "OK: Successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Ports"
+        "400":
+          description: "Bad request"
+        "404":
+          description: "Not found"
+        "405":
+          description: "Method not allowed: Use POST to invoke operations"
+    post:
+      tags:
+      - "k8switch"
+      summary: "Create ports by ID"
+      description: "Create operation of resource: ports"
+      operationId: "createK8switchPortsListByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      - in: "body"
+        name: "ports"
+        description: "portsbody object"
+        required: true
+        schema:
+          type: "array"
+          items:
+            $ref: "#/definitions/Ports"
+        x-exportParamName: "Ports"
+      responses:
+        "201":
+          description: "Created: Successful operation"
+        "403":
+          description: "Forbidden: User not authorized"
+        "404":
+          description: "Not found: Resource not created"
+        "409":
+          description: "Conflict: Resource not created"
+    put:
+      tags:
+      - "k8switch"
+      summary: "Replace ports by ID"
+      description: "Replace operation of resource: ports"
+      operationId: "replaceK8switchPortsListByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      - in: "body"
+        name: "ports"
+        description: "portsbody object"
+        required: true
+        schema:
+          type: "array"
+          items:
+            $ref: "#/definitions/Ports"
+        x-exportParamName: "Ports"
+      responses:
+        "201":
+          description: "OK: Resource replaced successfully"
+        "204":
+          description: "No content: Resource modified successfully"
+        "400":
+          description: "Bad request: resource not replaced"
+        "404":
+          description: "Resource not found"
+    delete:
+      tags:
+      - "k8switch"
+      summary: "Delete ports by ID"
+      description: "Delete operation of resource: ports"
+      operationId: "deleteK8switchPortsListByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      responses:
+        "204":
+          description: "No content: Resource deleted"
+        "403":
+          description: "Forbidden: User not authorized"
+        "404":
+          description: "Resource not found"
+    patch:
+      tags:
+      - "k8switch"
+      summary: "Update ports by ID"
+      description: "Update operation of resource: ports"
+      operationId: "updateK8switchPortsListByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      - in: "body"
+        name: "ports"
+        description: "portsbody object"
+        required: true
+        schema:
+          type: "array"
+          items:
+            $ref: "#/definitions/Ports"
+        x-exportParamName: "Ports"
+      responses:
+        "200":
+          description: "OK: Successful update"
+        "204":
+          description: "No content: Successful update"
+        "403":
+          description: "Forbidden: User not authorized"
+        "404":
+          description: "Not found: Resource not found"
+  /k8switch/{name}/ports/{ports_name}/uuid/:
+    get:
+      tags:
+      - "k8switch"
+      summary: "Read uuid by ID"
+      description: "Read operation of resource: uuid"
+      operationId: "readK8switchPortsUuidByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      - name: "ports_name"
+        in: "path"
+        description: "ID of ports_name"
+        required: true
+        type: "string"
+        x-exportParamName: "PortsName"
+      responses:
+        "200":
+          description: "OK: Successful operation"
+          schema:
+            type: "string"
+            format: "[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}"
+            description: "UUID of the port"
+        "400":
+          description: "Bad request"
+        "404":
+          description: "Not found"
+        "405":
+          description: "Method not allowed: Use POST to invoke operations"
+      x-is-base-datamodel: true
+  /k8switch/{name}/ports/{ports_name}/status/:
+    get:
+      tags:
+      - "k8switch"
+      summary: "Read status by ID"
+      description: "Read operation of resource: status"
+      operationId: "readK8switchPortsStatusByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      - name: "ports_name"
+        in: "path"
+        description: "ID of ports_name"
+        required: true
+        type: "string"
+        x-exportParamName: "PortsName"
+      responses:
+        "200":
+          description: "OK: Successful operation"
+          schema:
+            type: "string"
+            description: "Status of the port (UP or DOWN)"
+            enum:
+            - "UP"
+            - "DOWN"
+          x-is-enum: "true"
+        "400":
+          description: "Bad request"
+        "404":
+          description: "Not found"
+        "405":
+          description: "Method not allowed: Use POST to invoke operations"
+      x-is-base-datamodel: true
+  /k8switch/{name}/ports/{ports_name}/peer/:
+    get:
+      tags:
+      - "k8switch"
+      summary: "Read peer by ID"
+      description: "Read operation of resource: peer"
+      operationId: "readK8switchPortsPeerByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      - name: "ports_name"
+        in: "path"
+        description: "ID of ports_name"
+        required: true
+        type: "string"
+        x-exportParamName: "PortsName"
+      responses:
+        "200":
+          description: "OK: Successful operation"
+          schema:
+            type: "string"
+            description: "Peer name, such as a network interfaces (e.g., 'veth0')\
+              \ or another cube (e.g., 'br1:port2')"
+            example: "r0:port1"
+        "400":
+          description: "Bad request"
+        "404":
+          description: "Not found"
+        "405":
+          description: "Method not allowed: Use POST to invoke operations"
+      x-is-base-datamodel: true
+    patch:
+      tags:
+      - "k8switch"
+      summary: "Update peer by ID"
+      description: "Update operation of resource: peer"
+      operationId: "updateK8switchPortsPeerByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      - name: "ports_name"
+        in: "path"
+        description: "ID of ports_name"
+        required: true
+        type: "string"
+        x-exportParamName: "PortsName"
+      - in: "body"
+        name: "peer"
+        description: "Peer name, such as a network interfaces (e.g., 'veth0') or another\
+          \ cube (e.g., 'br1:port2')"
+        required: true
+        schema:
+          type: "string"
+          description: "Peer name, such as a network interfaces (e.g., 'veth0') or\
+            \ another cube (e.g., 'br1:port2')"
+          example: "r0:port1"
+        x-exportParamName: "Peer"
+      responses:
+        "200":
+          description: "OK: Successful update"
+        "204":
+          description: "No content: Successful update"
+        "403":
+          description: "Forbidden: User not authorized"
+        "404":
+          description: "Not found: Resource not found"
+      x-is-base-datamodel: true
+  /k8switch/{name}/ports/{ports_name}/type/:
+    get:
+      tags:
+      - "k8switch"
+      summary: "Read type by ID"
+      description: "Read operation of resource: type"
+      operationId: "readK8switchPortsTypeByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      - name: "ports_name"
+        in: "path"
+        description: "ID of ports_name"
+        required: true
+        type: "string"
+        x-exportParamName: "PortsName"
+      responses:
+        "200":
+          description: "OK: Successful operation"
+          schema:
+            type: "string"
+            description: "Type of the LB port (e.g. NODEPORT or DEFAULT)"
+            enum:
+            - "DEFAULT"
+            - "NODEPORT"
+            default: "DEFAULT"
+            x-is-required: false
+          x-is-enum: "true"
+        "400":
+          description: "Bad request"
+        "404":
+          description: "Not found"
+        "405":
+          description: "Method not allowed: Use POST to invoke operations"
+  /k8switch/{name}/shadow/:
+    get:
+      tags:
+      - "k8switch"
+      summary: "Read shadow by ID"
+      description: "Read operation of resource: shadow"
+      operationId: "readK8switchShadowByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      responses:
+        "200":
+          description: "OK: Successful operation"
+          schema:
+            type: "boolean"
+            description: "Defines if the service is visible in Linux"
+            default: "false"
+        "400":
+          description: "Bad request"
+        "404":
+          description: "Not found"
+        "405":
+          description: "Method not allowed: Use POST to invoke operations"
+      x-is-base-datamodel: true
+  /k8switch/{name}/span/:
+    get:
+      tags:
+      - "k8switch"
+      summary: "Read span by ID"
+      description: "Read operation of resource: span"
+      operationId: "readK8switchSpanByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      responses:
+        "200":
+          description: "OK: Successful operation"
+          schema:
+            type: "boolean"
+            description: "Defines if all traffic is sent to Linux"
+            default: "false"
+        "400":
+          description: "Bad request"
+        "404":
+          description: "Not found"
+        "405":
+          description: "Method not allowed: Use POST to invoke operations"
+      x-is-base-datamodel: true
+    patch:
+      tags:
+      - "k8switch"
+      summary: "Update span by ID"
+      description: "Update operation of resource: span"
+      operationId: "updateK8switchSpanByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      - in: "body"
+        name: "span"
+        description: "Defines if all traffic is sent to Linux"
+        required: true
+        schema:
+          type: "boolean"
+          description: "Defines if all traffic is sent to Linux"
+          default: "false"
+        x-exportParamName: "Span"
+      responses:
+        "200":
+          description: "OK: Successful update"
+        "204":
+          description: "No content: Successful update"
+        "403":
+          description: "Forbidden: User not authorized"
+        "404":
+          description: "Not found: Resource not found"
+      x-is-base-datamodel: true
+  /k8switch/{name}/cluster-ip-subnet/:
+    get:
+      tags:
+      - "k8switch"
+      summary: "Read cluster-ip-subnet by ID"
+      description: "Read operation of resource: cluster-ip-subnet"
+      operationId: "readK8switchClusterIpSubnetByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      responses:
+        "200":
+          description: "OK: Successful operation"
+          schema:
+            type: "string"
+            format: "(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])/(([0-9])|([1-2][0-9])|(3[0-2]))"
+            description: "Range of VIPs where clusterIP services are exposed"
+            example: "10.96.0.0/12"
+            x-is-required: true
+        "400":
+          description: "Bad request"
+        "404":
+          description: "Not found"
+        "405":
+          description: "Method not allowed: Use POST to invoke operations"
+    patch:
+      tags:
+      - "k8switch"
+      summary: "Update cluster-ip-subnet by ID"
+      description: "Update operation of resource: cluster-ip-subnet"
+      operationId: "updateK8switchClusterIpSubnetByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      - in: "body"
+        name: "cluster-ip-subnet"
+        description: "Range of VIPs where clusterIP services are exposed"
+        required: true
+        schema:
+          type: "string"
+          format: "(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])/(([0-9])|([1-2][0-9])|(3[0-2]))"
+          description: "Range of VIPs where clusterIP services are exposed"
+          example: "10.96.0.0/12"
+          x-is-required: true
+        x-exportParamName: "ClusterIpSubnet"
+      responses:
+        "200":
+          description: "OK: Successful update"
+        "204":
+          description: "No content: Successful update"
+        "403":
+          description: "Forbidden: User not authorized"
+        "404":
+          description: "Not found: Resource not found"
+  /k8switch/{name}/client-subnet/:
+    get:
+      tags:
+      - "k8switch"
+      summary: "Read client-subnet by ID"
+      description: "Read operation of resource: client-subnet"
+      operationId: "readK8switchClientSubnetByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      responses:
+        "200":
+          description: "OK: Successful operation"
+          schema:
+            type: "string"
+            format: "(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])/(([0-9])|([1-2][0-9])|(3[0-2]))"
+            description: "Range of IPs of pods in this node"
+            example: "192.168.1.0/24"
+            x-is-required: true
+        "400":
+          description: "Bad request"
+        "404":
+          description: "Not found"
+        "405":
+          description: "Method not allowed: Use POST to invoke operations"
+    patch:
+      tags:
+      - "k8switch"
+      summary: "Update client-subnet by ID"
+      description: "Update operation of resource: client-subnet"
+      operationId: "updateK8switchClientSubnetByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      - in: "body"
+        name: "client-subnet"
+        description: "Range of IPs of pods in this node"
+        required: true
+        schema:
+          type: "string"
+          format: "(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])/(([0-9])|([1-2][0-9])|(3[0-2]))"
+          description: "Range of IPs of pods in this node"
+          example: "192.168.1.0/24"
+          x-is-required: true
+        x-exportParamName: "ClientSubnet"
+      responses:
+        "200":
+          description: "OK: Successful update"
+        "204":
+          description: "No content: Successful update"
+        "403":
+          description: "Forbidden: User not authorized"
+        "404":
+          description: "Not found: Resource not found"
+  /k8switch/{name}/virtual-client-subnet/:
+    get:
+      tags:
+      - "k8switch"
+      summary: "Read virtual-client-subnet by ID"
+      description: "Read operation of resource: virtual-client-subnet"
+      operationId: "readK8switchVirtualClientSubnetByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      responses:
+        "200":
+          description: "OK: Successful operation"
+          schema:
+            type: "string"
+            format: "(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])/(([0-9])|([1-2][0-9])|(3[0-2]))"
+            description: "Range where client's IPs are mapped into"
+            example: "10.10.1.0/24"
+            x-is-required: true
+        "400":
+          description: "Bad request"
+        "404":
+          description: "Not found"
+        "405":
+          description: "Method not allowed: Use POST to invoke operations"
+    patch:
+      tags:
+      - "k8switch"
+      summary: "Update virtual-client-subnet by ID"
+      description: "Update operation of resource: virtual-client-subnet"
+      operationId: "updateK8switchVirtualClientSubnetByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      - in: "body"
+        name: "virtual-client-subnet"
+        description: "Range where client's IPs are mapped into"
+        required: true
+        schema:
+          type: "string"
+          format: "(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])/(([0-9])|([1-2][0-9])|(3[0-2]))"
+          description: "Range where client's IPs are mapped into"
+          example: "10.10.1.0/24"
+          x-is-required: true
+        x-exportParamName: "VirtualClientSubnet"
+      responses:
+        "200":
+          description: "OK: Successful update"
+        "204":
+          description: "No content: Successful update"
+        "403":
+          description: "Forbidden: User not authorized"
+        "404":
+          description: "Not found: Resource not found"
+  /k8switch/{name}/service/{vip}/{vport}/{proto}/:
+    get:
+      tags:
+      - "k8switch"
+      summary: "Read service by ID"
+      description: "Read operation of resource: service"
+      operationId: "readK8switchServiceByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      - name: "vip"
+        in: "path"
+        description: "ID of vip"
+        required: true
+        type: "string"
+        format: "(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\\\
+          p{N}\\p{L}]+)?"
+        x-exportParamName: "Vip"
+      - name: "vport"
+        in: "path"
+        description: "ID of vport"
+        required: true
+        type: "integer"
+        format: "uint16"
+        x-exportParamName: "Vport"
+      - name: "proto"
+        in: "path"
+        description: "ID of proto"
+        required: true
+        type: "string"
+        enum:
+        - "TCP"
+        - "UDP"
+        x-exportParamName: "Proto"
+      responses:
+        "200":
+          description: "OK: Successful operation"
+          schema:
+            $ref: "#/definitions/Service"
+        "400":
+          description: "Bad request"
+        "404":
+          description: "Not found"
+        "405":
+          description: "Method not allowed: Use POST to invoke operations"
+    post:
+      tags:
+      - "k8switch"
+      summary: "Create service by ID"
+      description: "Create operation of resource: service"
+      operationId: "createK8switchServiceByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      - name: "vip"
+        in: "path"
+        description: "ID of vip"
+        required: true
+        type: "string"
+        format: "(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\\\
+          p{N}\\p{L}]+)?"
+        x-exportParamName: "Vip"
+      - name: "vport"
+        in: "path"
+        description: "ID of vport"
+        required: true
+        type: "integer"
+        format: "uint16"
+        x-exportParamName: "Vport"
+      - name: "proto"
+        in: "path"
+        description: "ID of proto"
+        required: true
+        type: "string"
+        enum:
+        - "TCP"
+        - "UDP"
+        x-exportParamName: "Proto"
+      - in: "body"
+        name: "service"
+        description: "servicebody object"
+        required: true
+        schema:
+          $ref: "#/definitions/Service"
+        x-exportParamName: "Service"
+      responses:
+        "201":
+          description: "Created: Successful operation"
+        "403":
+          description: "Forbidden: User not authorized"
+        "404":
+          description: "Not found: Resource not created"
+        "409":
+          description: "Conflict: Resource not created"
+    put:
+      tags:
+      - "k8switch"
+      summary: "Replace service by ID"
+      description: "Replace operation of resource: service"
+      operationId: "replaceK8switchServiceByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      - name: "vip"
+        in: "path"
+        description: "ID of vip"
+        required: true
+        type: "string"
+        format: "(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\\\
+          p{N}\\p{L}]+)?"
+        x-exportParamName: "Vip"
+      - name: "vport"
+        in: "path"
+        description: "ID of vport"
+        required: true
+        type: "integer"
+        format: "uint16"
+        x-exportParamName: "Vport"
+      - name: "proto"
+        in: "path"
+        description: "ID of proto"
+        required: true
+        type: "string"
+        enum:
+        - "TCP"
+        - "UDP"
+        x-exportParamName: "Proto"
+      - in: "body"
+        name: "service"
+        description: "servicebody object"
+        required: true
+        schema:
+          $ref: "#/definitions/Service"
+        x-exportParamName: "Service"
+      responses:
+        "201":
+          description: "OK: Resource replaced successfully"
+        "204":
+          description: "No content: Resource modified successfully"
+        "400":
+          description: "Bad request: resource not replaced"
+        "404":
+          description: "Resource not found"
+    delete:
+      tags:
+      - "k8switch"
+      summary: "Delete service by ID"
+      description: "Delete operation of resource: service"
+      operationId: "deleteK8switchServiceByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      - name: "vip"
+        in: "path"
+        description: "ID of vip"
+        required: true
+        type: "string"
+        format: "(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\\\
+          p{N}\\p{L}]+)?"
+        x-exportParamName: "Vip"
+      - name: "vport"
+        in: "path"
+        description: "ID of vport"
+        required: true
+        type: "integer"
+        format: "uint16"
+        x-exportParamName: "Vport"
+      - name: "proto"
+        in: "path"
+        description: "ID of proto"
+        required: true
+        type: "string"
+        enum:
+        - "TCP"
+        - "UDP"
+        x-exportParamName: "Proto"
+      responses:
+        "204":
+          description: "No content: Resource deleted"
+        "403":
+          description: "Forbidden: User not authorized"
+        "404":
+          description: "Resource not found"
+    patch:
+      tags:
+      - "k8switch"
+      summary: "Update service by ID"
+      description: "Update operation of resource: service"
+      operationId: "updateK8switchServiceByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      - name: "vip"
+        in: "path"
+        description: "ID of vip"
+        required: true
+        type: "string"
+        format: "(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\\\
+          p{N}\\p{L}]+)?"
+        x-exportParamName: "Vip"
+      - name: "vport"
+        in: "path"
+        description: "ID of vport"
+        required: true
+        type: "integer"
+        format: "uint16"
+        x-exportParamName: "Vport"
+      - name: "proto"
+        in: "path"
+        description: "ID of proto"
+        required: true
+        type: "string"
+        enum:
+        - "TCP"
+        - "UDP"
+        x-exportParamName: "Proto"
+      - in: "body"
+        name: "service"
+        description: "servicebody object"
+        required: true
+        schema:
+          $ref: "#/definitions/Service"
+        x-exportParamName: "Service"
+      responses:
+        "200":
+          description: "OK: Successful update"
+        "204":
+          description: "No content: Successful update"
+        "403":
+          description: "Forbidden: User not authorized"
+        "404":
+          description: "Not found: Resource not found"
+  /k8switch/{name}/service/:
+    get:
+      tags:
+      - "k8switch"
+      summary: "Read service by ID"
+      description: "Read operation of resource: service"
+      operationId: "readK8switchServiceListByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      responses:
+        "200":
+          description: "OK: Successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Service"
+        "400":
+          description: "Bad request"
+        "404":
+          description: "Not found"
+        "405":
+          description: "Method not allowed: Use POST to invoke operations"
+    post:
+      tags:
+      - "k8switch"
+      summary: "Create service by ID"
+      description: "Create operation of resource: service"
+      operationId: "createK8switchServiceListByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      - in: "body"
+        name: "service"
+        description: "servicebody object"
+        required: true
+        schema:
+          type: "array"
+          items:
+            $ref: "#/definitions/Service"
+        x-exportParamName: "Service"
+      responses:
+        "201":
+          description: "Created: Successful operation"
+        "403":
+          description: "Forbidden: User not authorized"
+        "404":
+          description: "Not found: Resource not created"
+        "409":
+          description: "Conflict: Resource not created"
+    put:
+      tags:
+      - "k8switch"
+      summary: "Replace service by ID"
+      description: "Replace operation of resource: service"
+      operationId: "replaceK8switchServiceListByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      - in: "body"
+        name: "service"
+        description: "servicebody object"
+        required: true
+        schema:
+          type: "array"
+          items:
+            $ref: "#/definitions/Service"
+        x-exportParamName: "Service"
+      responses:
+        "201":
+          description: "OK: Resource replaced successfully"
+        "204":
+          description: "No content: Resource modified successfully"
+        "400":
+          description: "Bad request: resource not replaced"
+        "404":
+          description: "Resource not found"
+    delete:
+      tags:
+      - "k8switch"
+      summary: "Delete service by ID"
+      description: "Delete operation of resource: service"
+      operationId: "deleteK8switchServiceListByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      responses:
+        "204":
+          description: "No content: Resource deleted"
+        "403":
+          description: "Forbidden: User not authorized"
+        "404":
+          description: "Resource not found"
+    patch:
+      tags:
+      - "k8switch"
+      summary: "Update service by ID"
+      description: "Update operation of resource: service"
+      operationId: "updateK8switchServiceListByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      - in: "body"
+        name: "service"
+        description: "servicebody object"
+        required: true
+        schema:
+          type: "array"
+          items:
+            $ref: "#/definitions/Service"
+        x-exportParamName: "Service"
+      responses:
+        "200":
+          description: "OK: Successful update"
+        "204":
+          description: "No content: Successful update"
+        "403":
+          description: "Forbidden: User not authorized"
+        "404":
+          description: "Not found: Resource not found"
+  /k8switch/{name}/service/{vip}/{vport}/{proto}/name/:
+    get:
+      tags:
+      - "k8switch"
+      summary: "Read name by ID"
+      description: "Read operation of resource: name"
+      operationId: "readK8switchServiceNameByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      - name: "vip"
+        in: "path"
+        description: "ID of vip"
+        required: true
+        type: "string"
+        format: "(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\\\
+          p{N}\\p{L}]+)?"
+        x-exportParamName: "Vip"
+      - name: "vport"
+        in: "path"
+        description: "ID of vport"
+        required: true
+        type: "integer"
+        format: "uint16"
+        x-exportParamName: "Vport"
+      - name: "proto"
+        in: "path"
+        description: "ID of proto"
+        required: true
+        type: "string"
+        enum:
+        - "TCP"
+        - "UDP"
+        x-exportParamName: "Proto"
+      responses:
+        "200":
+          description: "OK: Successful operation"
+          schema:
+            type: "string"
+            description: "Service name related to the backend server of the pool is\
+              \ connected to"
+            example: "Service-nigx"
+        "400":
+          description: "Bad request"
+        "404":
+          description: "Not found"
+        "405":
+          description: "Method not allowed: Use POST to invoke operations"
+    patch:
+      tags:
+      - "k8switch"
+      summary: "Update name by ID"
+      description: "Update operation of resource: name"
+      operationId: "updateK8switchServiceNameByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      - name: "vip"
+        in: "path"
+        description: "ID of vip"
+        required: true
+        type: "string"
+        format: "(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\\\
+          p{N}\\p{L}]+)?"
+        x-exportParamName: "Vip"
+      - name: "vport"
+        in: "path"
+        description: "ID of vport"
+        required: true
+        type: "integer"
+        format: "uint16"
+        x-exportParamName: "Vport"
+      - name: "proto"
+        in: "path"
+        description: "ID of proto"
+        required: true
+        type: "string"
+        enum:
+        - "TCP"
+        - "UDP"
+        x-exportParamName: "Proto"
+      - in: "body"
+        name: "name"
+        description: "Service name related to the backend server of the pool is connected\
+          \ to"
+        required: true
+        schema:
+          type: "string"
+          description: "Service name related to the backend server of the pool is\
+            \ connected to"
+          example: "Service-nigx"
+        x-exportParamName: "Name"
+      responses:
+        "200":
+          description: "OK: Successful update"
+        "204":
+          description: "No content: Successful update"
+        "403":
+          description: "Forbidden: User not authorized"
+        "404":
+          description: "Not found: Resource not found"
+  /k8switch/{name}/service/{vip}/{vport}/{proto}/backend/{ip}/{port}/:
+    get:
+      tags:
+      - "k8switch"
+      summary: "Read backend by ID"
+      description: "Read operation of resource: backend"
+      operationId: "readK8switchServiceBackendByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      - name: "vip"
+        in: "path"
+        description: "ID of vip"
+        required: true
+        type: "string"
+        format: "(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\\\
+          p{N}\\p{L}]+)?"
+        x-exportParamName: "Vip"
+      - name: "vport"
+        in: "path"
+        description: "ID of vport"
+        required: true
+        type: "integer"
+        format: "uint16"
+        x-exportParamName: "Vport"
+      - name: "proto"
+        in: "path"
+        description: "ID of proto"
+        required: true
+        type: "string"
+        enum:
+        - "TCP"
+        - "UDP"
+        x-exportParamName: "Proto"
+      - name: "ip"
+        in: "path"
+        description: "ID of ip"
+        required: true
+        type: "string"
+        format: "(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\\\
+          p{N}\\p{L}]+)?"
+        x-exportParamName: "Ip"
+      - name: "port"
+        in: "path"
+        description: "ID of port"
+        required: true
+        type: "integer"
+        format: "uint16"
+        x-exportParamName: "Port"
+      responses:
+        "200":
+          description: "OK: Successful operation"
+          schema:
+            $ref: "#/definitions/ServiceBackend"
+        "400":
+          description: "Bad request"
+        "404":
+          description: "Not found"
+        "405":
+          description: "Method not allowed: Use POST to invoke operations"
+    post:
+      tags:
+      - "k8switch"
+      summary: "Create backend by ID"
+      description: "Create operation of resource: backend"
+      operationId: "createK8switchServiceBackendByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      - name: "vip"
+        in: "path"
+        description: "ID of vip"
+        required: true
+        type: "string"
+        format: "(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\\\
+          p{N}\\p{L}]+)?"
+        x-exportParamName: "Vip"
+      - name: "vport"
+        in: "path"
+        description: "ID of vport"
+        required: true
+        type: "integer"
+        format: "uint16"
+        x-exportParamName: "Vport"
+      - name: "proto"
+        in: "path"
+        description: "ID of proto"
+        required: true
+        type: "string"
+        enum:
+        - "TCP"
+        - "UDP"
+        x-exportParamName: "Proto"
+      - name: "ip"
+        in: "path"
+        description: "ID of ip"
+        required: true
+        type: "string"
+        format: "(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\\\
+          p{N}\\p{L}]+)?"
+        x-exportParamName: "Ip"
+      - name: "port"
+        in: "path"
+        description: "ID of port"
+        required: true
+        type: "integer"
+        format: "uint16"
+        x-exportParamName: "Port"
+      - in: "body"
+        name: "backend"
+        description: "backendbody object"
+        required: true
+        schema:
+          $ref: "#/definitions/ServiceBackend"
+        x-exportParamName: "Backend"
+      responses:
+        "201":
+          description: "Created: Successful operation"
+        "403":
+          description: "Forbidden: User not authorized"
+        "404":
+          description: "Not found: Resource not created"
+        "409":
+          description: "Conflict: Resource not created"
+    put:
+      tags:
+      - "k8switch"
+      summary: "Replace backend by ID"
+      description: "Replace operation of resource: backend"
+      operationId: "replaceK8switchServiceBackendByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      - name: "vip"
+        in: "path"
+        description: "ID of vip"
+        required: true
+        type: "string"
+        format: "(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\\\
+          p{N}\\p{L}]+)?"
+        x-exportParamName: "Vip"
+      - name: "vport"
+        in: "path"
+        description: "ID of vport"
+        required: true
+        type: "integer"
+        format: "uint16"
+        x-exportParamName: "Vport"
+      - name: "proto"
+        in: "path"
+        description: "ID of proto"
+        required: true
+        type: "string"
+        enum:
+        - "TCP"
+        - "UDP"
+        x-exportParamName: "Proto"
+      - name: "ip"
+        in: "path"
+        description: "ID of ip"
+        required: true
+        type: "string"
+        format: "(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\\\
+          p{N}\\p{L}]+)?"
+        x-exportParamName: "Ip"
+      - name: "port"
+        in: "path"
+        description: "ID of port"
+        required: true
+        type: "integer"
+        format: "uint16"
+        x-exportParamName: "Port"
+      - in: "body"
+        name: "backend"
+        description: "backendbody object"
+        required: true
+        schema:
+          $ref: "#/definitions/ServiceBackend"
+        x-exportParamName: "Backend"
+      responses:
+        "201":
+          description: "OK: Resource replaced successfully"
+        "204":
+          description: "No content: Resource modified successfully"
+        "400":
+          description: "Bad request: resource not replaced"
+        "404":
+          description: "Resource not found"
+    delete:
+      tags:
+      - "k8switch"
+      summary: "Delete backend by ID"
+      description: "Delete operation of resource: backend"
+      operationId: "deleteK8switchServiceBackendByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      - name: "vip"
+        in: "path"
+        description: "ID of vip"
+        required: true
+        type: "string"
+        format: "(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\\\
+          p{N}\\p{L}]+)?"
+        x-exportParamName: "Vip"
+      - name: "vport"
+        in: "path"
+        description: "ID of vport"
+        required: true
+        type: "integer"
+        format: "uint16"
+        x-exportParamName: "Vport"
+      - name: "proto"
+        in: "path"
+        description: "ID of proto"
+        required: true
+        type: "string"
+        enum:
+        - "TCP"
+        - "UDP"
+        x-exportParamName: "Proto"
+      - name: "ip"
+        in: "path"
+        description: "ID of ip"
+        required: true
+        type: "string"
+        format: "(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\\\
+          p{N}\\p{L}]+)?"
+        x-exportParamName: "Ip"
+      - name: "port"
+        in: "path"
+        description: "ID of port"
+        required: true
+        type: "integer"
+        format: "uint16"
+        x-exportParamName: "Port"
+      responses:
+        "204":
+          description: "No content: Resource deleted"
+        "403":
+          description: "Forbidden: User not authorized"
+        "404":
+          description: "Resource not found"
+    patch:
+      tags:
+      - "k8switch"
+      summary: "Update backend by ID"
+      description: "Update operation of resource: backend"
+      operationId: "updateK8switchServiceBackendByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      - name: "vip"
+        in: "path"
+        description: "ID of vip"
+        required: true
+        type: "string"
+        format: "(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\\\
+          p{N}\\p{L}]+)?"
+        x-exportParamName: "Vip"
+      - name: "vport"
+        in: "path"
+        description: "ID of vport"
+        required: true
+        type: "integer"
+        format: "uint16"
+        x-exportParamName: "Vport"
+      - name: "proto"
+        in: "path"
+        description: "ID of proto"
+        required: true
+        type: "string"
+        enum:
+        - "TCP"
+        - "UDP"
+        x-exportParamName: "Proto"
+      - name: "ip"
+        in: "path"
+        description: "ID of ip"
+        required: true
+        type: "string"
+        format: "(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\\\
+          p{N}\\p{L}]+)?"
+        x-exportParamName: "Ip"
+      - name: "port"
+        in: "path"
+        description: "ID of port"
+        required: true
+        type: "integer"
+        format: "uint16"
+        x-exportParamName: "Port"
+      - in: "body"
+        name: "backend"
+        description: "backendbody object"
+        required: true
+        schema:
+          $ref: "#/definitions/ServiceBackend"
+        x-exportParamName: "Backend"
+      responses:
+        "200":
+          description: "OK: Successful update"
+        "204":
+          description: "No content: Successful update"
+        "403":
+          description: "Forbidden: User not authorized"
+        "404":
+          description: "Not found: Resource not found"
+  /k8switch/{name}/service/{vip}/{vport}/{proto}/backend/:
+    get:
+      tags:
+      - "k8switch"
+      summary: "Read backend by ID"
+      description: "Read operation of resource: backend"
+      operationId: "readK8switchServiceBackendListByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      - name: "vip"
+        in: "path"
+        description: "ID of vip"
+        required: true
+        type: "string"
+        format: "(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\\\
+          p{N}\\p{L}]+)?"
+        x-exportParamName: "Vip"
+      - name: "vport"
+        in: "path"
+        description: "ID of vport"
+        required: true
+        type: "integer"
+        format: "uint16"
+        x-exportParamName: "Vport"
+      - name: "proto"
+        in: "path"
+        description: "ID of proto"
+        required: true
+        type: "string"
+        enum:
+        - "TCP"
+        - "UDP"
+        x-exportParamName: "Proto"
+      responses:
+        "200":
+          description: "OK: Successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/ServiceBackend"
+        "400":
+          description: "Bad request"
+        "404":
+          description: "Not found"
+        "405":
+          description: "Method not allowed: Use POST to invoke operations"
+    post:
+      tags:
+      - "k8switch"
+      summary: "Create backend by ID"
+      description: "Create operation of resource: backend"
+      operationId: "createK8switchServiceBackendListByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      - name: "vip"
+        in: "path"
+        description: "ID of vip"
+        required: true
+        type: "string"
+        format: "(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\\\
+          p{N}\\p{L}]+)?"
+        x-exportParamName: "Vip"
+      - name: "vport"
+        in: "path"
+        description: "ID of vport"
+        required: true
+        type: "integer"
+        format: "uint16"
+        x-exportParamName: "Vport"
+      - name: "proto"
+        in: "path"
+        description: "ID of proto"
+        required: true
+        type: "string"
+        enum:
+        - "TCP"
+        - "UDP"
+        x-exportParamName: "Proto"
+      - in: "body"
+        name: "backend"
+        description: "backendbody object"
+        required: true
+        schema:
+          type: "array"
+          items:
+            $ref: "#/definitions/ServiceBackend"
+        x-exportParamName: "Backend"
+      responses:
+        "201":
+          description: "Created: Successful operation"
+        "403":
+          description: "Forbidden: User not authorized"
+        "404":
+          description: "Not found: Resource not created"
+        "409":
+          description: "Conflict: Resource not created"
+    put:
+      tags:
+      - "k8switch"
+      summary: "Replace backend by ID"
+      description: "Replace operation of resource: backend"
+      operationId: "replaceK8switchServiceBackendListByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      - name: "vip"
+        in: "path"
+        description: "ID of vip"
+        required: true
+        type: "string"
+        format: "(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\\\
+          p{N}\\p{L}]+)?"
+        x-exportParamName: "Vip"
+      - name: "vport"
+        in: "path"
+        description: "ID of vport"
+        required: true
+        type: "integer"
+        format: "uint16"
+        x-exportParamName: "Vport"
+      - name: "proto"
+        in: "path"
+        description: "ID of proto"
+        required: true
+        type: "string"
+        enum:
+        - "TCP"
+        - "UDP"
+        x-exportParamName: "Proto"
+      - in: "body"
+        name: "backend"
+        description: "backendbody object"
+        required: true
+        schema:
+          type: "array"
+          items:
+            $ref: "#/definitions/ServiceBackend"
+        x-exportParamName: "Backend"
+      responses:
+        "201":
+          description: "OK: Resource replaced successfully"
+        "204":
+          description: "No content: Resource modified successfully"
+        "400":
+          description: "Bad request: resource not replaced"
+        "404":
+          description: "Resource not found"
+    delete:
+      tags:
+      - "k8switch"
+      summary: "Delete backend by ID"
+      description: "Delete operation of resource: backend"
+      operationId: "deleteK8switchServiceBackendListByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      - name: "vip"
+        in: "path"
+        description: "ID of vip"
+        required: true
+        type: "string"
+        format: "(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\\\
+          p{N}\\p{L}]+)?"
+        x-exportParamName: "Vip"
+      - name: "vport"
+        in: "path"
+        description: "ID of vport"
+        required: true
+        type: "integer"
+        format: "uint16"
+        x-exportParamName: "Vport"
+      - name: "proto"
+        in: "path"
+        description: "ID of proto"
+        required: true
+        type: "string"
+        enum:
+        - "TCP"
+        - "UDP"
+        x-exportParamName: "Proto"
+      responses:
+        "204":
+          description: "No content: Resource deleted"
+        "403":
+          description: "Forbidden: User not authorized"
+        "404":
+          description: "Resource not found"
+    patch:
+      tags:
+      - "k8switch"
+      summary: "Update backend by ID"
+      description: "Update operation of resource: backend"
+      operationId: "updateK8switchServiceBackendListByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      - name: "vip"
+        in: "path"
+        description: "ID of vip"
+        required: true
+        type: "string"
+        format: "(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\\\
+          p{N}\\p{L}]+)?"
+        x-exportParamName: "Vip"
+      - name: "vport"
+        in: "path"
+        description: "ID of vport"
+        required: true
+        type: "integer"
+        format: "uint16"
+        x-exportParamName: "Vport"
+      - name: "proto"
+        in: "path"
+        description: "ID of proto"
+        required: true
+        type: "string"
+        enum:
+        - "TCP"
+        - "UDP"
+        x-exportParamName: "Proto"
+      - in: "body"
+        name: "backend"
+        description: "backendbody object"
+        required: true
+        schema:
+          type: "array"
+          items:
+            $ref: "#/definitions/ServiceBackend"
+        x-exportParamName: "Backend"
+      responses:
+        "200":
+          description: "OK: Successful update"
+        "204":
+          description: "No content: Successful update"
+        "403":
+          description: "Forbidden: User not authorized"
+        "404":
+          description: "Not found: Resource not found"
+  /k8switch/{name}/service/{vip}/{vport}/{proto}/backend/{ip}/{port}/name/:
+    get:
+      tags:
+      - "k8switch"
+      summary: "Read name by ID"
+      description: "Read operation of resource: name"
+      operationId: "readK8switchServiceBackendNameByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      - name: "vip"
+        in: "path"
+        description: "ID of vip"
+        required: true
+        type: "string"
+        format: "(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\\\
+          p{N}\\p{L}]+)?"
+        x-exportParamName: "Vip"
+      - name: "vport"
+        in: "path"
+        description: "ID of vport"
+        required: true
+        type: "integer"
+        format: "uint16"
+        x-exportParamName: "Vport"
+      - name: "proto"
+        in: "path"
+        description: "ID of proto"
+        required: true
+        type: "string"
+        enum:
+        - "TCP"
+        - "UDP"
+        x-exportParamName: "Proto"
+      - name: "ip"
+        in: "path"
+        description: "ID of ip"
+        required: true
+        type: "string"
+        format: "(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\\\
+          p{N}\\p{L}]+)?"
+        x-exportParamName: "Ip"
+      - name: "port"
+        in: "path"
+        description: "ID of port"
+        required: true
+        type: "integer"
+        format: "uint16"
+        x-exportParamName: "Port"
+      responses:
+        "200":
+          description: "OK: Successful operation"
+          schema:
+            type: "string"
+            description: "name"
+            example: "backend1"
+        "400":
+          description: "Bad request"
+        "404":
+          description: "Not found"
+        "405":
+          description: "Method not allowed: Use POST to invoke operations"
+    patch:
+      tags:
+      - "k8switch"
+      summary: "Update name by ID"
+      description: "Update operation of resource: name"
+      operationId: "updateK8switchServiceBackendNameByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      - name: "vip"
+        in: "path"
+        description: "ID of vip"
+        required: true
+        type: "string"
+        format: "(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\\\
+          p{N}\\p{L}]+)?"
+        x-exportParamName: "Vip"
+      - name: "vport"
+        in: "path"
+        description: "ID of vport"
+        required: true
+        type: "integer"
+        format: "uint16"
+        x-exportParamName: "Vport"
+      - name: "proto"
+        in: "path"
+        description: "ID of proto"
+        required: true
+        type: "string"
+        enum:
+        - "TCP"
+        - "UDP"
+        x-exportParamName: "Proto"
+      - name: "ip"
+        in: "path"
+        description: "ID of ip"
+        required: true
+        type: "string"
+        format: "(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\\\
+          p{N}\\p{L}]+)?"
+        x-exportParamName: "Ip"
+      - name: "port"
+        in: "path"
+        description: "ID of port"
+        required: true
+        type: "integer"
+        format: "uint16"
+        x-exportParamName: "Port"
+      - in: "body"
+        name: "name"
+        description: "name"
+        required: true
+        schema:
+          type: "string"
+          description: "name"
+          example: "backend1"
+        x-exportParamName: "Name"
+      responses:
+        "200":
+          description: "OK: Successful update"
+        "204":
+          description: "No content: Successful update"
+        "403":
+          description: "Forbidden: User not authorized"
+        "404":
+          description: "Not found: Resource not found"
+  /k8switch/{name}/service/{vip}/{vport}/{proto}/backend/{ip}/{port}/weight/:
+    get:
+      tags:
+      - "k8switch"
+      summary: "Read weight by ID"
+      description: "Read operation of resource: weight"
+      operationId: "readK8switchServiceBackendWeightByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      - name: "vip"
+        in: "path"
+        description: "ID of vip"
+        required: true
+        type: "string"
+        format: "(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\\\
+          p{N}\\p{L}]+)?"
+        x-exportParamName: "Vip"
+      - name: "vport"
+        in: "path"
+        description: "ID of vport"
+        required: true
+        type: "integer"
+        format: "uint16"
+        x-exportParamName: "Vport"
+      - name: "proto"
+        in: "path"
+        description: "ID of proto"
+        required: true
+        type: "string"
+        enum:
+        - "TCP"
+        - "UDP"
+        x-exportParamName: "Proto"
+      - name: "ip"
+        in: "path"
+        description: "ID of ip"
+        required: true
+        type: "string"
+        format: "(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\\\
+          p{N}\\p{L}]+)?"
+        x-exportParamName: "Ip"
+      - name: "port"
+        in: "path"
+        description: "ID of port"
+        required: true
+        type: "integer"
+        format: "uint16"
+        x-exportParamName: "Port"
+      responses:
+        "200":
+          description: "OK: Successful operation"
+          schema:
+            type: "integer"
+            format: "uint16"
+            description: "Weight of the backend in the pool"
+            example: "1"
+        "400":
+          description: "Bad request"
+        "404":
+          description: "Not found"
+        "405":
+          description: "Method not allowed: Use POST to invoke operations"
+    patch:
+      tags:
+      - "k8switch"
+      summary: "Update weight by ID"
+      description: "Update operation of resource: weight"
+      operationId: "updateK8switchServiceBackendWeightByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      - name: "vip"
+        in: "path"
+        description: "ID of vip"
+        required: true
+        type: "string"
+        format: "(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\\\
+          p{N}\\p{L}]+)?"
+        x-exportParamName: "Vip"
+      - name: "vport"
+        in: "path"
+        description: "ID of vport"
+        required: true
+        type: "integer"
+        format: "uint16"
+        x-exportParamName: "Vport"
+      - name: "proto"
+        in: "path"
+        description: "ID of proto"
+        required: true
+        type: "string"
+        enum:
+        - "TCP"
+        - "UDP"
+        x-exportParamName: "Proto"
+      - name: "ip"
+        in: "path"
+        description: "ID of ip"
+        required: true
+        type: "string"
+        format: "(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\\\
+          p{N}\\p{L}]+)?"
+        x-exportParamName: "Ip"
+      - name: "port"
+        in: "path"
+        description: "ID of port"
+        required: true
+        type: "integer"
+        format: "uint16"
+        x-exportParamName: "Port"
+      - in: "body"
+        name: "weight"
+        description: "Weight of the backend in the pool"
+        required: true
+        schema:
+          type: "integer"
+          format: "uint16"
+          description: "Weight of the backend in the pool"
+          example: "1"
+        x-exportParamName: "Weight"
+      responses:
+        "200":
+          description: "OK: Successful update"
+        "204":
+          description: "No content: Successful update"
+        "403":
+          description: "Forbidden: User not authorized"
+        "404":
+          description: "Not found: Resource not found"
+  /k8switch/{name}/fwd-table/{address}/:
+    get:
+      tags:
+      - "k8switch"
+      summary: "Read fwd-table by ID"
+      description: "Read operation of resource: fwd-table"
+      operationId: "readK8switchFwdTableByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      - name: "address"
+        in: "path"
+        description: "ID of address"
+        required: true
+        type: "string"
+        x-exportParamName: "Address"
+      responses:
+        "200":
+          description: "OK: Successful operation"
+          schema:
+            $ref: "#/definitions/FwdTable"
+        "400":
+          description: "Bad request"
+        "404":
+          description: "Not found"
+        "405":
+          description: "Method not allowed: Use POST to invoke operations"
+    post:
+      tags:
+      - "k8switch"
+      summary: "Create fwd-table by ID"
+      description: "Create operation of resource: fwd-table"
+      operationId: "createK8switchFwdTableByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      - name: "address"
+        in: "path"
+        description: "ID of address"
+        required: true
+        type: "string"
+        x-exportParamName: "Address"
+      - in: "body"
+        name: "fwd-table"
+        description: "fwd-tablebody object"
+        required: true
+        schema:
+          $ref: "#/definitions/FwdTable"
+        x-exportParamName: "FwdTable"
+      responses:
+        "201":
+          description: "Created: Successful operation"
+        "403":
+          description: "Forbidden: User not authorized"
+        "404":
+          description: "Not found: Resource not created"
+        "409":
+          description: "Conflict: Resource not created"
+    put:
+      tags:
+      - "k8switch"
+      summary: "Replace fwd-table by ID"
+      description: "Replace operation of resource: fwd-table"
+      operationId: "replaceK8switchFwdTableByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      - name: "address"
+        in: "path"
+        description: "ID of address"
+        required: true
+        type: "string"
+        x-exportParamName: "Address"
+      - in: "body"
+        name: "fwd-table"
+        description: "fwd-tablebody object"
+        required: true
+        schema:
+          $ref: "#/definitions/FwdTable"
+        x-exportParamName: "FwdTable"
+      responses:
+        "201":
+          description: "OK: Resource replaced successfully"
+        "204":
+          description: "No content: Resource modified successfully"
+        "400":
+          description: "Bad request: resource not replaced"
+        "404":
+          description: "Resource not found"
+    delete:
+      tags:
+      - "k8switch"
+      summary: "Delete fwd-table by ID"
+      description: "Delete operation of resource: fwd-table"
+      operationId: "deleteK8switchFwdTableByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      - name: "address"
+        in: "path"
+        description: "ID of address"
+        required: true
+        type: "string"
+        x-exportParamName: "Address"
+      responses:
+        "204":
+          description: "No content: Resource deleted"
+        "403":
+          description: "Forbidden: User not authorized"
+        "404":
+          description: "Resource not found"
+    patch:
+      tags:
+      - "k8switch"
+      summary: "Update fwd-table by ID"
+      description: "Update operation of resource: fwd-table"
+      operationId: "updateK8switchFwdTableByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      - name: "address"
+        in: "path"
+        description: "ID of address"
+        required: true
+        type: "string"
+        x-exportParamName: "Address"
+      - in: "body"
+        name: "fwd-table"
+        description: "fwd-tablebody object"
+        required: true
+        schema:
+          $ref: "#/definitions/FwdTable"
+        x-exportParamName: "FwdTable"
+      responses:
+        "200":
+          description: "OK: Successful update"
+        "204":
+          description: "No content: Successful update"
+        "403":
+          description: "Forbidden: User not authorized"
+        "404":
+          description: "Not found: Resource not found"
+  /k8switch/{name}/fwd-table/:
+    get:
+      tags:
+      - "k8switch"
+      summary: "Read fwd-table by ID"
+      description: "Read operation of resource: fwd-table"
+      operationId: "readK8switchFwdTableListByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      responses:
+        "200":
+          description: "OK: Successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/FwdTable"
+        "400":
+          description: "Bad request"
+        "404":
+          description: "Not found"
+        "405":
+          description: "Method not allowed: Use POST to invoke operations"
+    post:
+      tags:
+      - "k8switch"
+      summary: "Create fwd-table by ID"
+      description: "Create operation of resource: fwd-table"
+      operationId: "createK8switchFwdTableListByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      - in: "body"
+        name: "fwd-table"
+        description: "fwd-tablebody object"
+        required: true
+        schema:
+          type: "array"
+          items:
+            $ref: "#/definitions/FwdTable"
+        x-exportParamName: "FwdTable"
+      responses:
+        "201":
+          description: "Created: Successful operation"
+        "403":
+          description: "Forbidden: User not authorized"
+        "404":
+          description: "Not found: Resource not created"
+        "409":
+          description: "Conflict: Resource not created"
+    put:
+      tags:
+      - "k8switch"
+      summary: "Replace fwd-table by ID"
+      description: "Replace operation of resource: fwd-table"
+      operationId: "replaceK8switchFwdTableListByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      - in: "body"
+        name: "fwd-table"
+        description: "fwd-tablebody object"
+        required: true
+        schema:
+          type: "array"
+          items:
+            $ref: "#/definitions/FwdTable"
+        x-exportParamName: "FwdTable"
+      responses:
+        "201":
+          description: "OK: Resource replaced successfully"
+        "204":
+          description: "No content: Resource modified successfully"
+        "400":
+          description: "Bad request: resource not replaced"
+        "404":
+          description: "Resource not found"
+    delete:
+      tags:
+      - "k8switch"
+      summary: "Delete fwd-table by ID"
+      description: "Delete operation of resource: fwd-table"
+      operationId: "deleteK8switchFwdTableListByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      responses:
+        "204":
+          description: "No content: Resource deleted"
+        "403":
+          description: "Forbidden: User not authorized"
+        "404":
+          description: "Resource not found"
+    patch:
+      tags:
+      - "k8switch"
+      summary: "Update fwd-table by ID"
+      description: "Update operation of resource: fwd-table"
+      operationId: "updateK8switchFwdTableListByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      - in: "body"
+        name: "fwd-table"
+        description: "fwd-tablebody object"
+        required: true
+        schema:
+          type: "array"
+          items:
+            $ref: "#/definitions/FwdTable"
+        x-exportParamName: "FwdTable"
+      responses:
+        "200":
+          description: "OK: Successful update"
+        "204":
+          description: "No content: Successful update"
+        "403":
+          description: "Forbidden: User not authorized"
+        "404":
+          description: "Not found: Resource not found"
+  /k8switch/{name}/fwd-table/{address}/mac/:
+    get:
+      tags:
+      - "k8switch"
+      summary: "Read mac by ID"
+      description: "Read operation of resource: mac"
+      operationId: "readK8switchFwdTableMacByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      - name: "address"
+        in: "path"
+        description: "ID of address"
+        required: true
+        type: "string"
+        x-exportParamName: "Address"
+      responses:
+        "200":
+          description: "OK: Successful operation"
+          schema:
+            type: "string"
+            description: "Destination MAC address"
+            example: "C5:13:2D:36:27:9B"
+            x-is-required: true
+        "400":
+          description: "Bad request"
+        "404":
+          description: "Not found"
+        "405":
+          description: "Method not allowed: Use POST to invoke operations"
+    patch:
+      tags:
+      - "k8switch"
+      summary: "Update mac by ID"
+      description: "Update operation of resource: mac"
+      operationId: "updateK8switchFwdTableMacByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      - name: "address"
+        in: "path"
+        description: "ID of address"
+        required: true
+        type: "string"
+        x-exportParamName: "Address"
+      - in: "body"
+        name: "mac"
+        description: "Destination MAC address"
+        required: true
+        schema:
+          type: "string"
+          description: "Destination MAC address"
+          example: "C5:13:2D:36:27:9B"
+          x-is-required: true
+        x-exportParamName: "Mac"
+      responses:
+        "200":
+          description: "OK: Successful update"
+        "204":
+          description: "No content: Successful update"
+        "403":
+          description: "Forbidden: User not authorized"
+        "404":
+          description: "Not found: Resource not found"
+  /k8switch/{name}/fwd-table/{address}/port/:
+    get:
+      tags:
+      - "k8switch"
+      summary: "Read port by ID"
+      description: "Read operation of resource: port"
+      operationId: "readK8switchFwdTablePortByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      - name: "address"
+        in: "path"
+        description: "ID of address"
+        required: true
+        type: "string"
+        x-exportParamName: "Address"
+      responses:
+        "200":
+          description: "OK: Successful operation"
+          schema:
+            type: "string"
+            description: "Port where this entry is present"
+            example: "port1"
+            x-is-required: true
+        "400":
+          description: "Bad request"
+        "404":
+          description: "Not found"
+        "405":
+          description: "Method not allowed: Use POST to invoke operations"
+    patch:
+      tags:
+      - "k8switch"
+      summary: "Update port by ID"
+      description: "Update operation of resource: port"
+      operationId: "updateK8switchFwdTablePortByID"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "ID of name"
+        required: true
+        type: "string"
+        x-exportParamName: "Name"
+      - name: "address"
+        in: "path"
+        description: "ID of address"
+        required: true
+        type: "string"
+        x-exportParamName: "Address"
+      - in: "body"
+        name: "port"
+        description: "Port where this entry is present"
+        required: true
+        schema:
+          type: "string"
+          description: "Port where this entry is present"
+          example: "port1"
+          x-is-required: true
+        x-exportParamName: "Port"
+      responses:
+        "200":
+          description: "OK: Successful update"
+        "204":
+          description: "No content: Successful update"
+        "403":
+          description: "Forbidden: User not authorized"
+        "404":
+          description: "Not found: Resource not found"
+definitions:
+  Ports:
+    properties:
+      name:
+        type: "string"
+        example: "port1"
+        description: "Port Name"
+        x-has-default-impl: true
+        x-is-required: true
+        x-is-key: true
+      uuid:
+        type: "string"
+        format: "[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}"
+        description: "UUID of the port"
+        readOnly: true
+        x-is-base-datamodel: true
+      status:
+        type: "string"
+        description: "Status of the port (UP or DOWN)"
+        readOnly: true
+        enum:
+        - "UP"
+        - "DOWN"
+        x-is-base-datamodel: true
+      peer:
+        type: "string"
+        example: "r0:port1"
+        description: "Peer name, such as a network interfaces (e.g., 'veth0') or another\
+          \ cube (e.g., 'br1:port2')"
+        x-is-base-datamodel: true
+      tcubes:
+        type: "array"
+        items:
+          type: "string"
+          description: "List of transparent cubes attached to this port"
+          readOnly: true
+        x-is-base-datamodel: true
+      type:
+        type: "string"
+        description: "Type of the LB port (e.g. NODEPORT or DEFAULT)"
+        readOnly: true
+        enum:
+        - "DEFAULT"
+        - "NODEPORT"
+        default: "DEFAULT"
+        x-is-required: false
+    example:
+      tcubes:
+      - "tcubes"
+      - "tcubes"
+      peer: "r0:port1"
+      name: "port1"
+      type: "DEFAULT"
+      uuid: "uuid"
+      status: "UP"
+    x-inherits-from: "polycube::service::Port"
+    x-is-list: "true"
+    x-parent: "K8switch"
+  ServiceBackend:
+    properties:
+      name:
+        type: "string"
+        example: "backend1"
+        description: "name"
+      ip:
+        type: "string"
+        format: "(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\\\
+          p{N}\\p{L}]+)?"
+        example: "10.244.1.23"
+        description: "IP address of the backend server of the pool"
+        x-is-key: true
+      port:
+        type: "integer"
+        format: "uint16"
+        example: 80
+        description: "Port where the server listen to (this value is ignored in case\
+          \ of ICMP)"
+        minimum: 0
+        maximum: 65535
+        x-is-key: true
+      weight:
+        type: "integer"
+        format: "uint16"
+        example: 1
+        description: "Weight of the backend in the pool"
+    example:
+      port: 80
+      ip: "10.244.1.23"
+      name: "backend1"
+      weight: 1
+    x-is-list: "true"
+    x-parent: "Service"
+  Service:
+    properties:
+      name:
+        type: "string"
+        example: "Service-nigx"
+        description: "Service name related to the backend server of the pool is connected\
+          \ to"
+      vip:
+        type: "string"
+        format: "(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(%[\\\
+          p{N}\\p{L}]+)?"
+        example: "130.192.100.12"
+        description: "Virtual IP (vip) of the service where clients connect to"
+        x-is-key: true
+      vport:
+        type: "integer"
+        format: "uint16"
+        example: 80
+        description: "Port of the virtual server where clients connect to (this value\
+          \ is ignored in case of ICMP)"
+        minimum: 0
+        maximum: 65535
+        x-is-key: true
+      proto:
+        type: "string"
+        description: "Upper-layer protocol associated with a loadbalancing service\
+          \ instance."
+        enum:
+        - "TCP"
+        - "UDP"
+        x-is-required: true
+        x-is-key: true
+      backend:
+        type: "array"
+        description: "Pool of backend servers that actually serve requests"
+        items:
+          $ref: "#/definitions/ServiceBackend"
+        x-key:
+        - "ip"
+        - "port"
+        x-key-list:
+        - name: "ip"
+          type: "string"
+        - name: "port"
+          type: "integer"
+          format: "uint16"
+    example:
+      vport: 80
+      proto: "TCP"
+      name: "Service-nigx"
+      backend:
+      - port: 80
+        ip: "10.244.1.23"
+        name: "backend1"
+        weight: 1
+      - port: 80
+        ip: "10.244.1.23"
+        name: "backend1"
+        weight: 1
+      vip: "130.192.100.12"
+    x-is-list: "true"
+    x-parent: "K8switch"
+  FwdTable:
+    properties:
+      address:
+        type: "string"
+        example: "123.13.34.0"
+        description: "Destination IP address"
+        x-is-required: true
+        x-is-key: true
+      mac:
+        type: "string"
+        example: "C5:13:2D:36:27:9B"
+        description: "Destination MAC address"
+        x-is-required: true
+      port:
+        type: "string"
+        example: "port1"
+        description: "Port where this entry is present"
+        x-is-required: true
+    example:
+      address: "123.13.34.0"
+      port: "port1"
+      mac: "C5:13:2D:36:27:9B"
+    x-is-list: "true"
+    x-parent: "K8switch"
+  K8switch:
+    properties:
+      name:
+        type: "string"
+        example: "k8switch1"
+        description: "Name of the k8switch service"
+        x-has-default-impl: true
+        x-is-required: true
+        x-is-key: true
+        x-is-cube-name: true
+      uuid:
+        type: "string"
+        format: "[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}"
+        description: "UUID of the Cube"
+        readOnly: true
+        x-is-base-datamodel: true
+      type:
+        type: "string"
+        example: "TC"
+        description: "Type of the Cube (TC, XDP_SKB, XDP_DRV)"
+        readOnly: true
+        enum:
+        - "TC"
+        - "XDP_SKB"
+        - "XDP_DRV"
+        default: "TC"
+        x-is-base-datamodel: true
+      service-name:
+        type: "string"
+        example: "helloworld"
+        readOnly: true
+        x-is-base-datamodel: true
+      loglevel:
+        type: "string"
+        example: "INFO"
+        description: "Logging level of a cube, from none (OFF) to the most verbose\
+          \ (TRACE)"
+        enum:
+        - "TRACE"
+        - "DEBUG"
+        - "INFO"
+        - "WARN"
+        - "ERR"
+        - "CRITICAL"
+        - "OFF"
+        default: "INFO"
+        x-is-base-datamodel: true
+      dyn-opt:
+        type: "boolean"
+        description: "Defines if the service should be automatically optimized by\
+          \ Morpheus"
+        readOnly: true
+        default: false
+      start-morpheus:
+        type: "boolean"
+        description: "Set this flag if you want to start Morpheus compiler"
+        default: false
+      ports:
+        type: "array"
+        description: "Entry of the ports table"
+        items:
+          $ref: "#/definitions/Ports"
+        x-is-port-class: true
+        x-key:
+        - "name"
+        x-key-list:
+        - name: "name"
+          type: "string"
+      shadow:
+        type: "boolean"
+        description: "Defines if the service is visible in Linux"
+        readOnly: true
+        default: false
+        x-is-base-datamodel: true
+      span:
+        type: "boolean"
+        description: "Defines if all traffic is sent to Linux"
+        default: false
+        x-is-base-datamodel: true
+      cluster-ip-subnet:
+        type: "string"
+        format: "(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])/(([0-9])|([1-2][0-9])|(3[0-2]))"
+        example: "10.96.0.0/12"
+        description: "Range of VIPs where clusterIP services are exposed"
+        x-is-required: true
+      client-subnet:
+        type: "string"
+        format: "(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])/(([0-9])|([1-2][0-9])|(3[0-2]))"
+        example: "192.168.1.0/24"
+        description: "Range of IPs of pods in this node"
+        x-is-required: true
+      virtual-client-subnet:
+        type: "string"
+        format: "(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])/(([0-9])|([1-2][0-9])|(3[0-2]))"
+        example: "10.10.1.0/24"
+        description: "Range where client's IPs are mapped into"
+        x-is-required: true
+      service:
+        type: "array"
+        description: "Services (i.e., virtual ip:protocol:port) exported to the client"
+        items:
+          $ref: "#/definitions/Service"
+        x-key:
+        - "vip"
+        - "vport"
+        - "proto"
+        x-key-list:
+        - name: "vip"
+          type: "string"
+        - name: "vport"
+          type: "integer"
+          format: "uint16"
+        - name: "proto"
+          type: "string"
+          isEnum: "true"
+      fwd-table:
+        type: "array"
+        description: "Entry associated with the forwarding table"
+        items:
+          $ref: "#/definitions/FwdTable"
+        x-key:
+        - "address"
+        x-key-list:
+        - name: "address"
+          type: "string"
+    example:
+      shadow: false
+      virtual-client-subnet: "10.10.1.0/24"
+      start-morpheus: false
+      type: "TC"
+      ports:
+      - tcubes:
+        - "tcubes"
+        - "tcubes"
+        peer: "r0:port1"
+        name: "port1"
+        type: "DEFAULT"
+        uuid: "uuid"
+        status: "UP"
+      - tcubes:
+        - "tcubes"
+        - "tcubes"
+        peer: "r0:port1"
+        name: "port1"
+        type: "DEFAULT"
+        uuid: "uuid"
+        status: "UP"
+      uuid: "uuid"
+      fwd-table:
+      - address: "123.13.34.0"
+        port: "port1"
+        mac: "C5:13:2D:36:27:9B"
+      - address: "123.13.34.0"
+        port: "port1"
+        mac: "C5:13:2D:36:27:9B"
+      service-name: "helloworld"
+      dyn-opt: false
+      cluster-ip-subnet: "10.96.0.0/12"
+      service:
+      - vport: 80
+        proto: "TCP"
+        name: "Service-nigx"
+        backend:
+        - port: 80
+          ip: "10.244.1.23"
+          name: "backend1"
+          weight: 1
+        - port: 80
+          ip: "10.244.1.23"
+          name: "backend1"
+          weight: 1
+        vip: "130.192.100.12"
+      - vport: 80
+        proto: "TCP"
+        name: "Service-nigx"
+        backend:
+        - port: 80
+          ip: "10.244.1.23"
+          name: "backend1"
+          weight: 1
+        - port: 80
+          ip: "10.244.1.23"
+          name: "backend1"
+          weight: 1
+        vip: "130.192.100.12"
+      loglevel: "INFO"
+      client-subnet: "192.168.1.0/24"
+      name: "k8switch1"
+      span: false
+    x-is-list: "true"
+    x-is-standard: true
+    x-parent: "K8switch"
