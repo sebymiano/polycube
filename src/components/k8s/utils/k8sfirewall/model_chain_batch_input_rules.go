@@ -9,7 +9,9 @@
 
 package swagger
 
-type RuleFields struct {
+type ChainBatchInputRules struct {
+	Id int32 `json:"id,omitempty"`
+	Operation string `json:"operation,omitempty"`
 	// Source IP Address.
 	Src string `json:"src,omitempty"`
 	// Destination IP Address.

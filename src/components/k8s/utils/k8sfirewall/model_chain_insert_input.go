@@ -25,7 +25,7 @@ type ChainInsertInput struct {
 	Tcpflags string `json:"tcpflags,omitempty"`
 	// Connection status (NEW, ESTABLISHED, RELATED, INVALID)
 	Conntrack string `json:"conntrack,omitempty"`
-	// Action if the rule matches. Default is DROP.
+	// Action if the rule matches. Default is ACCEPT.
 	Action string `json:"action,omitempty"`
 	// Description of the rule.
 	Description string `json:"description,omitempty"`

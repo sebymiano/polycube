@@ -10,22 +10,25 @@
 package swagger
 
 type K8sfilter struct {
-
 	// Name of the k8sfilter service
 	Name string `json:"name,omitempty"`
-
 	// UUID of the Cube
 	Uuid string `json:"uuid,omitempty"`
-
-	// Type of the Cube (TYPE_TC, TYPE_XDP_SKB, TYPE_XDP_DRV)
-	Type_ string `json:"type,omitempty"`
-
+	// Type of the Cube (TC, XDP_SKB, XDP_DRV)
+	Type_       string `json:"type,omitempty"`
+	ServiceName string `json:"service-name,omitempty"`
 	// Logging level of a cube, from none (OFF) to the most verbose (TRACE)
 	Loglevel string `json:"loglevel,omitempty"`
-
+	// Defines if the service should be automatically optimized by Morpheus
+	DynOpt bool `json:"dyn-opt,omitempty"`
+	// Set this flag if you want to start Morpheus compiler
+	StartMorpheus bool `json:"start-morpheus,omitempty"`
 	// Entry of the ports table
 	Ports []Ports `json:"ports,omitempty"`
-
+	// Defines if the service is visible in Linux
+	Shadow bool `json:"shadow,omitempty"`
+	// Defines if all traffic is sent to Linux
+	Span bool `json:"span,omitempty"`
 	// Port range used for NodePort services
 	NodeportRange string `json:"nodeport-range,omitempty"`
 }

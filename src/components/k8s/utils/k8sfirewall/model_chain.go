@@ -12,7 +12,7 @@ package swagger
 type Chain struct {
 	// Chain in which the rule will be inserted. Default: INGRESS.
 	Name string `json:"name,omitempty"`
-	// Default action if no rule matches in the ingress chain. Default is DROP.
+	// Default action if no rule matches in the ingress chain. Default is ACCEPT.
 	Default_ string `json:"default,omitempty"`
 	Stats []ChainStats `json:"stats,omitempty"`
 	Rule []ChainRule `json:"rule,omitempty"`

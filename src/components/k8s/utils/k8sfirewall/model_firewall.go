@@ -19,12 +19,14 @@ type Firewall struct {
 	ServiceName string `json:"service-name,omitempty"`
 	// Logging level of a cube, from none (OFF) to the most verbose (TRACE)
 	Loglevel string `json:"loglevel,omitempty"`
+	// Defines if the service should be automatically optimized by Morpheus
+	DynOpt bool `json:"dyn-opt,omitempty"`
+	// Set this flag if you want to start Morpheus compiler
+	StartMorpheus bool `json:"start-morpheus,omitempty"`
 	// Enables the Connection Tracking module. Mandatory if connection tracking rules are needed. Default is ON.
 	Conntrack string `json:"conntrack,omitempty"`
-	// If Connection Tracking is enabled, all packets belonging to ESTABLISHED connections will be forwarded automatically. Default is ON.
+	// If Connection Tracking is enabled, all packets belonging to ESTABLISHED connections will be accepted automatically. Default is ON.
 	AcceptEstablished string `json:"accept-established,omitempty"`
-	// Interactive mode applies new rules immediately; if 'false', the command 'apply-rules' has to be used to apply all the rules at once. Default is TRUE.
-	Interactive bool `json:"interactive,omitempty"`
 	SessionTable []SessionTable `json:"session-table,omitempty"`
 	Chain []Chain `json:"chain,omitempty"`
 }

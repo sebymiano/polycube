@@ -26,11 +26,11 @@ var (
 type FirewallApiService service
 
 /*
-FirewallApiService Create firewall by ID
-Create operation of resource: firewall
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param name ID of name
- * @param firewall firewallbody object
+ FirewallApiService Create firewall by ID
+ Create operation of resource: firewall
+  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  * @param name ID of name
+  * @param firewall firewallbody object
 
 
 */
@@ -98,14 +98,14 @@ func (a *FirewallApiService) CreateFirewallByID(ctx context.Context, name string
 }
 
 /*
-FirewallApiService Create append by ID
-Create operation of resource: append
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param name ID of name
- * @param chainName ID of chain_name
- * @param append appendbody object
+ FirewallApiService Create append by ID
+ Create operation of resource: append
+  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  * @param name ID of name
+  * @param chainName ID of chain_name
+  * @param append appendbody object
 
-@return ChainAppendOutput
+ @return ChainAppendOutput
 */
 func (a *FirewallApiService) CreateFirewallChainAppendByID(ctx context.Context, name string, chainName string, append ChainAppendInput) (ChainAppendOutput, *http.Response, error) {
 	var (
@@ -163,9 +163,7 @@ func (a *FirewallApiService) CreateFirewallChainAppendByID(ctx context.Context, 
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
 		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-		if err == nil {
-			return localVarReturnValue, localVarHttpResponse, err
-		}
+		return localVarReturnValue, localVarHttpResponse, err
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
@@ -192,25 +190,25 @@ func (a *FirewallApiService) CreateFirewallChainAppendByID(ctx context.Context, 
 }
 
 /*
-FirewallApiService Create apply-rules by ID
-Create operation of resource: apply-rules
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param name ID of name
- * @param chainName ID of chain_name
+ FirewallApiService Create batch by ID
+ Create operation of resource: batch
+  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  * @param name ID of name
+  * @param chainName ID of chain_name
+  * @param batch batchbody object
 
-@return ChainApplyRulesOutput
+
 */
-func (a *FirewallApiService) CreateFirewallChainApplyRulesByID(ctx context.Context, name string, chainName string) (ChainApplyRulesOutput, *http.Response, error) {
+func (a *FirewallApiService) CreateFirewallChainBatchByID(ctx context.Context, name string, chainName string, batch ChainBatchInput) (*http.Response, error) {
 	var (
-		localVarHttpMethod  = strings.ToUpper("Post")
-		localVarPostBody    interface{}
-		localVarFileName    string
-		localVarFileBytes   []byte
-		localVarReturnValue ChainApplyRulesOutput
+		localVarHttpMethod = strings.ToUpper("Post")
+		localVarPostBody   interface{}
+		localVarFileName   string
+		localVarFileBytes  []byte
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/firewall/{name}/chain/{chain_name}/apply-rules/"
+	localVarPath := a.client.cfg.BasePath + "/firewall/{name}/chain/{chain_name}/batch/"
 	localVarPath = strings.Replace(localVarPath, "{"+"name"+"}", fmt.Sprintf("%v", name), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"chain_name"+"}", fmt.Sprintf("%v", chainName), -1)
 
@@ -235,28 +233,22 @@ func (a *FirewallApiService) CreateFirewallChainApplyRulesByID(ctx context.Conte
 	if localVarHttpHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
 	}
+	// body params
+	localVarPostBody = &batch
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {
-		return localVarReturnValue, nil, err
+		return nil, err
 	}
 
 	localVarHttpResponse, err := a.client.callAPI(r)
 	if err != nil || localVarHttpResponse == nil {
-		return localVarReturnValue, localVarHttpResponse, err
+		return localVarHttpResponse, err
 	}
 
 	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
 	localVarHttpResponse.Body.Close()
 	if err != nil {
-		return localVarReturnValue, localVarHttpResponse, err
-	}
-
-	if localVarHttpResponse.StatusCode < 300 {
-		// If we succeed, return the data, otherwise pass on to decode error.
-		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-		if err == nil {
-			return localVarReturnValue, localVarHttpResponse, err
-		}
+		return localVarHttpResponse, err
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
@@ -265,30 +257,19 @@ func (a *FirewallApiService) CreateFirewallChainApplyRulesByID(ctx context.Conte
 			error: localVarHttpResponse.Status,
 		}
 
-		if localVarHttpResponse.StatusCode == 200 {
-			var v ChainApplyRulesOutput
-			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHttpResponse, newErr
-			}
-			newErr.model = v
-			return localVarReturnValue, localVarHttpResponse, newErr
-		}
-
-		return localVarReturnValue, localVarHttpResponse, newErr
+		return localVarHttpResponse, newErr
 	}
 
-	return localVarReturnValue, localVarHttpResponse, nil
+	return localVarHttpResponse, nil
 }
 
 /*
-FirewallApiService Create chain by ID
-Create operation of resource: chain
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param name ID of name
- * @param chainName ID of chain_name
- * @param chain chainbody object
+ FirewallApiService Create chain by ID
+ Create operation of resource: chain
+  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  * @param name ID of name
+  * @param chainName ID of chain_name
+  * @param chain chainbody object
 
 
 */
@@ -357,12 +338,12 @@ func (a *FirewallApiService) CreateFirewallChainByID(ctx context.Context, name s
 }
 
 /*
-FirewallApiService Create delete by ID
-Create operation of resource: delete
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param name ID of name
- * @param chainName ID of chain_name
- * @param delete deletebody object
+ FirewallApiService Create delete by ID
+ Create operation of resource: delete
+  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  * @param name ID of name
+  * @param chainName ID of chain_name
+  * @param delete deletebody object
 
 
 */
@@ -431,14 +412,14 @@ func (a *FirewallApiService) CreateFirewallChainDeleteByID(ctx context.Context, 
 }
 
 /*
-FirewallApiService Create insert by ID
-Create operation of resource: insert
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param name ID of name
- * @param chainName ID of chain_name
- * @param insert insertbody object
+ FirewallApiService Create insert by ID
+ Create operation of resource: insert
+  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  * @param name ID of name
+  * @param chainName ID of chain_name
+  * @param insert insertbody object
 
-@return ChainInsertOutput
+ @return ChainInsertOutput
 */
 func (a *FirewallApiService) CreateFirewallChainInsertByID(ctx context.Context, name string, chainName string, insert ChainInsertInput) (ChainInsertOutput, *http.Response, error) {
 	var (
@@ -496,9 +477,7 @@ func (a *FirewallApiService) CreateFirewallChainInsertByID(ctx context.Context, 
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
 		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-		if err == nil {
-			return localVarReturnValue, localVarHttpResponse, err
-		}
+		return localVarReturnValue, localVarHttpResponse, err
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
@@ -525,11 +504,11 @@ func (a *FirewallApiService) CreateFirewallChainInsertByID(ctx context.Context, 
 }
 
 /*
-FirewallApiService Create chain by ID
-Create operation of resource: chain
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param name ID of name
- * @param chain chainbody object
+ FirewallApiService Create chain by ID
+ Create operation of resource: chain
+  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  * @param name ID of name
+  * @param chain chainbody object
 
 
 */
@@ -597,13 +576,13 @@ func (a *FirewallApiService) CreateFirewallChainListByID(ctx context.Context, na
 }
 
 /*
-FirewallApiService Create reset-counters by ID
-Create operation of resource: reset-counters
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param name ID of name
- * @param chainName ID of chain_name
+ FirewallApiService Create reset-counters by ID
+ Create operation of resource: reset-counters
+  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  * @param name ID of name
+  * @param chainName ID of chain_name
 
-@return ChainResetCountersOutput
+ @return ChainResetCountersOutput
 */
 func (a *FirewallApiService) CreateFirewallChainResetCountersByID(ctx context.Context, name string, chainName string) (ChainResetCountersOutput, *http.Response, error) {
 	var (
@@ -659,9 +638,7 @@ func (a *FirewallApiService) CreateFirewallChainResetCountersByID(ctx context.Co
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
 		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-		if err == nil {
-			return localVarReturnValue, localVarHttpResponse, err
-		}
+		return localVarReturnValue, localVarHttpResponse, err
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
@@ -688,13 +665,13 @@ func (a *FirewallApiService) CreateFirewallChainResetCountersByID(ctx context.Co
 }
 
 /*
-FirewallApiService Create rule by ID
-Create operation of resource: rule
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param name ID of name
- * @param chainName ID of chain_name
- * @param id ID of id
- * @param rule rulebody object
+ FirewallApiService Create rule by ID
+ Create operation of resource: rule
+  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  * @param name ID of name
+  * @param chainName ID of chain_name
+  * @param id ID of id
+  * @param rule rulebody object
 
 
 */
@@ -764,12 +741,12 @@ func (a *FirewallApiService) CreateFirewallChainRuleByID(ctx context.Context, na
 }
 
 /*
-FirewallApiService Create rule by ID
-Create operation of resource: rule
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param name ID of name
- * @param chainName ID of chain_name
- * @param rule rulebody object
+ FirewallApiService Create rule by ID
+ Create operation of resource: rule
+  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  * @param name ID of name
+  * @param chainName ID of chain_name
+  * @param rule rulebody object
 
 
 */
@@ -838,10 +815,10 @@ func (a *FirewallApiService) CreateFirewallChainRuleListByID(ctx context.Context
 }
 
 /*
-FirewallApiService Delete firewall by ID
-Delete operation of resource: firewall
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param name ID of name
+ FirewallApiService Delete firewall by ID
+ Delete operation of resource: firewall
+  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  * @param name ID of name
 
 
 */
@@ -907,11 +884,11 @@ func (a *FirewallApiService) DeleteFirewallByID(ctx context.Context, name string
 }
 
 /*
-FirewallApiService Delete chain by ID
-Delete operation of resource: chain
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param name ID of name
- * @param chainName ID of chain_name
+ FirewallApiService Delete chain by ID
+ Delete operation of resource: chain
+  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  * @param name ID of name
+  * @param chainName ID of chain_name
 
 
 */
@@ -978,10 +955,10 @@ func (a *FirewallApiService) DeleteFirewallChainByID(ctx context.Context, name s
 }
 
 /*
-FirewallApiService Delete chain by ID
-Delete operation of resource: chain
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param name ID of name
+ FirewallApiService Delete chain by ID
+ Delete operation of resource: chain
+  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  * @param name ID of name
 
 
 */
@@ -1047,12 +1024,12 @@ func (a *FirewallApiService) DeleteFirewallChainListByID(ctx context.Context, na
 }
 
 /*
-FirewallApiService Delete rule by ID
-Delete operation of resource: rule
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param name ID of name
- * @param chainName ID of chain_name
- * @param id ID of id
+ FirewallApiService Delete rule by ID
+ Delete operation of resource: rule
+  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  * @param name ID of name
+  * @param chainName ID of chain_name
+  * @param id ID of id
 
 
 */
@@ -1120,11 +1097,11 @@ func (a *FirewallApiService) DeleteFirewallChainRuleByID(ctx context.Context, na
 }
 
 /*
-FirewallApiService Delete rule by ID
-Delete operation of resource: rule
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param name ID of name
- * @param chainName ID of chain_name
+ FirewallApiService Delete rule by ID
+ Delete operation of resource: rule
+  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  * @param name ID of name
+  * @param chainName ID of chain_name
 
 
 */
@@ -1191,12 +1168,12 @@ func (a *FirewallApiService) DeleteFirewallChainRuleListByID(ctx context.Context
 }
 
 /*
-FirewallApiService Read accept-established by ID
-Read operation of resource: accept-established
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param name ID of name
+ FirewallApiService Read accept-established by ID
+ Read operation of resource: accept-established
+  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  * @param name ID of name
 
-@return string
+ @return string
 */
 func (a *FirewallApiService) ReadFirewallAcceptEstablishedByID(ctx context.Context, name string) (string, *http.Response, error) {
 	var (
@@ -1251,9 +1228,7 @@ func (a *FirewallApiService) ReadFirewallAcceptEstablishedByID(ctx context.Conte
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
 		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-		if err == nil {
-			return localVarReturnValue, localVarHttpResponse, err
-		}
+		return localVarReturnValue, localVarHttpResponse, err
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
@@ -1280,12 +1255,12 @@ func (a *FirewallApiService) ReadFirewallAcceptEstablishedByID(ctx context.Conte
 }
 
 /*
-FirewallApiService Read firewall by ID
-Read operation of resource: firewall
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param name ID of name
+ FirewallApiService Read firewall by ID
+ Read operation of resource: firewall
+  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  * @param name ID of name
 
-@return Firewall
+ @return Firewall
 */
 func (a *FirewallApiService) ReadFirewallByID(ctx context.Context, name string) (Firewall, *http.Response, error) {
 	var (
@@ -1340,9 +1315,7 @@ func (a *FirewallApiService) ReadFirewallByID(ctx context.Context, name string) 
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
 		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-		if err == nil {
-			return localVarReturnValue, localVarHttpResponse, err
-		}
+		return localVarReturnValue, localVarHttpResponse, err
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
@@ -1369,13 +1342,13 @@ func (a *FirewallApiService) ReadFirewallByID(ctx context.Context, name string) 
 }
 
 /*
-FirewallApiService Read chain by ID
-Read operation of resource: chain
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param name ID of name
- * @param chainName ID of chain_name
+ FirewallApiService Read chain by ID
+ Read operation of resource: chain
+  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  * @param name ID of name
+  * @param chainName ID of chain_name
 
-@return Chain
+ @return Chain
 */
 func (a *FirewallApiService) ReadFirewallChainByID(ctx context.Context, name string, chainName string) (Chain, *http.Response, error) {
 	var (
@@ -1431,9 +1404,7 @@ func (a *FirewallApiService) ReadFirewallChainByID(ctx context.Context, name str
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
 		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-		if err == nil {
-			return localVarReturnValue, localVarHttpResponse, err
-		}
+		return localVarReturnValue, localVarHttpResponse, err
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
@@ -1460,13 +1431,13 @@ func (a *FirewallApiService) ReadFirewallChainByID(ctx context.Context, name str
 }
 
 /*
-FirewallApiService Read default by ID
-Read operation of resource: default
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param name ID of name
- * @param chainName ID of chain_name
+ FirewallApiService Read default by ID
+ Read operation of resource: default
+  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  * @param name ID of name
+  * @param chainName ID of chain_name
 
-@return string
+ @return string
 */
 func (a *FirewallApiService) ReadFirewallChainDefaultByID(ctx context.Context, name string, chainName string) (string, *http.Response, error) {
 	var (
@@ -1522,9 +1493,7 @@ func (a *FirewallApiService) ReadFirewallChainDefaultByID(ctx context.Context, n
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
 		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-		if err == nil {
-			return localVarReturnValue, localVarHttpResponse, err
-		}
+		return localVarReturnValue, localVarHttpResponse, err
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
@@ -1551,12 +1520,12 @@ func (a *FirewallApiService) ReadFirewallChainDefaultByID(ctx context.Context, n
 }
 
 /*
-FirewallApiService Read chain by ID
-Read operation of resource: chain
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param name ID of name
+ FirewallApiService Read chain by ID
+ Read operation of resource: chain
+  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  * @param name ID of name
 
-@return []Chain
+ @return []Chain
 */
 func (a *FirewallApiService) ReadFirewallChainListByID(ctx context.Context, name string) ([]Chain, *http.Response, error) {
 	var (
@@ -1611,9 +1580,7 @@ func (a *FirewallApiService) ReadFirewallChainListByID(ctx context.Context, name
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
 		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-		if err == nil {
-			return localVarReturnValue, localVarHttpResponse, err
-		}
+		return localVarReturnValue, localVarHttpResponse, err
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
@@ -1640,14 +1607,14 @@ func (a *FirewallApiService) ReadFirewallChainListByID(ctx context.Context, name
 }
 
 /*
-FirewallApiService Read action by ID
-Read operation of resource: action
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param name ID of name
- * @param chainName ID of chain_name
- * @param id ID of id
+ FirewallApiService Read action by ID
+ Read operation of resource: action
+  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  * @param name ID of name
+  * @param chainName ID of chain_name
+  * @param id ID of id
 
-@return string
+ @return string
 */
 func (a *FirewallApiService) ReadFirewallChainRuleActionByID(ctx context.Context, name string, chainName string, id int32) (string, *http.Response, error) {
 	var (
@@ -1704,9 +1671,7 @@ func (a *FirewallApiService) ReadFirewallChainRuleActionByID(ctx context.Context
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
 		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-		if err == nil {
-			return localVarReturnValue, localVarHttpResponse, err
-		}
+		return localVarReturnValue, localVarHttpResponse, err
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
@@ -1733,14 +1698,14 @@ func (a *FirewallApiService) ReadFirewallChainRuleActionByID(ctx context.Context
 }
 
 /*
-FirewallApiService Read rule by ID
-Read operation of resource: rule
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param name ID of name
- * @param chainName ID of chain_name
- * @param id ID of id
+ FirewallApiService Read rule by ID
+ Read operation of resource: rule
+  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  * @param name ID of name
+  * @param chainName ID of chain_name
+  * @param id ID of id
 
-@return ChainRule
+ @return ChainRule
 */
 func (a *FirewallApiService) ReadFirewallChainRuleByID(ctx context.Context, name string, chainName string, id int32) (ChainRule, *http.Response, error) {
 	var (
@@ -1797,9 +1762,7 @@ func (a *FirewallApiService) ReadFirewallChainRuleByID(ctx context.Context, name
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
 		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-		if err == nil {
-			return localVarReturnValue, localVarHttpResponse, err
-		}
+		return localVarReturnValue, localVarHttpResponse, err
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
@@ -1826,14 +1789,14 @@ func (a *FirewallApiService) ReadFirewallChainRuleByID(ctx context.Context, name
 }
 
 /*
-FirewallApiService Read conntrack by ID
-Read operation of resource: conntrack
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param name ID of name
- * @param chainName ID of chain_name
- * @param id ID of id
+ FirewallApiService Read conntrack by ID
+ Read operation of resource: conntrack
+  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  * @param name ID of name
+  * @param chainName ID of chain_name
+  * @param id ID of id
 
-@return string
+ @return string
 */
 func (a *FirewallApiService) ReadFirewallChainRuleConntrackByID(ctx context.Context, name string, chainName string, id int32) (string, *http.Response, error) {
 	var (
@@ -1890,9 +1853,7 @@ func (a *FirewallApiService) ReadFirewallChainRuleConntrackByID(ctx context.Cont
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
 		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-		if err == nil {
-			return localVarReturnValue, localVarHttpResponse, err
-		}
+		return localVarReturnValue, localVarHttpResponse, err
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
@@ -1919,14 +1880,14 @@ func (a *FirewallApiService) ReadFirewallChainRuleConntrackByID(ctx context.Cont
 }
 
 /*
-FirewallApiService Read description by ID
-Read operation of resource: description
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param name ID of name
- * @param chainName ID of chain_name
- * @param id ID of id
+ FirewallApiService Read description by ID
+ Read operation of resource: description
+  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  * @param name ID of name
+  * @param chainName ID of chain_name
+  * @param id ID of id
 
-@return string
+ @return string
 */
 func (a *FirewallApiService) ReadFirewallChainRuleDescriptionByID(ctx context.Context, name string, chainName string, id int32) (string, *http.Response, error) {
 	var (
@@ -1983,9 +1944,7 @@ func (a *FirewallApiService) ReadFirewallChainRuleDescriptionByID(ctx context.Co
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
 		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-		if err == nil {
-			return localVarReturnValue, localVarHttpResponse, err
-		}
+		return localVarReturnValue, localVarHttpResponse, err
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
@@ -2012,14 +1971,14 @@ func (a *FirewallApiService) ReadFirewallChainRuleDescriptionByID(ctx context.Co
 }
 
 /*
-FirewallApiService Read dport by ID
-Read operation of resource: dport
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param name ID of name
- * @param chainName ID of chain_name
- * @param id ID of id
+ FirewallApiService Read dport by ID
+ Read operation of resource: dport
+  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  * @param name ID of name
+  * @param chainName ID of chain_name
+  * @param id ID of id
 
-@return int32
+ @return int32
 */
 func (a *FirewallApiService) ReadFirewallChainRuleDportByID(ctx context.Context, name string, chainName string, id int32) (int32, *http.Response, error) {
 	var (
@@ -2076,9 +2035,7 @@ func (a *FirewallApiService) ReadFirewallChainRuleDportByID(ctx context.Context,
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
 		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-		if err == nil {
-			return localVarReturnValue, localVarHttpResponse, err
-		}
+		return localVarReturnValue, localVarHttpResponse, err
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
@@ -2105,14 +2062,14 @@ func (a *FirewallApiService) ReadFirewallChainRuleDportByID(ctx context.Context,
 }
 
 /*
-FirewallApiService Read dst by ID
-Read operation of resource: dst
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param name ID of name
- * @param chainName ID of chain_name
- * @param id ID of id
+ FirewallApiService Read dst by ID
+ Read operation of resource: dst
+  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  * @param name ID of name
+  * @param chainName ID of chain_name
+  * @param id ID of id
 
-@return string
+ @return string
 */
 func (a *FirewallApiService) ReadFirewallChainRuleDstByID(ctx context.Context, name string, chainName string, id int32) (string, *http.Response, error) {
 	var (
@@ -2169,9 +2126,7 @@ func (a *FirewallApiService) ReadFirewallChainRuleDstByID(ctx context.Context, n
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
 		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-		if err == nil {
-			return localVarReturnValue, localVarHttpResponse, err
-		}
+		return localVarReturnValue, localVarHttpResponse, err
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
@@ -2198,14 +2153,14 @@ func (a *FirewallApiService) ReadFirewallChainRuleDstByID(ctx context.Context, n
 }
 
 /*
-FirewallApiService Read l4proto by ID
-Read operation of resource: l4proto
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param name ID of name
- * @param chainName ID of chain_name
- * @param id ID of id
+ FirewallApiService Read l4proto by ID
+ Read operation of resource: l4proto
+  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  * @param name ID of name
+  * @param chainName ID of chain_name
+  * @param id ID of id
 
-@return string
+ @return string
 */
 func (a *FirewallApiService) ReadFirewallChainRuleL4protoByID(ctx context.Context, name string, chainName string, id int32) (string, *http.Response, error) {
 	var (
@@ -2262,9 +2217,7 @@ func (a *FirewallApiService) ReadFirewallChainRuleL4protoByID(ctx context.Contex
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
 		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-		if err == nil {
-			return localVarReturnValue, localVarHttpResponse, err
-		}
+		return localVarReturnValue, localVarHttpResponse, err
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
@@ -2291,13 +2244,13 @@ func (a *FirewallApiService) ReadFirewallChainRuleL4protoByID(ctx context.Contex
 }
 
 /*
-FirewallApiService Read rule by ID
-Read operation of resource: rule
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param name ID of name
- * @param chainName ID of chain_name
+ FirewallApiService Read rule by ID
+ Read operation of resource: rule
+  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  * @param name ID of name
+  * @param chainName ID of chain_name
 
-@return []ChainRule
+ @return []ChainRule
 */
 func (a *FirewallApiService) ReadFirewallChainRuleListByID(ctx context.Context, name string, chainName string) ([]ChainRule, *http.Response, error) {
 	var (
@@ -2353,9 +2306,7 @@ func (a *FirewallApiService) ReadFirewallChainRuleListByID(ctx context.Context, 
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
 		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-		if err == nil {
-			return localVarReturnValue, localVarHttpResponse, err
-		}
+		return localVarReturnValue, localVarHttpResponse, err
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
@@ -2382,14 +2333,14 @@ func (a *FirewallApiService) ReadFirewallChainRuleListByID(ctx context.Context, 
 }
 
 /*
-FirewallApiService Read sport by ID
-Read operation of resource: sport
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param name ID of name
- * @param chainName ID of chain_name
- * @param id ID of id
+ FirewallApiService Read sport by ID
+ Read operation of resource: sport
+  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  * @param name ID of name
+  * @param chainName ID of chain_name
+  * @param id ID of id
 
-@return int32
+ @return int32
 */
 func (a *FirewallApiService) ReadFirewallChainRuleSportByID(ctx context.Context, name string, chainName string, id int32) (int32, *http.Response, error) {
 	var (
@@ -2446,9 +2397,7 @@ func (a *FirewallApiService) ReadFirewallChainRuleSportByID(ctx context.Context,
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
 		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-		if err == nil {
-			return localVarReturnValue, localVarHttpResponse, err
-		}
+		return localVarReturnValue, localVarHttpResponse, err
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
@@ -2475,14 +2424,14 @@ func (a *FirewallApiService) ReadFirewallChainRuleSportByID(ctx context.Context,
 }
 
 /*
-FirewallApiService Read src by ID
-Read operation of resource: src
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param name ID of name
- * @param chainName ID of chain_name
- * @param id ID of id
+ FirewallApiService Read src by ID
+ Read operation of resource: src
+  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  * @param name ID of name
+  * @param chainName ID of chain_name
+  * @param id ID of id
 
-@return string
+ @return string
 */
 func (a *FirewallApiService) ReadFirewallChainRuleSrcByID(ctx context.Context, name string, chainName string, id int32) (string, *http.Response, error) {
 	var (
@@ -2539,9 +2488,7 @@ func (a *FirewallApiService) ReadFirewallChainRuleSrcByID(ctx context.Context, n
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
 		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-		if err == nil {
-			return localVarReturnValue, localVarHttpResponse, err
-		}
+		return localVarReturnValue, localVarHttpResponse, err
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
@@ -2568,14 +2515,14 @@ func (a *FirewallApiService) ReadFirewallChainRuleSrcByID(ctx context.Context, n
 }
 
 /*
-FirewallApiService Read tcpflags by ID
-Read operation of resource: tcpflags
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param name ID of name
- * @param chainName ID of chain_name
- * @param id ID of id
+ FirewallApiService Read tcpflags by ID
+ Read operation of resource: tcpflags
+  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  * @param name ID of name
+  * @param chainName ID of chain_name
+  * @param id ID of id
 
-@return string
+ @return string
 */
 func (a *FirewallApiService) ReadFirewallChainRuleTcpflagsByID(ctx context.Context, name string, chainName string, id int32) (string, *http.Response, error) {
 	var (
@@ -2632,9 +2579,7 @@ func (a *FirewallApiService) ReadFirewallChainRuleTcpflagsByID(ctx context.Conte
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
 		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-		if err == nil {
-			return localVarReturnValue, localVarHttpResponse, err
-		}
+		return localVarReturnValue, localVarHttpResponse, err
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
@@ -2661,14 +2606,14 @@ func (a *FirewallApiService) ReadFirewallChainRuleTcpflagsByID(ctx context.Conte
 }
 
 /*
-FirewallApiService Read action by ID
-Read operation of resource: action
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param name ID of name
- * @param chainName ID of chain_name
- * @param id ID of id
+ FirewallApiService Read action by ID
+ Read operation of resource: action
+  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  * @param name ID of name
+  * @param chainName ID of chain_name
+  * @param id ID of id
 
-@return string
+ @return string
 */
 func (a *FirewallApiService) ReadFirewallChainStatsActionByID(ctx context.Context, name string, chainName string, id int32) (string, *http.Response, error) {
 	var (
@@ -2725,9 +2670,7 @@ func (a *FirewallApiService) ReadFirewallChainStatsActionByID(ctx context.Contex
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
 		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-		if err == nil {
-			return localVarReturnValue, localVarHttpResponse, err
-		}
+		return localVarReturnValue, localVarHttpResponse, err
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
@@ -2754,14 +2697,14 @@ func (a *FirewallApiService) ReadFirewallChainStatsActionByID(ctx context.Contex
 }
 
 /*
-FirewallApiService Read stats by ID
-Read operation of resource: stats
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param name ID of name
- * @param chainName ID of chain_name
- * @param id ID of id
+ FirewallApiService Read stats by ID
+ Read operation of resource: stats
+  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  * @param name ID of name
+  * @param chainName ID of chain_name
+  * @param id ID of id
 
-@return ChainStats
+ @return ChainStats
 */
 func (a *FirewallApiService) ReadFirewallChainStatsByID(ctx context.Context, name string, chainName string, id int32) (ChainStats, *http.Response, error) {
 	var (
@@ -2818,9 +2761,7 @@ func (a *FirewallApiService) ReadFirewallChainStatsByID(ctx context.Context, nam
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
 		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-		if err == nil {
-			return localVarReturnValue, localVarHttpResponse, err
-		}
+		return localVarReturnValue, localVarHttpResponse, err
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
@@ -2847,14 +2788,14 @@ func (a *FirewallApiService) ReadFirewallChainStatsByID(ctx context.Context, nam
 }
 
 /*
-FirewallApiService Read bytes by ID
-Read operation of resource: bytes
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param name ID of name
- * @param chainName ID of chain_name
- * @param id ID of id
+ FirewallApiService Read bytes by ID
+ Read operation of resource: bytes
+  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  * @param name ID of name
+  * @param chainName ID of chain_name
+  * @param id ID of id
 
-@return int32
+ @return int32
 */
 func (a *FirewallApiService) ReadFirewallChainStatsBytesByID(ctx context.Context, name string, chainName string, id int32) (int32, *http.Response, error) {
 	var (
@@ -2911,9 +2852,7 @@ func (a *FirewallApiService) ReadFirewallChainStatsBytesByID(ctx context.Context
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
 		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-		if err == nil {
-			return localVarReturnValue, localVarHttpResponse, err
-		}
+		return localVarReturnValue, localVarHttpResponse, err
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
@@ -2940,14 +2879,14 @@ func (a *FirewallApiService) ReadFirewallChainStatsBytesByID(ctx context.Context
 }
 
 /*
-FirewallApiService Read conntrack by ID
-Read operation of resource: conntrack
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param name ID of name
- * @param chainName ID of chain_name
- * @param id ID of id
+ FirewallApiService Read conntrack by ID
+ Read operation of resource: conntrack
+  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  * @param name ID of name
+  * @param chainName ID of chain_name
+  * @param id ID of id
 
-@return string
+ @return string
 */
 func (a *FirewallApiService) ReadFirewallChainStatsConntrackByID(ctx context.Context, name string, chainName string, id int32) (string, *http.Response, error) {
 	var (
@@ -3004,9 +2943,7 @@ func (a *FirewallApiService) ReadFirewallChainStatsConntrackByID(ctx context.Con
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
 		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-		if err == nil {
-			return localVarReturnValue, localVarHttpResponse, err
-		}
+		return localVarReturnValue, localVarHttpResponse, err
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
@@ -3033,14 +2970,14 @@ func (a *FirewallApiService) ReadFirewallChainStatsConntrackByID(ctx context.Con
 }
 
 /*
-FirewallApiService Read description by ID
-Read operation of resource: description
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param name ID of name
- * @param chainName ID of chain_name
- * @param id ID of id
+ FirewallApiService Read description by ID
+ Read operation of resource: description
+  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  * @param name ID of name
+  * @param chainName ID of chain_name
+  * @param id ID of id
 
-@return string
+ @return string
 */
 func (a *FirewallApiService) ReadFirewallChainStatsDescriptionByID(ctx context.Context, name string, chainName string, id int32) (string, *http.Response, error) {
 	var (
@@ -3097,9 +3034,7 @@ func (a *FirewallApiService) ReadFirewallChainStatsDescriptionByID(ctx context.C
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
 		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-		if err == nil {
-			return localVarReturnValue, localVarHttpResponse, err
-		}
+		return localVarReturnValue, localVarHttpResponse, err
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
@@ -3126,14 +3061,14 @@ func (a *FirewallApiService) ReadFirewallChainStatsDescriptionByID(ctx context.C
 }
 
 /*
-FirewallApiService Read dport by ID
-Read operation of resource: dport
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param name ID of name
- * @param chainName ID of chain_name
- * @param id ID of id
+ FirewallApiService Read dport by ID
+ Read operation of resource: dport
+  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  * @param name ID of name
+  * @param chainName ID of chain_name
+  * @param id ID of id
 
-@return int32
+ @return int32
 */
 func (a *FirewallApiService) ReadFirewallChainStatsDportByID(ctx context.Context, name string, chainName string, id int32) (int32, *http.Response, error) {
 	var (
@@ -3190,9 +3125,7 @@ func (a *FirewallApiService) ReadFirewallChainStatsDportByID(ctx context.Context
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
 		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-		if err == nil {
-			return localVarReturnValue, localVarHttpResponse, err
-		}
+		return localVarReturnValue, localVarHttpResponse, err
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
@@ -3219,14 +3152,14 @@ func (a *FirewallApiService) ReadFirewallChainStatsDportByID(ctx context.Context
 }
 
 /*
-FirewallApiService Read dst by ID
-Read operation of resource: dst
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param name ID of name
- * @param chainName ID of chain_name
- * @param id ID of id
+ FirewallApiService Read dst by ID
+ Read operation of resource: dst
+  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  * @param name ID of name
+  * @param chainName ID of chain_name
+  * @param id ID of id
 
-@return string
+ @return string
 */
 func (a *FirewallApiService) ReadFirewallChainStatsDstByID(ctx context.Context, name string, chainName string, id int32) (string, *http.Response, error) {
 	var (
@@ -3283,9 +3216,7 @@ func (a *FirewallApiService) ReadFirewallChainStatsDstByID(ctx context.Context, 
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
 		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-		if err == nil {
-			return localVarReturnValue, localVarHttpResponse, err
-		}
+		return localVarReturnValue, localVarHttpResponse, err
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
@@ -3312,14 +3243,14 @@ func (a *FirewallApiService) ReadFirewallChainStatsDstByID(ctx context.Context, 
 }
 
 /*
-FirewallApiService Read l4proto by ID
-Read operation of resource: l4proto
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param name ID of name
- * @param chainName ID of chain_name
- * @param id ID of id
+ FirewallApiService Read l4proto by ID
+ Read operation of resource: l4proto
+  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  * @param name ID of name
+  * @param chainName ID of chain_name
+  * @param id ID of id
 
-@return string
+ @return string
 */
 func (a *FirewallApiService) ReadFirewallChainStatsL4protoByID(ctx context.Context, name string, chainName string, id int32) (string, *http.Response, error) {
 	var (
@@ -3376,9 +3307,7 @@ func (a *FirewallApiService) ReadFirewallChainStatsL4protoByID(ctx context.Conte
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
 		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-		if err == nil {
-			return localVarReturnValue, localVarHttpResponse, err
-		}
+		return localVarReturnValue, localVarHttpResponse, err
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
@@ -3405,13 +3334,13 @@ func (a *FirewallApiService) ReadFirewallChainStatsL4protoByID(ctx context.Conte
 }
 
 /*
-FirewallApiService Read stats by ID
-Read operation of resource: stats
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param name ID of name
- * @param chainName ID of chain_name
+ FirewallApiService Read stats by ID
+ Read operation of resource: stats
+  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  * @param name ID of name
+  * @param chainName ID of chain_name
 
-@return []ChainStats
+ @return []ChainStats
 */
 func (a *FirewallApiService) ReadFirewallChainStatsListByID(ctx context.Context, name string, chainName string) ([]ChainStats, *http.Response, error) {
 	var (
@@ -3467,9 +3396,7 @@ func (a *FirewallApiService) ReadFirewallChainStatsListByID(ctx context.Context,
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
 		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-		if err == nil {
-			return localVarReturnValue, localVarHttpResponse, err
-		}
+		return localVarReturnValue, localVarHttpResponse, err
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
@@ -3496,14 +3423,14 @@ func (a *FirewallApiService) ReadFirewallChainStatsListByID(ctx context.Context,
 }
 
 /*
-FirewallApiService Read pkts by ID
-Read operation of resource: pkts
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param name ID of name
- * @param chainName ID of chain_name
- * @param id ID of id
+ FirewallApiService Read pkts by ID
+ Read operation of resource: pkts
+  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  * @param name ID of name
+  * @param chainName ID of chain_name
+  * @param id ID of id
 
-@return int32
+ @return int32
 */
 func (a *FirewallApiService) ReadFirewallChainStatsPktsByID(ctx context.Context, name string, chainName string, id int32) (int32, *http.Response, error) {
 	var (
@@ -3560,9 +3487,7 @@ func (a *FirewallApiService) ReadFirewallChainStatsPktsByID(ctx context.Context,
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
 		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-		if err == nil {
-			return localVarReturnValue, localVarHttpResponse, err
-		}
+		return localVarReturnValue, localVarHttpResponse, err
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
@@ -3589,14 +3514,14 @@ func (a *FirewallApiService) ReadFirewallChainStatsPktsByID(ctx context.Context,
 }
 
 /*
-FirewallApiService Read sport by ID
-Read operation of resource: sport
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param name ID of name
- * @param chainName ID of chain_name
- * @param id ID of id
+ FirewallApiService Read sport by ID
+ Read operation of resource: sport
+  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  * @param name ID of name
+  * @param chainName ID of chain_name
+  * @param id ID of id
 
-@return int32
+ @return int32
 */
 func (a *FirewallApiService) ReadFirewallChainStatsSportByID(ctx context.Context, name string, chainName string, id int32) (int32, *http.Response, error) {
 	var (
@@ -3653,9 +3578,7 @@ func (a *FirewallApiService) ReadFirewallChainStatsSportByID(ctx context.Context
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
 		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-		if err == nil {
-			return localVarReturnValue, localVarHttpResponse, err
-		}
+		return localVarReturnValue, localVarHttpResponse, err
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
@@ -3682,14 +3605,14 @@ func (a *FirewallApiService) ReadFirewallChainStatsSportByID(ctx context.Context
 }
 
 /*
-FirewallApiService Read src by ID
-Read operation of resource: src
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param name ID of name
- * @param chainName ID of chain_name
- * @param id ID of id
+ FirewallApiService Read src by ID
+ Read operation of resource: src
+  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  * @param name ID of name
+  * @param chainName ID of chain_name
+  * @param id ID of id
 
-@return string
+ @return string
 */
 func (a *FirewallApiService) ReadFirewallChainStatsSrcByID(ctx context.Context, name string, chainName string, id int32) (string, *http.Response, error) {
 	var (
@@ -3746,9 +3669,7 @@ func (a *FirewallApiService) ReadFirewallChainStatsSrcByID(ctx context.Context, 
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
 		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-		if err == nil {
-			return localVarReturnValue, localVarHttpResponse, err
-		}
+		return localVarReturnValue, localVarHttpResponse, err
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
@@ -3775,14 +3696,14 @@ func (a *FirewallApiService) ReadFirewallChainStatsSrcByID(ctx context.Context, 
 }
 
 /*
-FirewallApiService Read tcpflags by ID
-Read operation of resource: tcpflags
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param name ID of name
- * @param chainName ID of chain_name
- * @param id ID of id
+ FirewallApiService Read tcpflags by ID
+ Read operation of resource: tcpflags
+  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  * @param name ID of name
+  * @param chainName ID of chain_name
+  * @param id ID of id
 
-@return string
+ @return string
 */
 func (a *FirewallApiService) ReadFirewallChainStatsTcpflagsByID(ctx context.Context, name string, chainName string, id int32) (string, *http.Response, error) {
 	var (
@@ -3839,9 +3760,7 @@ func (a *FirewallApiService) ReadFirewallChainStatsTcpflagsByID(ctx context.Cont
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
 		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-		if err == nil {
-			return localVarReturnValue, localVarHttpResponse, err
-		}
+		return localVarReturnValue, localVarHttpResponse, err
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
@@ -3868,12 +3787,12 @@ func (a *FirewallApiService) ReadFirewallChainStatsTcpflagsByID(ctx context.Cont
 }
 
 /*
-FirewallApiService Read conntrack by ID
-Read operation of resource: conntrack
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param name ID of name
+ FirewallApiService Read conntrack by ID
+ Read operation of resource: conntrack
+  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  * @param name ID of name
 
-@return string
+ @return string
 */
 func (a *FirewallApiService) ReadFirewallConntrackByID(ctx context.Context, name string) (string, *http.Response, error) {
 	var (
@@ -3928,9 +3847,7 @@ func (a *FirewallApiService) ReadFirewallConntrackByID(ctx context.Context, name
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
 		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-		if err == nil {
-			return localVarReturnValue, localVarHttpResponse, err
-		}
+		return localVarReturnValue, localVarHttpResponse, err
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
@@ -3957,14 +3874,14 @@ func (a *FirewallApiService) ReadFirewallConntrackByID(ctx context.Context, name
 }
 
 /*
-FirewallApiService Read interactive by ID
-Read operation of resource: interactive
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param name ID of name
+ FirewallApiService Read dyn-opt by ID
+ Read operation of resource: dyn-opt
+  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  * @param name ID of name
 
-@return bool
+ @return bool
 */
-func (a *FirewallApiService) ReadFirewallInteractiveByID(ctx context.Context, name string) (bool, *http.Response, error) {
+func (a *FirewallApiService) ReadFirewallDynOptByID(ctx context.Context, name string) (bool, *http.Response, error) {
 	var (
 		localVarHttpMethod  = strings.ToUpper("Get")
 		localVarPostBody    interface{}
@@ -3974,7 +3891,7 @@ func (a *FirewallApiService) ReadFirewallInteractiveByID(ctx context.Context, na
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/firewall/{name}/interactive/"
+	localVarPath := a.client.cfg.BasePath + "/firewall/{name}/dyn-opt/"
 	localVarPath = strings.Replace(localVarPath, "{"+"name"+"}", fmt.Sprintf("%v", name), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -4017,9 +3934,7 @@ func (a *FirewallApiService) ReadFirewallInteractiveByID(ctx context.Context, na
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
 		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-		if err == nil {
-			return localVarReturnValue, localVarHttpResponse, err
-		}
+		return localVarReturnValue, localVarHttpResponse, err
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
@@ -4046,11 +3961,11 @@ func (a *FirewallApiService) ReadFirewallInteractiveByID(ctx context.Context, na
 }
 
 /*
-FirewallApiService Read firewall by ID
-Read operation of resource: firewall
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ FirewallApiService Read firewall by ID
+ Read operation of resource: firewall
+  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 
-@return []Firewall
+ @return []Firewall
 */
 func (a *FirewallApiService) ReadFirewallListByID(ctx context.Context) ([]Firewall, *http.Response, error) {
 	var (
@@ -4104,9 +4019,7 @@ func (a *FirewallApiService) ReadFirewallListByID(ctx context.Context) ([]Firewa
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
 		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-		if err == nil {
-			return localVarReturnValue, localVarHttpResponse, err
-		}
+		return localVarReturnValue, localVarHttpResponse, err
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
@@ -4133,12 +4046,12 @@ func (a *FirewallApiService) ReadFirewallListByID(ctx context.Context) ([]Firewa
 }
 
 /*
-FirewallApiService Read loglevel by ID
-Read operation of resource: loglevel
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param name ID of name
+ FirewallApiService Read loglevel by ID
+ Read operation of resource: loglevel
+  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  * @param name ID of name
 
-@return string
+ @return string
 */
 func (a *FirewallApiService) ReadFirewallLoglevelByID(ctx context.Context, name string) (string, *http.Response, error) {
 	var (
@@ -4193,9 +4106,7 @@ func (a *FirewallApiService) ReadFirewallLoglevelByID(ctx context.Context, name 
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
 		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-		if err == nil {
-			return localVarReturnValue, localVarHttpResponse, err
-		}
+		return localVarReturnValue, localVarHttpResponse, err
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
@@ -4222,12 +4133,12 @@ func (a *FirewallApiService) ReadFirewallLoglevelByID(ctx context.Context, name 
 }
 
 /*
-FirewallApiService Read service-name by ID
-Read operation of resource: service-name
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param name ID of name
+ FirewallApiService Read service-name by ID
+ Read operation of resource: service-name
+  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  * @param name ID of name
 
-@return string
+ @return string
 */
 func (a *FirewallApiService) ReadFirewallServiceNameByID(ctx context.Context, name string) (string, *http.Response, error) {
 	var (
@@ -4282,9 +4193,7 @@ func (a *FirewallApiService) ReadFirewallServiceNameByID(ctx context.Context, na
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
 		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-		if err == nil {
-			return localVarReturnValue, localVarHttpResponse, err
-		}
+		return localVarReturnValue, localVarHttpResponse, err
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
@@ -4311,17 +4220,17 @@ func (a *FirewallApiService) ReadFirewallServiceNameByID(ctx context.Context, na
 }
 
 /*
-FirewallApiService Read session-table by ID
-Read operation of resource: session-table
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param name ID of name
- * @param src ID of src
- * @param dst ID of dst
- * @param l4proto ID of l4proto
- * @param sport ID of sport
- * @param dport ID of dport
+ FirewallApiService Read session-table by ID
+ Read operation of resource: session-table
+  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  * @param name ID of name
+  * @param src ID of src
+  * @param dst ID of dst
+  * @param l4proto ID of l4proto
+  * @param sport ID of sport
+  * @param dport ID of dport
 
-@return SessionTable
+ @return SessionTable
 */
 func (a *FirewallApiService) ReadFirewallSessionTableByID(ctx context.Context, name string, src string, dst string, l4proto string, sport int32, dport int32) (SessionTable, *http.Response, error) {
 	var (
@@ -4381,9 +4290,7 @@ func (a *FirewallApiService) ReadFirewallSessionTableByID(ctx context.Context, n
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
 		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-		if err == nil {
-			return localVarReturnValue, localVarHttpResponse, err
-		}
+		return localVarReturnValue, localVarHttpResponse, err
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
@@ -4410,17 +4317,17 @@ func (a *FirewallApiService) ReadFirewallSessionTableByID(ctx context.Context, n
 }
 
 /*
-FirewallApiService Read eta by ID
-Read operation of resource: eta
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param name ID of name
- * @param src ID of src
- * @param dst ID of dst
- * @param l4proto ID of l4proto
- * @param sport ID of sport
- * @param dport ID of dport
+ FirewallApiService Read eta by ID
+ Read operation of resource: eta
+  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  * @param name ID of name
+  * @param src ID of src
+  * @param dst ID of dst
+  * @param l4proto ID of l4proto
+  * @param sport ID of sport
+  * @param dport ID of dport
 
-@return int32
+ @return int32
 */
 func (a *FirewallApiService) ReadFirewallSessionTableEtaByID(ctx context.Context, name string, src string, dst string, l4proto string, sport int32, dport int32) (int32, *http.Response, error) {
 	var (
@@ -4480,9 +4387,7 @@ func (a *FirewallApiService) ReadFirewallSessionTableEtaByID(ctx context.Context
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
 		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-		if err == nil {
-			return localVarReturnValue, localVarHttpResponse, err
-		}
+		return localVarReturnValue, localVarHttpResponse, err
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
@@ -4509,12 +4414,12 @@ func (a *FirewallApiService) ReadFirewallSessionTableEtaByID(ctx context.Context
 }
 
 /*
-FirewallApiService Read session-table by ID
-Read operation of resource: session-table
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param name ID of name
+ FirewallApiService Read session-table by ID
+ Read operation of resource: session-table
+  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  * @param name ID of name
 
-@return []SessionTable
+ @return []SessionTable
 */
 func (a *FirewallApiService) ReadFirewallSessionTableListByID(ctx context.Context, name string) ([]SessionTable, *http.Response, error) {
 	var (
@@ -4569,9 +4474,7 @@ func (a *FirewallApiService) ReadFirewallSessionTableListByID(ctx context.Contex
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
 		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-		if err == nil {
-			return localVarReturnValue, localVarHttpResponse, err
-		}
+		return localVarReturnValue, localVarHttpResponse, err
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
@@ -4598,17 +4501,17 @@ func (a *FirewallApiService) ReadFirewallSessionTableListByID(ctx context.Contex
 }
 
 /*
-FirewallApiService Read state by ID
-Read operation of resource: state
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param name ID of name
- * @param src ID of src
- * @param dst ID of dst
- * @param l4proto ID of l4proto
- * @param sport ID of sport
- * @param dport ID of dport
+ FirewallApiService Read state by ID
+ Read operation of resource: state
+  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  * @param name ID of name
+  * @param src ID of src
+  * @param dst ID of dst
+  * @param l4proto ID of l4proto
+  * @param sport ID of sport
+  * @param dport ID of dport
 
-@return string
+ @return string
 */
 func (a *FirewallApiService) ReadFirewallSessionTableStateByID(ctx context.Context, name string, src string, dst string, l4proto string, sport int32, dport int32) (string, *http.Response, error) {
 	var (
@@ -4668,9 +4571,7 @@ func (a *FirewallApiService) ReadFirewallSessionTableStateByID(ctx context.Conte
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
 		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-		if err == nil {
-			return localVarReturnValue, localVarHttpResponse, err
-		}
+		return localVarReturnValue, localVarHttpResponse, err
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
@@ -4697,12 +4598,99 @@ func (a *FirewallApiService) ReadFirewallSessionTableStateByID(ctx context.Conte
 }
 
 /*
-FirewallApiService Read type by ID
-Read operation of resource: type
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param name ID of name
+ FirewallApiService Read start-morpheus by ID
+ Read operation of resource: start-morpheus
+  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  * @param name ID of name
 
-@return string
+ @return bool
+*/
+func (a *FirewallApiService) ReadFirewallStartMorpheusByID(ctx context.Context, name string) (bool, *http.Response, error) {
+	var (
+		localVarHttpMethod  = strings.ToUpper("Get")
+		localVarPostBody    interface{}
+		localVarFileName    string
+		localVarFileBytes   []byte
+		localVarReturnValue bool
+	)
+
+	// create path and map variables
+	localVarPath := a.client.cfg.BasePath + "/firewall/{name}/start-morpheus/"
+	localVarPath = strings.Replace(localVarPath, "{"+"name"+"}", fmt.Sprintf("%v", name), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	// to determine the Content-Type header
+	localVarHttpContentTypes := []string{"application/json"}
+
+	// set Content-Type header
+	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
+	if localVarHttpContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHttpContentType
+	}
+
+	// to determine the Accept header
+	localVarHttpHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
+	if localVarHttpHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
+	}
+	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHttpResponse, err := a.client.callAPI(r)
+	if err != nil || localVarHttpResponse == nil {
+		return localVarReturnValue, localVarHttpResponse, err
+	}
+
+	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
+	localVarHttpResponse.Body.Close()
+	if err != nil {
+		return localVarReturnValue, localVarHttpResponse, err
+	}
+
+	if localVarHttpResponse.StatusCode < 300 {
+		// If we succeed, return the data, otherwise pass on to decode error.
+		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+		return localVarReturnValue, localVarHttpResponse, err
+	}
+
+	if localVarHttpResponse.StatusCode >= 300 {
+		newErr := GenericSwaggerError{
+			body:  localVarBody,
+			error: localVarHttpResponse.Status,
+		}
+
+		if localVarHttpResponse.StatusCode == 200 {
+			var v bool
+			err = a.client.decode(&v, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHttpResponse, newErr
+			}
+			newErr.model = v
+			return localVarReturnValue, localVarHttpResponse, newErr
+		}
+
+		return localVarReturnValue, localVarHttpResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHttpResponse, nil
+}
+
+/*
+ FirewallApiService Read type by ID
+ Read operation of resource: type
+  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  * @param name ID of name
+
+ @return string
 */
 func (a *FirewallApiService) ReadFirewallTypeByID(ctx context.Context, name string) (string, *http.Response, error) {
 	var (
@@ -4757,9 +4745,7 @@ func (a *FirewallApiService) ReadFirewallTypeByID(ctx context.Context, name stri
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
 		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-		if err == nil {
-			return localVarReturnValue, localVarHttpResponse, err
-		}
+		return localVarReturnValue, localVarHttpResponse, err
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
@@ -4786,12 +4772,12 @@ func (a *FirewallApiService) ReadFirewallTypeByID(ctx context.Context, name stri
 }
 
 /*
-FirewallApiService Read uuid by ID
-Read operation of resource: uuid
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param name ID of name
+ FirewallApiService Read uuid by ID
+ Read operation of resource: uuid
+  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  * @param name ID of name
 
-@return string
+ @return string
 */
 func (a *FirewallApiService) ReadFirewallUuidByID(ctx context.Context, name string) (string, *http.Response, error) {
 	var (
@@ -4846,9 +4832,7 @@ func (a *FirewallApiService) ReadFirewallUuidByID(ctx context.Context, name stri
 	if localVarHttpResponse.StatusCode < 300 {
 		// If we succeed, return the data, otherwise pass on to decode error.
 		err = a.client.decode(&localVarReturnValue, localVarBody, localVarHttpResponse.Header.Get("Content-Type"))
-		if err == nil {
-			return localVarReturnValue, localVarHttpResponse, err
-		}
+		return localVarReturnValue, localVarHttpResponse, err
 	}
 
 	if localVarHttpResponse.StatusCode >= 300 {
@@ -4875,11 +4859,11 @@ func (a *FirewallApiService) ReadFirewallUuidByID(ctx context.Context, name stri
 }
 
 /*
-FirewallApiService Replace firewall by ID
-Replace operation of resource: firewall
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param name ID of name
- * @param firewall firewallbody object
+ FirewallApiService Replace firewall by ID
+ Replace operation of resource: firewall
+  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  * @param name ID of name
+  * @param firewall firewallbody object
 
 
 */
@@ -4947,12 +4931,12 @@ func (a *FirewallApiService) ReplaceFirewallByID(ctx context.Context, name strin
 }
 
 /*
-FirewallApiService Replace chain by ID
-Replace operation of resource: chain
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param name ID of name
- * @param chainName ID of chain_name
- * @param chain chainbody object
+ FirewallApiService Replace chain by ID
+ Replace operation of resource: chain
+  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  * @param name ID of name
+  * @param chainName ID of chain_name
+  * @param chain chainbody object
 
 
 */
@@ -5021,11 +5005,11 @@ func (a *FirewallApiService) ReplaceFirewallChainByID(ctx context.Context, name 
 }
 
 /*
-FirewallApiService Replace chain by ID
-Replace operation of resource: chain
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param name ID of name
- * @param chain chainbody object
+ FirewallApiService Replace chain by ID
+ Replace operation of resource: chain
+  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  * @param name ID of name
+  * @param chain chainbody object
 
 
 */
@@ -5093,13 +5077,13 @@ func (a *FirewallApiService) ReplaceFirewallChainListByID(ctx context.Context, n
 }
 
 /*
-FirewallApiService Replace rule by ID
-Replace operation of resource: rule
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param name ID of name
- * @param chainName ID of chain_name
- * @param id ID of id
- * @param rule rulebody object
+ FirewallApiService Replace rule by ID
+ Replace operation of resource: rule
+  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  * @param name ID of name
+  * @param chainName ID of chain_name
+  * @param id ID of id
+  * @param rule rulebody object
 
 
 */
@@ -5169,12 +5153,12 @@ func (a *FirewallApiService) ReplaceFirewallChainRuleByID(ctx context.Context, n
 }
 
 /*
-FirewallApiService Replace rule by ID
-Replace operation of resource: rule
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param name ID of name
- * @param chainName ID of chain_name
- * @param rule rulebody object
+ FirewallApiService Replace rule by ID
+ Replace operation of resource: rule
+  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  * @param name ID of name
+  * @param chainName ID of chain_name
+  * @param rule rulebody object
 
 
 */
@@ -5243,11 +5227,11 @@ func (a *FirewallApiService) ReplaceFirewallChainRuleListByID(ctx context.Contex
 }
 
 /*
-FirewallApiService Update accept-established by ID
-Update operation of resource: accept-established
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param name ID of name
- * @param acceptEstablished If Connection Tracking is enabled, all packets belonging to ESTABLISHED connections will be forwarded automatically. Default is ON.
+ FirewallApiService Update accept-established by ID
+ Update operation of resource: accept-established
+  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  * @param name ID of name
+  * @param acceptEstablished If Connection Tracking is enabled, all packets belonging to ESTABLISHED connections will be accepted automatically. Default is ON.
 
 
 */
@@ -5315,11 +5299,11 @@ func (a *FirewallApiService) UpdateFirewallAcceptEstablishedByID(ctx context.Con
 }
 
 /*
-FirewallApiService Update firewall by ID
-Update operation of resource: firewall
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param name ID of name
- * @param firewall firewallbody object
+ FirewallApiService Update firewall by ID
+ Update operation of resource: firewall
+  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  * @param name ID of name
+  * @param firewall firewallbody object
 
 
 */
@@ -5387,12 +5371,12 @@ func (a *FirewallApiService) UpdateFirewallByID(ctx context.Context, name string
 }
 
 /*
-FirewallApiService Update chain by ID
-Update operation of resource: chain
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param name ID of name
- * @param chainName ID of chain_name
- * @param chain chainbody object
+ FirewallApiService Update chain by ID
+ Update operation of resource: chain
+  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  * @param name ID of name
+  * @param chainName ID of chain_name
+  * @param chain chainbody object
 
 
 */
@@ -5461,12 +5445,12 @@ func (a *FirewallApiService) UpdateFirewallChainByID(ctx context.Context, name s
 }
 
 /*
-FirewallApiService Update default by ID
-Update operation of resource: default
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param name ID of name
- * @param chainName ID of chain_name
- * @param default_ Default action if no rule matches in the ingress chain. Default is DROP.
+ FirewallApiService Update default by ID
+ Update operation of resource: default
+  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  * @param name ID of name
+  * @param chainName ID of chain_name
+  * @param default_ Default action if no rule matches in the ingress chain. Default is ACCEPT.
 
 
 */
@@ -5535,11 +5519,11 @@ func (a *FirewallApiService) UpdateFirewallChainDefaultByID(ctx context.Context,
 }
 
 /*
-FirewallApiService Update chain by ID
-Update operation of resource: chain
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param name ID of name
- * @param chain chainbody object
+ FirewallApiService Update chain by ID
+ Update operation of resource: chain
+  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  * @param name ID of name
+  * @param chain chainbody object
 
 
 */
@@ -5607,13 +5591,13 @@ func (a *FirewallApiService) UpdateFirewallChainListByID(ctx context.Context, na
 }
 
 /*
-FirewallApiService Update rule by ID
-Update operation of resource: rule
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param name ID of name
- * @param chainName ID of chain_name
- * @param id ID of id
- * @param rule rulebody object
+ FirewallApiService Update rule by ID
+ Update operation of resource: rule
+  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  * @param name ID of name
+  * @param chainName ID of chain_name
+  * @param id ID of id
+  * @param rule rulebody object
 
 
 */
@@ -5683,12 +5667,12 @@ func (a *FirewallApiService) UpdateFirewallChainRuleByID(ctx context.Context, na
 }
 
 /*
-FirewallApiService Update rule by ID
-Update operation of resource: rule
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param name ID of name
- * @param chainName ID of chain_name
- * @param rule rulebody object
+ FirewallApiService Update rule by ID
+ Update operation of resource: rule
+  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  * @param name ID of name
+  * @param chainName ID of chain_name
+  * @param rule rulebody object
 
 
 */
@@ -5757,11 +5741,11 @@ func (a *FirewallApiService) UpdateFirewallChainRuleListByID(ctx context.Context
 }
 
 /*
-FirewallApiService Update conntrack by ID
-Update operation of resource: conntrack
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param name ID of name
- * @param conntrack Enables the Connection Tracking module. Mandatory if connection tracking rules are needed. Default is ON.
+ FirewallApiService Update conntrack by ID
+ Update operation of resource: conntrack
+  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  * @param name ID of name
+  * @param conntrack Enables the Connection Tracking module. Mandatory if connection tracking rules are needed. Default is ON.
 
 
 */
@@ -5829,82 +5813,10 @@ func (a *FirewallApiService) UpdateFirewallConntrackByID(ctx context.Context, na
 }
 
 /*
-FirewallApiService Update interactive by ID
-Update operation of resource: interactive
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param name ID of name
- * @param interactive Interactive mode applies new rules immediately; if &#39;false&#39;, the command &#39;apply-rules&#39; has to be used to apply all the rules at once. Default is TRUE.
-
-
-*/
-func (a *FirewallApiService) UpdateFirewallInteractiveByID(ctx context.Context, name string, interactive bool) (*http.Response, error) {
-	var (
-		localVarHttpMethod = strings.ToUpper("Patch")
-		localVarPostBody   interface{}
-		localVarFileName   string
-		localVarFileBytes  []byte
-	)
-
-	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/firewall/{name}/interactive/"
-	localVarPath = strings.Replace(localVarPath, "{"+"name"+"}", fmt.Sprintf("%v", name), -1)
-
-	localVarHeaderParams := make(map[string]string)
-	localVarQueryParams := url.Values{}
-	localVarFormParams := url.Values{}
-
-	// to determine the Content-Type header
-	localVarHttpContentTypes := []string{"application/json"}
-
-	// set Content-Type header
-	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
-	if localVarHttpContentType != "" {
-		localVarHeaderParams["Content-Type"] = localVarHttpContentType
-	}
-
-	// to determine the Accept header
-	localVarHttpHeaderAccepts := []string{"application/json"}
-
-	// set Accept header
-	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
-	if localVarHttpHeaderAccept != "" {
-		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
-	}
-	// body params
-	localVarPostBody = &interactive
-	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
-	if err != nil {
-		return nil, err
-	}
-
-	localVarHttpResponse, err := a.client.callAPI(r)
-	if err != nil || localVarHttpResponse == nil {
-		return localVarHttpResponse, err
-	}
-
-	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
-	localVarHttpResponse.Body.Close()
-	if err != nil {
-		return localVarHttpResponse, err
-	}
-
-	if localVarHttpResponse.StatusCode >= 300 {
-		newErr := GenericSwaggerError{
-			body:  localVarBody,
-			error: localVarHttpResponse.Status,
-		}
-
-		return localVarHttpResponse, newErr
-	}
-
-	return localVarHttpResponse, nil
-}
-
-/*
-FirewallApiService Update firewall by ID
-Update operation of resource: firewall
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param firewall firewallbody object
+ FirewallApiService Update firewall by ID
+ Update operation of resource: firewall
+  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  * @param firewall firewallbody object
 
 
 */
@@ -5971,11 +5883,11 @@ func (a *FirewallApiService) UpdateFirewallListByID(ctx context.Context, firewal
 }
 
 /*
-FirewallApiService Update loglevel by ID
-Update operation of resource: loglevel
- * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param name ID of name
- * @param loglevel Logging level of a cube, from none (OFF) to the most verbose (TRACE)
+ FirewallApiService Update loglevel by ID
+ Update operation of resource: loglevel
+  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  * @param name ID of name
+  * @param loglevel Logging level of a cube, from none (OFF) to the most verbose (TRACE)
 
 
 */
@@ -6014,6 +5926,78 @@ func (a *FirewallApiService) UpdateFirewallLoglevelByID(ctx context.Context, nam
 	}
 	// body params
 	localVarPostBody = &loglevel
+	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
+	if err != nil {
+		return nil, err
+	}
+
+	localVarHttpResponse, err := a.client.callAPI(r)
+	if err != nil || localVarHttpResponse == nil {
+		return localVarHttpResponse, err
+	}
+
+	localVarBody, err := ioutil.ReadAll(localVarHttpResponse.Body)
+	localVarHttpResponse.Body.Close()
+	if err != nil {
+		return localVarHttpResponse, err
+	}
+
+	if localVarHttpResponse.StatusCode >= 300 {
+		newErr := GenericSwaggerError{
+			body:  localVarBody,
+			error: localVarHttpResponse.Status,
+		}
+
+		return localVarHttpResponse, newErr
+	}
+
+	return localVarHttpResponse, nil
+}
+
+/*
+ FirewallApiService Update start-morpheus by ID
+ Update operation of resource: start-morpheus
+  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+  * @param name ID of name
+  * @param startMorpheus Set this flag if you want to start Morpheus compiler
+
+
+*/
+func (a *FirewallApiService) UpdateFirewallStartMorpheusByID(ctx context.Context, name string, startMorpheus bool) (*http.Response, error) {
+	var (
+		localVarHttpMethod = strings.ToUpper("Patch")
+		localVarPostBody   interface{}
+		localVarFileName   string
+		localVarFileBytes  []byte
+	)
+
+	// create path and map variables
+	localVarPath := a.client.cfg.BasePath + "/firewall/{name}/start-morpheus/"
+	localVarPath = strings.Replace(localVarPath, "{"+"name"+"}", fmt.Sprintf("%v", name), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	// to determine the Content-Type header
+	localVarHttpContentTypes := []string{"application/json"}
+
+	// set Content-Type header
+	localVarHttpContentType := selectHeaderContentType(localVarHttpContentTypes)
+	if localVarHttpContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHttpContentType
+	}
+
+	// to determine the Accept header
+	localVarHttpHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHttpHeaderAccept := selectHeaderAccept(localVarHttpHeaderAccepts)
+	if localVarHttpHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
+	}
+	// body params
+	localVarPostBody = &startMorpheus
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
 	if err != nil {
 		return nil, err

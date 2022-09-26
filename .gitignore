@@ -15,3 +15,4 @@ deps
 cmake-build-debug/
 Debug/*
 compile_commands.json
+go-clients/
