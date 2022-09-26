@@ -19,6 +19,7 @@ package main
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -209,7 +210,7 @@ func cmdAdd(args *skel.CmdArgs) error {
 	// create port on k8switch
 	portName := args.ContainerID[0:10] // take just first digits of the id
 	k8switchPort := k8switch.Ports{Name: portName, Peer: hostInterface.Name}
-	if _, err := k8switchAPI.CreateK8switchPortsByID("k8switch0", portName, k8switchPort); err != nil {
+	if _, err := k8switchAPI.CreateK8switchPortsByID(context.TODO(), "k8switch0", portName, k8switchPort); err != nil {
 		return fmt.Errorf("Error creating port in k8switch: %s", err)
 	}
 
@@ -286,7 +287,7 @@ func cmdAdd(args *skel.CmdArgs) error {
 		Address: ip.String(),
 		Mac:     mac.String(),
 		Port:    portName}
-	if _, err := k8switchAPI.CreateK8switchFwdTableByID("k8switch0",
+	if _, err := k8switchAPI.CreateK8switchFwdTableByID(context.TODO(), "k8switch0",
 		fwdEntry.Address, fwdEntry); err != nil {
 		return fmt.Errorf("Error creating fwdEntry entry %s", err)
 	}
@@ -334,7 +335,7 @@ func createFirewall(portName, ip string) error {
 	name := "fw-" + ip
 
 	// First create the firewall
-	if response, err := fwAPI.CreateFirewallByID(nil, name, k8sfirewall.Firewall{
+	if response, err := fwAPI.CreateFirewallByID(context.TODO(), name, k8sfirewall.Firewall{
 		Name: name,
 	}); err != nil {
 		log.Errorf("An error occurred while trying to create firewall %s: error: %s, response: %+v", name, err, response)
@@ -346,7 +347,7 @@ func createFirewall(portName, ip string) error {
 	// not need to insert a rule to do that, and we can reduce the rules list.
 	// NOTE: \" are included because the swagger-generated API would send
 	// on instead of "on" as it should be.
-	if response, err := fwAPI.UpdateFirewallAcceptEstablishedByID(nil, name, "\"ON\""); err != nil {
+	if response, err := fwAPI.UpdateFirewallAcceptEstablishedByID(context.TODO(), name, "\"ON\""); err != nil {
 		log.Errorf("An error occurred while trying to set accept-established to 'on'. Firewall: %s, error: %s, response: %+v", name, err, response)
 		deleteFirewall(name)
 		return err
@@ -355,12 +356,12 @@ func createFirewall(portName, ip string) error {
 
 	// Switch to forward for both ingress and egress
 	// Read above for the \" thing.
-	if response, err := fwAPI.UpdateFirewallChainDefaultByID(nil, name, "ingress", "\"forward\""); err != nil {
+	if response, err := fwAPI.UpdateFirewallChainDefaultByID(context.TODO(), name, "ingress", "\"forward\""); err != nil {
 		log.Errorf("Could not set default ingress action to forward for firewall %s. Error: %s, response: %+v", name, err, response)
 		deleteFirewall(name)
 		return err
 	}
-	if response, err := fwAPI.UpdateFirewallChainDefaultByID(nil, name, "egress", "\"forward\""); err != nil {
+	if response, err := fwAPI.UpdateFirewallChainDefaultByID(context.TODO(), name, "egress", "\"forward\""); err != nil {
 		log.Errorf("Could not set default egress action to forward for firewall %s. Error: %s, response: %+v", name, err, response)
 		deleteFirewall(name)
 		return err
@@ -369,10 +370,10 @@ func createFirewall(portName, ip string) error {
 	// Set it async
 	// This does not return any error because the soultion would still work
 	// even if this fails: rules injection will just be slower.
-	if response, err := fwAPI.UpdateFirewallInteractiveByID(nil, name, false); err != nil {
-		log.Errorf("Could not set interactive to false on firewall %s: %+v, %s\n", name, response, err)
-	}
-	log.Infof("firewall %s successfully set to async", name)
+	// if response, err := fwAPI.UpdateFirewallInteractiveByID(nil, name, false); err != nil {
+	// 	log.Errorf("Could not set interactive to false on firewall %s: %+v, %s\n", name, response, err)
+	// }
+	// log.Infof("firewall %s successfully set to async", name)
 
 	// Attach it
 	// TODO: generate swagger api for this
@@ -390,7 +391,7 @@ func createFirewall(portName, ip string) error {
 }
 
 func deleteFirewall(name string) {
-	if response, err := fwAPI.DeleteFirewallByID(nil, name); err != nil {
+	if response, err := fwAPI.DeleteFirewallByID(context.TODO(), name); err != nil {
 		log.Errorf("Could not delete firewall %s; response: %+v; error: %s", name, response, err)
 	}
 }
@@ -444,7 +445,7 @@ func cmdDel(args *skel.CmdArgs) error {
 	}
 
 	// remove fwd table in load balancer
-	if _, err := k8switchAPI.DeleteK8switchFwdTableByID("k8switch0", ip.String()); err != nil {
+	if _, err := k8switchAPI.DeleteK8switchFwdTableByID(context.TODO(), "k8switch0", ip.String()); err != nil {
 		log.Errorf("Error removing fwdEntry entry %s", err)
 	}
 
@@ -475,7 +476,7 @@ func cmdDel(args *skel.CmdArgs) error {
 		log.Error("Error deleting static arp entry for virtualarp")
 	}
 
-	_, err = k8switchAPI.DeleteK8switchPortsByID("k8switch0", portName)
+	_, err = k8switchAPI.DeleteK8switchPortsByID(context.TODO(), "k8switch0", portName)
 	return err
 }
 
