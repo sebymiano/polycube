@@ -19,6 +19,12 @@ For more information, jump to the project [Documentation](https://polycube-netwo
  - [pcn-k8s - The CNI network plugin for Kubernetes](https://polycube-network.readthedocs.io/en/latest/components/k8s/pcn-kubernetes.html)
  - [pcn-iptables - A clone of Iptables based on eBPF](https://polycube-network.readthedocs.io/en/latest/components/iptables/pcn-iptables.html)
 
+## Create Morpheus-k8s default container
+You can use the following command to build the container.
+
+```
+DOCKER_BUILDKIT=1 docker build --build-arg DEFAULT_MODE=pcn-k8s --build-arg DEFAULT_CLONE_MODE=git -t morpheus-k8s:latest .
+```
 
 ## Licence
 Polycube is licensed under the Apache License, Version 2.0 (ALv2).
