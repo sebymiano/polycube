@@ -112,8 +112,7 @@ struct nt_v {
 } __attribute__((packed));
 ;
 
-BPF_F_TABLE("hash", struct nt_k, struct nt_v, npr_table, 1024,
-            BPF_F_NO_PREALLOC);
+BPF_TABLE("hash", struct nt_k, struct nt_v, npr_table, 1024);
 
 // Port numbers
 struct free_port_entry {
