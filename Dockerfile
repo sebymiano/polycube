@@ -6,10 +6,11 @@
 # This dockerfile is reused for all the DEFAULT_MODE (default, pcn-iptables, pcn-k8s) which, thanks to install.sh and pre-requirements.sh scripts,
 # enable/disable Polycube services and install specific tools.
 ARG DEFAULT_CLONE_MODE=git
+ARG DEFAULT_MODE=morpheus-k8s
 
 FROM ubuntu:20.04 AS tmp-builder
 
-ARG DEFAULT_MODE=default
+ARG DEFAULT_MODE
 ARG DEBIAN_FRONTEND=noninteractive
 ENV MODE=$DEFAULT_MODE
 
