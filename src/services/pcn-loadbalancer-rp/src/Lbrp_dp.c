@@ -47,7 +47,7 @@
 *
 */
 
-#define MAX_SERVICES 10000
+#define MAX_SERVICES 1024
 #define MAX_SESSIONS 65536
 #define MAX_FRONTENDS 1024
 
@@ -63,8 +63,6 @@
    offsetof(struct icmphdr, checksum))
 #define IS_PSEUDO 0x10
 
-#ifndef SRCIP_REWRITE_ENABLED
-#define SRCIP_REWRITE_ENABLED 0
 #ifndef SINGLE_PORT_MODE
 #define SINGLE_PORT_MODE 0
 #endif
@@ -157,7 +155,7 @@ struct backend {
  *
  * where 'pool_size' is 4 for VIP 1.
  */
-BPF_TABLE("percpu_hash", struct vip, struct backend, services, MAX_SERVICES);
+BPF_TABLE("hash", struct vip, struct backend, services, MAX_SERVICES);
 
 /*
  *  Keeps the sessions handled by the load balancer in this table. This is
@@ -190,10 +188,9 @@ struct src_ip_r_value {
   u32 mask;  // host network byte order
 };
 
-BPF_F_TABLE("lpm_trie", struct src_ip_r_key, struct src_ip_r_value,
-            src_ip_rewrite, MAX_SERVICES, BPF_F_NO_PREALLOC);
+BPF_LPM_TRIE(src_ip_rewrite, struct src_ip_r_key, struct src_ip_r_value, MAX_SERVICES);
 
-BPF_TABLE("percpu_hash", struct backend, struct vip, backend_to_service, MAX_SERVICES);
+BPF_TABLE("hash", struct backend, struct vip, backend_to_service, MAX_SERVICES);
 
 BPF_TABLE("hash", __be32, u16, ip_to_frontend_port, MAX_FRONTENDS);
 
@@ -254,7 +251,6 @@ static inline struct backend *get_bck_ip(struct CTXTYPE *ctx, __be32 ip_src,
           id, bck_value->ip, bck_value->port
   );
 
-#if SRCIP_REWRITE_ENABLED
   // check if src ip rewrite applies for this packet, if yes,  do not create a
   // new entry in the session table
   struct src_ip_r_key k = {32, ip_dst};
@@ -262,9 +258,7 @@ static inline struct backend *get_bck_ip(struct CTXTYPE *ctx, __be32 ip_src,
   if (v1) {
     return bck_value;
   }
-#endif
 
-#if FRONTED_PORT != BACKEND_PORT
   // Calculate a second hash on the session, but this time we use the backend IP
   sessions_key.ip_dst = bck_value->ip;      // backend ip address
   sessions_key.port_dst = bck_value->port;  // backend port
@@ -286,7 +280,6 @@ static inline struct backend *get_bck_ip(struct CTXTYPE *ctx, __be32 ip_src,
   // nothing happens.
   // if the entry doesn't exist, it is added to the list
   hash_session.update(&check, &v);  // hash-vip
-#endif
 
   return bck_value;
 }
@@ -492,7 +485,6 @@ LB:;
 
     ip->daddr = bck_value->ip;
 
-#if SRC_IP_REWRITE_ENABLED
     // should we rewrite the src ip?
     struct src_ip_r_key k = {32, ip->saddr};
     struct src_ip_r_value *v = src_ip_rewrite.lookup(&k);
@@ -501,7 +493,6 @@ LB:;
       ip->saddr |= bpf_htonl(v->net);
       new_sip = ip->saddr;
     }
-#endif
 
     pcn_log(ctx, LOG_TRACE,
             "Pkt DNATted and redirected to BACKEND port - (src: %I:%P, new_dst: %I:%P)",

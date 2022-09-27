@@ -356,7 +356,7 @@ BPF_TABLE_SHARED_RO("array", int, u16, egress_next, _POLYCUBE_MAX_PORTS, 1);
 
 // Same as above for XDP programs. Higher 16 bits of the value tells if the next
 // entity is a program (0) or a netdev (1). Lower 16 bits contain its index.
-BPF_TABLE_SHARED_RO("array", int, u32, egress_next_xdp, _POLYCUBE_MAX_PORTS);
+BPF_TABLE_SHARED_RO("array", int, u32, egress_next_xdp, _POLYCUBE_MAX_PORTS, 1);
 
 // Stores (port_id, peer_info) mappings
 struct _POLYCUBE_peer_info {
@@ -370,7 +370,7 @@ struct _POLYCUBE_peer_info {
                   // program)
 };
 BPF_TABLE_SHARED_RO("hash", int, struct _POLYCUBE_peer_info, _POLYCUBE_peers,
-                 _POLYCUBE_MAX_PORTS);
+                 _POLYCUBE_MAX_PORTS, 1);
 )";
 
 const std::string Cube::CUBE_WRAPPER = R"(

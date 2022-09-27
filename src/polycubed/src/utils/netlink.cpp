@@ -109,7 +109,7 @@ class Netlink::NetlinkNotification {
 
           received_bytes = recv(sock, buffer, sizeof(buffer), 0);
           if (received_bytes < 0)
-            parent_->logger->error("Netlink Notification error received_bytes");
+            parent_->logger->debug("Netlink Notification error received_bytes");
 
           nlh = (struct nlmsghdr *) buffer;
           recv_func(sock,nlh, &Netlink::getInstance(),received_bytes);
