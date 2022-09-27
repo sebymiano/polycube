@@ -62,7 +62,7 @@ spec:
         effect: NoSchedule
       containers:
       - name: polycubed
-        image: polycubenets/polycube-k8s:latest
+        image: morpheuscompiler/morpheus-pcn-k8s:latest
         imagePullPolicy: Always
         command: ["polycubed",
           "--loglevel=DEBUG",
@@ -112,7 +112,7 @@ spec:
             containerPort: 9000
         terminationMessagePolicy: FallbackToLogsOnError
       - name: polycube-k8s
-        image: polycubenets/polycube-k8s:latest
+        image: morpheuscompiler/morpheus-pcn-k8s:latest
         imagePullPolicy: Always
         command: ["/pcn_k8s"]
         lifecycle:
