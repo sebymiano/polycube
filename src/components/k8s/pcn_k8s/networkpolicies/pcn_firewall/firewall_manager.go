@@ -1,6 +1,7 @@
 package pcnfirewall
 
 import (
+	"context"
 	"strings"
 	"sync"
 	"time"
@@ -198,23 +199,25 @@ func (d *FirewallManager) Link(pod *core_v1.Pod) bool {
 	err := d.updateDefaultAction(name, "ingress", d.ingressDefaultAction)
 	if err != nil {
 		logger.Errorf(f+"Could not update the default ingress action: %s", err)
-	} else {
-		_, err := d.applyRules(name, "ingress")
-		if err != nil {
-			logger.Errorf(f+"Could not apply ingress rules: %s", err)
-		}
 	}
+	// } else {
+	// 	_, err := d.applyRules(name, "ingress")
+	// 	if err != nil {
+	// 		logger.Errorf(f+"Could not apply ingress rules: %s", err)
+	// 	}
+	// }
 
 	// -- egress
 	err = d.updateDefaultAction(name, "egress", d.egressDefaultAction)
 	if err != nil {
 		logger.Errorf(f+"Could not update the default egress action: %s", err)
-	} else {
-		_, err := d.applyRules(name, "egress")
-		if err != nil {
-			logger.Errorf(f+"Could not apply egress rules: %s", err)
-		}
 	}
+	// } else {
+	// 	_, err := d.applyRules(name, "egress")
+	// 	if err != nil {
+	// 		logger.Errorf(f+"Could not apply egress rules: %s", err)
+	// 	}
+	// }
 
 	//-------------------------------------
 	// Finally, link it
@@ -252,9 +255,9 @@ func (d *FirewallManager) Unlink(pod *core_v1.Pod, then UnlinkOperation) (bool, 
 			logger.Warningln(f + "Could not properly clean firewall for the provided pod.")
 		} else {
 			d.updateDefaultAction(name, "ingress", pcn_types.ActionForward)
-			d.applyRules(name, "ingress")
+			// d.applyRules(name, "ingress")
 			d.updateDefaultAction(name, "egress", pcn_types.ActionForward)
-			d.applyRules(name, "egress")
+			// d.applyRules(name, "egress")
 		}
 	case DestroyFirewall:
 		if err := d.destroyFw(name); err != nil {
@@ -444,11 +447,12 @@ func (d *FirewallManager) updateCounts(operation, policyType string) {
 				err := d.updateDefaultAction(name, direction, pcn_types.ActionDrop)
 				if err != nil {
 					logger.Errorf(f+"Could not update default action for firewall %s: %s", name, direction)
-				} else {
-					if _, err := d.applyRules(name, direction); err != nil {
-						logger.Errorf(f+"Could not apply rules for firewall %s: %s", name, direction)
-					}
 				}
+				// } else {
+				// 	if _, err := d.applyRules(name, direction); err != nil {
+				// 		logger.Errorf(f+"Could not apply rules for firewall %s: %s", name, direction)
+				// 	}
+				// }
 			}
 		}
 	}
@@ -479,11 +483,12 @@ func (d *FirewallManager) updateCounts(operation, policyType string) {
 				err := d.updateDefaultAction(name, direction, pcn_types.ActionForward)
 				if err != nil {
 					logger.Errorf(f+"Could not update default action for firewall %s: %s", name, direction)
-				} else {
-					if _, err := d.applyRules(name, direction); err != nil {
-						logger.Errorf(f+"Could not apply rules for firewall %s: %s", name, direction)
-					}
 				}
+				// } else {
+				// 	if _, err := d.applyRules(name, direction); err != nil {
+				// 		logger.Errorf(f+"Could not apply rules for firewall %s: %s", name, direction)
+				// 	}
+				// }
 			}
 		}
 	}
@@ -678,7 +683,7 @@ func (d *FirewallManager) injectRules(firewall, direction string, rules []k8sfir
 			ruleToInsert.Dst = me
 		}
 
-		_, response, err := fwAPI.CreateFirewallChainInsertByID(nil, firewall, direction, ruleToInsert)
+		_, response, err := fwAPI.CreateFirewallChainInsertByID(context.TODO(), firewall, direction, ruleToInsert)
 		if err != nil {
 			logger.Errorf(f+"Error while trying to inject rule: %s, %+v", err, response)
 			// This rule had an error, but we still gotta push the other ones dude...
@@ -687,10 +692,10 @@ func (d *FirewallManager) injectRules(firewall, direction string, rules []k8sfir
 	}
 
 	// Now apply the changes
-	if response, err := d.applyRules(firewall, direction); err != nil {
-		logger.Errorf(f+"Error while trying to apply rules: %s, %+v", err, response)
-		return err
-	}
+	// if response, err := d.applyRules(firewall, direction); err != nil {
+	// 	logger.Errorf(f+"Error while trying to apply rules: %s, %+v", err, response)
+	// 	return err
+	// }
 
 	return nil
 }
@@ -801,7 +806,7 @@ func (d *FirewallManager) reactToPod(event pcn_types.EventType, pod *core_v1.Pod
 			for _, fwIP := range d.linkedPods {
 				name := "fw-" + fwIP
 				d.deleteRules(name, "ingress", rulesToDelete)
-				d.applyRules(name, "ingress")
+				// d.applyRules(name, "ingress")
 			}
 		}
 
@@ -829,7 +834,7 @@ func (d *FirewallManager) reactToPod(event pcn_types.EventType, pod *core_v1.Pod
 			for _, fwIP := range d.linkedPods {
 				name := "fw-" + fwIP
 				d.deleteRules(name, "egress", rulesToDelete)
-				d.applyRules(name, "egress")
+				// d.applyRules(name, "egress")
 			}
 		}
 
@@ -921,7 +926,7 @@ func (d *FirewallManager) deleteAllPolicyRules(policy string) {
 		for _, ip := range d.linkedPods {
 			name := "fw-" + ip
 			d.deleteRules(name, "ingress", rules)
-			d.applyRules(name, "ingress")
+			// d.applyRules(name, "ingress")
 		}
 	}()
 
@@ -942,7 +947,7 @@ func (d *FirewallManager) deleteAllPolicyRules(policy string) {
 		for _, ip := range d.linkedPods {
 			name := "fw-" + ip
 			d.deleteRules(name, "egress", rules)
-			d.applyRules(name, "egress")
+			// d.applyRules(name, "egress")
 		}
 	}()
 }
@@ -1110,10 +1115,10 @@ func (d *FirewallManager) cleanFw(name string) (error, error) {
 	var iErr error
 	var eErr error
 
-	if _, err := fwAPI.DeleteFirewallChainRuleListByID(nil, name, "ingress"); err != nil {
+	if _, err := fwAPI.DeleteFirewallChainRuleListByID(context.TODO(), name, "ingress"); err != nil {
 		iErr = err
 	}
-	if _, err := fwAPI.DeleteFirewallChainRuleListByID(nil, name, "egress"); err != nil {
+	if _, err := fwAPI.DeleteFirewallChainRuleListByID(context.TODO(), name, "egress"); err != nil {
 		eErr = err
 	}
 
@@ -1121,10 +1126,10 @@ func (d *FirewallManager) cleanFw(name string) (error, error) {
 }
 
 // applyRules is a wrapper for CreateFirewallChainApplyRulesByID method.
-func (d *FirewallManager) applyRules(firewall, direction string) (bool, error) {
-	out, _, err := fwAPI.CreateFirewallChainApplyRulesByID(nil, firewall, direction)
-	return out.Result, err
-}
+// func (d *FirewallManager) applyRules(firewall, direction string) (bool, error) {
+// 	out, _, err := fwAPI.CreateFirewallChainApplyRulesByID(nil, firewall, direction)
+// 	return out.Result, err
+// }
 
 // Destroy destroys the current firewall manager.
 // This function should not be called manually, as it is called automatically

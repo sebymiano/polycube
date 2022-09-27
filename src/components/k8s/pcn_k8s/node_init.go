@@ -17,6 +17,7 @@
 package main
 
 import (
+	"context"
 	"crypto/rand"
 	"fmt"
 	"net"
@@ -52,8 +53,8 @@ func createLBRPNode(node *k8sNode) error {
 	serviceClusterIPRange := os.Getenv("POLYCUBE_SERVICE_CLUSTERIP_RANGE")
 	if serviceClusterIPRange == "" {
 		log.Warningf("POLYCUBE_SERVICE_CLUSTERIP_RANGE not found, defaulting to %s",
-		serviceClusterIPRangeDefault)
-			serviceClusterIPRange = serviceClusterIPRangeDefault
+			serviceClusterIPRangeDefault)
+		serviceClusterIPRange = serviceClusterIPRangeDefault
 	}
 
 	lb := k8switch.K8switch{
@@ -63,7 +64,7 @@ func createLBRPNode(node *k8sNode) error {
 		ClientSubnet:        node.GetPodCIDR().String(),
 		VirtualClientSubnet: node.GetVPodCIDR().String()}
 
-	if _, err := k8switchAPI.CreateK8switchByID(k8switchName, lb); err != nil {
+	if _, err := k8switchAPI.CreateK8switchByID(context.TODO(), k8switchName, lb); err != nil {
 		return err
 	}
 
@@ -86,9 +87,9 @@ func createK8sFilter() error {
 	ports := []k8sfilter.Ports{external, internal}
 
 	k8sf := k8sfilter.K8sfilter{Name: "k8sf",
-								Ports: ports,
-								NodeportRange: nodePortServiceRange}
-	if _, err := k8sfilterAPI.CreateK8sfilterByID("k8sf", k8sf); err != nil {
+		Ports:         ports,
+		NodeportRange: nodePortServiceRange}
+	if _, err := k8sfilterAPI.CreateK8sfilterByID(context.TODO(), "k8sf", k8sf); err != nil {
 		return err
 	}
 
@@ -111,16 +112,16 @@ func generateRandomMac() net.HardwareAddr {
 
 func connectModules(nodeportIface string) error {
 	/*** connect k8sfilter to k8switch ***/
-	if _, err := k8switchAPI.UpdateK8switchPortsPeerByID(k8switchName, "toNodePort",
+	if _, err := k8switchAPI.UpdateK8switchPortsPeerByID(context.TODO(), k8switchName, "toNodePort",
 		"k8sf:internal"); err != nil {
 		return err
 	}
-	if _, err := k8sfilterAPI.UpdateK8sfilterPortsPeerByID("k8sf",
+	if _, err := k8sfilterAPI.UpdateK8sfilterPortsPeerByID(context.TODO(), "k8sf",
 		"internal", k8switchName+":toNodePort"); err != nil {
 		return err
 	}
 	/*** connect k8sfilter to public interface ***/
-	if _, err := k8sfilterAPI.UpdateK8sfilterPortsPeerByID("k8sf",
+	if _, err := k8sfilterAPI.UpdateK8sfilterPortsPeerByID(context.TODO(), "k8sf",
 		"external", nodeportIface); err != nil {
 		return err
 	}
@@ -226,7 +227,7 @@ func (node *k8sNode) Init() error {
 	}
 
 	// connect k8s to stack
-	if _, err := k8switchAPI.UpdateK8switchPortsPeerByID(k8switchName, "toStack",
+	if _, err := k8switchAPI.UpdateK8switchPortsPeerByID(context.TODO(), k8switchName, "toStack",
 		polycubeLBInterface); err != nil {
 		return err
 	}
@@ -238,7 +239,7 @@ func (node *k8sNode) Init() error {
 		Mac:     link1.Attrs().HardwareAddr.String(),
 		Port:    "toStack",
 	}
-	if _, err := k8switchAPI.CreateK8switchFwdTableByID(k8switchName,
+	if _, err := k8switchAPI.CreateK8switchFwdTableByID(context.TODO(), k8switchName,
 		fwdEntryGW.Address, fwdEntryGW); err != nil {
 		return fmt.Errorf("Error creating fwdEntry entry %s", err)
 	}
@@ -249,7 +250,7 @@ func (node *k8sNode) Init() error {
 		Mac:     link1.Attrs().HardwareAddr.String(),
 		Port:    "toStack",
 	}
-	if _, err := k8switchAPI.CreateK8switchFwdTableByID(k8switchName,
+	if _, err := k8switchAPI.CreateK8switchFwdTableByID(context.TODO(), k8switchName,
 		fwdEntry.Address, fwdEntry); err != nil {
 		return fmt.Errorf("Error creating fwdEntry entry %s", err)
 	}

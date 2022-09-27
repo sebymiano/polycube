@@ -17,6 +17,8 @@
 package main
 
 import (
+	"context"
+
 	k8switch "github.com/polycube-network/polycube/src/components/k8s/utils/k8switch"
 
 	log "github.com/sirupsen/logrus"
@@ -56,7 +58,7 @@ func addNodeServicePort(service service, port servicePort) error {
 		Backend: backends}
 	// try to remove possible already existing versions of the service
 	delNodeServicePort(service, port)
-	_, err := k8switchAPI.CreateK8switchServiceByID(k8switchName, s.Vip, s.Vport, s.Proto, s)
+	_, err := k8switchAPI.CreateK8switchServiceByID(context.TODO(), k8switchName, s.Vip, s.Vport, s.Proto, s)
 	if err != nil {
 		return err
 	}
@@ -64,7 +66,7 @@ func addNodeServicePort(service service, port servicePort) error {
 	if service.Type == "NodePort" {
 		if service.ExternalTrafficPolicy == "Local" {
 			log.Warnf("Service %s has external traffic policy %s, defaulting to kube-proxy",
-				service.Name, service.ExternalTrafficPolicy )
+				service.Name, service.ExternalTrafficPolicy)
 			return nil
 		}
 
@@ -73,7 +75,7 @@ func addNodeServicePort(service service, port servicePort) error {
 			Vport:   port.Nodeport,
 			Proto:   port.Proto,
 			Backend: backends}
-		_, err := k8switchAPI.CreateK8switchServiceByID(k8switchName, s.Vip, s.Vport, s.Proto, s)
+		_, err := k8switchAPI.CreateK8switchServiceByID(context.TODO(), k8switchName, s.Vip, s.Vport, s.Proto, s)
 		if err != nil {
 			return err
 		}
@@ -84,7 +86,7 @@ func addNodeServicePort(service service, port servicePort) error {
 }
 
 func delNodeServicePort(service service, port servicePort) error {
-	_, err := k8switchAPI.DeleteK8switchServiceByID(k8switchName, service.VIP,
+	_, err := k8switchAPI.DeleteK8switchServiceByID(context.TODO(), k8switchName, service.VIP,
 		port.Port, port.Proto)
 	if err != nil {
 		return err
@@ -94,7 +96,7 @@ func delNodeServicePort(service service, port servicePort) error {
 		if service.ExternalTrafficPolicy == "Local" {
 			return nil
 		}
-		_, err := k8switchAPI.DeleteK8switchServiceByID(k8switchName, nodeIP,
+		_, err := k8switchAPI.DeleteK8switchServiceByID(context.TODO(), k8switchName, nodeIP,
 			port.Nodeport, port.Proto)
 		if err != nil {
 			return err
@@ -106,7 +108,7 @@ func delNodeServicePort(service service, port servicePort) error {
 
 func addNodeServicePortBackend(service service, port servicePort, bck backend) error {
 	backend := k8switch.ServiceBackend{Ip: bck.IP, Port: bck.Port}
-	_, err := k8switchAPI.CreateK8switchServiceBackendByID(k8switchName, service.VIP,
+	_, err := k8switchAPI.CreateK8switchServiceBackendByID(context.TODO(), k8switchName, service.VIP,
 		port.Port, port.Proto, bck.IP, bck.Port, backend)
 	if err != nil {
 		return err
@@ -117,7 +119,7 @@ func addNodeServicePortBackend(service service, port servicePort, bck backend) e
 			return nil
 		}
 
-		_, err := k8switchAPI.CreateK8switchServiceBackendByID(k8switchName, nodeIP,
+		_, err := k8switchAPI.CreateK8switchServiceBackendByID(context.TODO(), k8switchName, nodeIP,
 			port.Nodeport, port.Proto, bck.IP, bck.Port, backend)
 		if err != nil {
 			return err
@@ -128,7 +130,7 @@ func addNodeServicePortBackend(service service, port servicePort, bck backend) e
 }
 
 func delNodeServicePortBackend(service service, port servicePort, bck backend) error {
-	_, err := k8switchAPI.DeleteK8switchServiceBackendByID(k8switchName, service.VIP,
+	_, err := k8switchAPI.DeleteK8switchServiceBackendByID(context.TODO(), k8switchName, service.VIP,
 		port.Port, port.Proto, bck.IP, bck.Port)
 	if err != nil {
 		return err
@@ -138,7 +140,7 @@ func delNodeServicePortBackend(service service, port servicePort, bck backend) e
 		if service.ExternalTrafficPolicy == "Local" {
 			return nil
 		}
-		_, err := k8switchAPI.DeleteK8switchServiceBackendByID(k8switchName, nodeIP,
+		_, err := k8switchAPI.DeleteK8switchServiceBackendByID(context.TODO(), k8switchName, nodeIP,
 			port.Nodeport, port.Proto, bck.IP, bck.Port)
 		if err != nil {
 			return err
