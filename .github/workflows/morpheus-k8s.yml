@@ -30,4 +30,4 @@ jobs:
           tags: morpheuscompiler/morpheus-polycube-k8s:latest
           build-args: |
             DEFAULT_MODE=morpheus-k8s 
-            DEFAULT_CLONE_MODE=local
+            DEFAULT_CLONE_MODE=git
