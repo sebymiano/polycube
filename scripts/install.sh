@@ -59,7 +59,7 @@ while getopts h option; do
  esac
 done
 
-echo "Use 'install.sh -h' to show advanced installation options."
+echo "Use 'install.sh -h' to show advanced installation options. "
 
 MODE=$1
 
@@ -113,7 +113,7 @@ CMAKE_CMD="cmake .. -DCMAKE_C_COMPILER=/usr/bin/gcc-9 \
                     -DLLVM_DIR="${WORKDIR}"/clang+llvm10/lib/cmake/llvm"
 
 
-if [ "$MODE" == "pcn-k8s" || "$MODE" == "morpheus-k8s" ]; then
+if [ "$MODE" == "pcn-k8s" ] || [ "$MODE" == "morpheus-k8s" ]; then
   $CMAKE_CMD .. -DENABLE_SERVICE_BRIDGE=ON \
     -DENABLE_SERVICE_DDOSMITIGATOR=ON \
     -DENABLE_SERVICE_FIREWALL=ON \
