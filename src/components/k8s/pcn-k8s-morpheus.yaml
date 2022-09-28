@@ -96,6 +96,7 @@ spec:
             exec:
               command:
                 - "/cni-uninstall.sh"
+                - "/cleanup.sh"
         env:
           - name: K8S_NODE_NAME
             valueFrom:
