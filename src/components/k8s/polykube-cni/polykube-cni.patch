@@ -51,6 +51,19 @@ index 0607c65..7e73dd4 100644
  		Peer:  hostIfaceName,
  	}
  	nlog = l.WithFields(log.Fields{
+diff --git a/manifests/config_map.yaml b/manifests/config_map.yaml
+index 1e89f5a..c407294 100644
+--- a/manifests/config_map.yaml
++++ b/manifests/config_map.yaml
+@@ -10,7 +10,7 @@ data:
+   vxlanIfaceName: "vxlan0"
+   polykubeVethPairNamePrefix: "polykube"
+   vtepCidr: "10.18.0.0/16"
+-  clusterCidr: "192.178.0.0/16"
++  clusterCidr: "192.168.0.0/16"
+   nodePortRange: "30000-32767"
+   cniConfFilePath: "/host/etc/cni/net.d/00-polykube.json"
+   mtu: "1450"
 diff --git a/manifests/daemon_set.yaml b/manifests/daemon_set.yaml
 index 91fe70e..68f597f 100644
 --- a/manifests/daemon_set.yaml
