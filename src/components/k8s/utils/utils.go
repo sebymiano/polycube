@@ -194,3 +194,7 @@ func BuildObjectKey(obj *pcn_types.ObjectQuery, peerType string) string {
 
 	return key
 }
+
+func CreatePeer(serviceName, servicePort string) string {
+	return serviceName + ":" + servicePort
+}

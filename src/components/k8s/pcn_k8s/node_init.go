@@ -112,19 +112,42 @@ func generateRandomMac() net.HardwareAddr {
 
 func connectModules(nodeportIface string) error {
 	/*** connect k8sfilter to k8switch ***/
-	if _, err := k8switchAPI.UpdateK8switchPortsPeerByID(context.TODO(), k8switchName, "toNodePort",
-		"k8sf:internal"); err != nil {
+	nodePortToInternal := k8switch.Ports{
+		Name: "toNodePort",
+		Peer: "k8sf:internal",
+	}
+
+	if resp, err := k8switchAPI.UpdateK8switchPortsByID(context.TODO(), k8switchName, "toNodePort", nodePortToInternal); err != nil {
+		log.Errorf("failed to connect k8sfilter to k8switch1: %s", fmt.Sprintf("%+v", resp))
 		return err
 	}
-	if _, err := k8sfilterAPI.UpdateK8sfilterPortsPeerByID(context.TODO(), "k8sf",
-		"internal", k8switchName+":toNodePort"); err != nil {
+
+	log.Debugf("First port (toNodePort) connected to k8sf:internal")
+
+	internalToNodePortPeer := utils.CreatePeer(k8switchName, "toNodePort")
+	internalToNodePort := k8sfilter.Ports{
+		Name: "internal",
+		Peer: internalToNodePortPeer,
+	}
+
+	if resp, err := k8sfilterAPI.UpdateK8sfilterPortsByID(context.TODO(), "k8sf", "internal", internalToNodePort); err != nil {
+		log.Errorf("failed to connect k8sfilter to k8switch2: %s", fmt.Sprintf("%+v", resp))
 		return err
+	}
+
+	log.Debugf("Second port (internal) connected to k8switch:toNodePort")
+
+	k8sfilterToPublic := k8sfilter.Ports{
+		Name: "external",
+		Peer: nodeportIface,
 	}
 	/*** connect k8sfilter to public interface ***/
-	if _, err := k8sfilterAPI.UpdateK8sfilterPortsPeerByID(context.TODO(), "k8sf",
-		"external", nodeportIface); err != nil {
+	if resp, err := k8sfilterAPI.UpdateK8sfilterPortsByID(context.TODO(), "k8sf", "external", k8sfilterToPublic); err != nil {
+		log.Errorf("failed to connect k8sfilter to public interface: %s", fmt.Sprintf("%+v", resp))
 		return err
 	}
+
+	log.Debugf("Third port (external) connected to public interface")
 
 	return nil
 }
@@ -226,9 +249,14 @@ func (node *k8sNode) Init() error {
 		return err
 	}
 
+	toStackToPolycubeLB := k8switch.Ports{
+		Name: "toStack",
+		Peer: polycubeLBInterface,
+	}
+
 	// connect k8s to stack
-	if _, err := k8switchAPI.UpdateK8switchPortsPeerByID(context.TODO(), k8switchName, "toStack",
-		polycubeLBInterface); err != nil {
+	if resp, err := k8switchAPI.UpdateK8switchPortsByID(context.TODO(), k8switchName, "toStack", toStackToPolycubeLB); err != nil {
+		log.Errorf("failed to connect k8sfilter to Polycube LB port: %s", fmt.Sprintf("%+v", resp))
 		return err
 	}
 
@@ -241,7 +269,7 @@ func (node *k8sNode) Init() error {
 	}
 	if _, err := k8switchAPI.CreateK8switchFwdTableByID(context.TODO(), k8switchName,
 		fwdEntryGW.Address, fwdEntryGW); err != nil {
-		return fmt.Errorf("Error creating fwdEntry entry %s", err)
+		return fmt.Errorf("error creating fwdEntry entry %s", err)
 	}
 
 	// add default gateway for k8switch
