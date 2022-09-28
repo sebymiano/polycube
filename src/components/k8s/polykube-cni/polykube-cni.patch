@@ -1,3 +1,13 @@
+diff --git a/.gitignore b/.gitignore
+index 2f11831..8d50e30 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -24,3 +24,4 @@ testbin/*
+ *.swp
+ *.swo
+ *~
++polykube-cni.patch
+\ No newline at end of file
 diff --git a/cni/lbrp.go b/cni/lbrp.go
 index bb012b0..04b5928 100644
 --- a/cni/lbrp.go
@@ -52,7 +62,7 @@ index 0607c65..7e73dd4 100644
  	}
  	nlog = l.WithFields(log.Fields{
 diff --git a/manifests/config_map.yaml b/manifests/config_map.yaml
-index 1e89f5a..c407294 100644
+index 1e89f5a..540d8f2 100644
 --- a/manifests/config_map.yaml
 +++ b/manifests/config_map.yaml
 @@ -10,7 +10,7 @@ data:
@@ -64,8 +74,18 @@ index 1e89f5a..c407294 100644
    nodePortRange: "30000-32767"
    cniConfFilePath: "/host/etc/cni/net.d/00-polykube.json"
    mtu: "1450"
+@@ -28,4 +28,6 @@ data:
+   # added to the daemonset tolerations:
+   # - effect: NoSchedule
+   #   key: node-role.kubernetes.io/master
+-  isCPNodesDeployAllowed: "true"
+\ No newline at end of file
++  isCPNodesDeployAllowed: "true"
++  # This flag is used to enable Morpheus optimization
++  enableMorpheusDynamicOpts: "true"
+\ No newline at end of file
 diff --git a/manifests/daemon_set.yaml b/manifests/daemon_set.yaml
-index 91fe70e..68f597f 100644
+index 91fe70e..7e8a621 100644
 --- a/manifests/daemon_set.yaml
 +++ b/manifests/daemon_set.yaml
 @@ -9,29 +9,26 @@ spec:
@@ -153,7 +173,19 @@ index 91fe70e..68f597f 100644
            env:
              - name: POD_NAME
                valueFrom:
-@@ -194,13 +171,5 @@ spec:
+@@ -172,6 +149,11 @@ spec:
+                 configMapKeyRef:
+                   name: polykube-cfg
+                   key: isCPNodesDeployAllowed
++            - name: ENABLE_MORPHEUS_DYNAMIC_OPTS
++              valueFrom:
++                configMapKeyRef:
++                  name: polykube-cfg
++                  key: enableMorpheusDynamicOpts
+           volumeMounts:
+             - name: opt-cni-bin
+               mountPath: /host/opt/cni/bin
+@@ -194,13 +176,5 @@ spec:
            hostPath:
              path: /usr/src
        tolerations:
@@ -170,6 +202,72 @@ index 91fe70e..68f597f 100644
 \ No newline at end of file
 +      - operator: Exists
 +        effect: NoSchedule
+diff --git a/node/env.go b/node/env.go
+index 967992e..78b2526 100644
+--- a/node/env.go
++++ b/node/env.go
+@@ -19,12 +19,13 @@ package node
+ import (
+ 	"errors"
+ 	"fmt"
+-	"github.com/containernetworking/plugins/pkg/ip"
+-	"github.com/polycube-network/polykube/utils"
+ 	"net"
+ 	"os"
+ 	"strconv"
+ 	"strings"
++
++	"github.com/containernetworking/plugins/pkg/ip"
++	"github.com/polycube-network/polykube/utils"
+ )
+ 
+ const (
+@@ -225,6 +226,20 @@ func LoadEnvironment() error {
+ 	}
+ 	env.IsCPNodesDeployAllowed = isCPNodesDeployAllowed
+ 
++	// IsCPNodesDeployAllowed
++	isMorpheusDynamicOptsEnabledStr := getEnvVar("ENABLE_MORPHEUS_DYNAMIC_OPTS", "false")
++	isMorpheusDynamicOptsEnabled, err := strconv.ParseBool(isMorpheusDynamicOptsEnabledStr)
++	if err != nil {
++		log.Error(
++			err,
++			"failed to parse env variable",
++			"envVar", "ENABLE_MORPHEUS_DYNAMIC_OPTS",
++			"value", isMorpheusDynamicOptsEnabledStr,
++		)
++		return errors.New("failed to parse ENABLE_MORPHEUS_DYNAMIC_OPTS")
++	}
++	env.EnableMorpheusDynamicOpts = isMorpheusDynamicOptsEnabled
++
+ 	Env = env
+ 	log.Info("loaded environment configuration")
+ 	return nil
+diff --git a/node/types.go b/node/types.go
+index 275a618..e3952f3 100644
+--- a/node/types.go
++++ b/node/types.go
+@@ -18,10 +18,11 @@ package node
+ 
+ import (
+ 	"fmt"
++	"net"
++
+ 	"github.com/polycube-network/polykube/types"
+ 	v1 "k8s.io/api/core/v1"
+ 	"k8s.io/client-go/kubernetes"
+-	"net"
+ )
+ 
+ type Environment struct {
+@@ -43,6 +44,7 @@ type Environment struct {
+ 	CubesLogLevel              string
+ 	CNILogLevel                string
+ 	IsCPNodesDeployAllowed     bool
++	EnableMorpheusDynamicOpts  bool
+ }
+ 
+ func (e *Environment) APIServerEndpoint() string {
 diff --git a/polycube/clients/k8sdispatcher/README.md b/polycube/clients/k8sdispatcher/README.md
 index 7d2e0ca..81fb61a 100644
 --- a/polycube/clients/k8sdispatcher/README.md
@@ -8835,7 +8933,7 @@ index 2e8d79e..1ec1c25 100644
  			})
  		}
 diff --git a/polycube/polycube.go b/polycube/polycube.go
-index 8b42d05..2b92cb2 100644
+index 8b42d05..581292d 100644
 --- a/polycube/polycube.go
 +++ b/polycube/polycube.go
 @@ -20,16 +20,17 @@ import (
@@ -8861,7 +8959,7 @@ index 8b42d05..2b92cb2 100644
  )
  
  const (
-@@ -73,10 +74,10 @@ func createIntLbrp() error {
+@@ -73,10 +74,11 @@ func createIntLbrp() error {
  	}
  	ilbPorts := []lbrp.Ports{ilbToRPort}
  	ilb := lbrp.Lbrp{
@@ -8873,10 +8971,19 @@ index 8b42d05..2b92cb2 100644
 +		Loglevel: conf.cubesLogLevel,
 +		Ports:    ilbPorts,
 +		PortMode: "MULTI",
++		DynOpt:   conf.enableMorpheusDynamicOpt,
  	}
  
  	// creating internal lbrp
-@@ -207,10 +208,10 @@ func createExtLbrp() error {
+@@ -176,6 +178,7 @@ func createRouter() error {
+ 		Loglevel: conf.cubesLogLevel,
+ 		Route:    routes,
+ 		ArpTable: arptable,
++		DynOpt:   conf.enableMorpheusDynamicOpt,
+ 	}
+ 
+ 	// creating router
+@@ -207,10 +210,11 @@ func createExtLbrp() error {
  
  	elbPorts := []lbrp.Ports{elbToRPort, elbToKPort}
  	elb := lbrp.Lbrp{
@@ -8888,9 +8995,53 @@ index 8b42d05..2b92cb2 100644
 +		Loglevel: conf.cubesLogLevel,
 +		Ports:    elbPorts,
 +		PortMode: "SINGLE",
++		DynOpt:   conf.enableMorpheusDynamicOpt,
  	}
  
  	// creating external lbrp
+@@ -251,6 +255,7 @@ func createK8sDispatcher() error {
+ 		Ports:         kPorts,
+ 		InternalSrcIp: node.Conf.VPodIPNet.IP.String(),
+ 		NodeportRange: node.Env.NodePortRange,
++		DynOpt:        conf.enableMorpheusDynamicOpt,
+ 	}
+ 
+ 	// creating k8s dispatcher
+@@ -541,19 +546,20 @@ func EnsureConnection() error {
+ func InitConf() {
+ 	ec := node.Env
+ 	conf = &configuration{
+-		cubesLogLevel:    ec.CubesLogLevel,
+-		intLbrpName:      ec.IntLbrpName,
+-		rName:            ec.RouterName,
+-		extLbrpName:      ec.ExtLbrpName,
+-		k8sDispName:      ec.K8sDispName,
+-		ilbToRPortName:   "to_" + ec.RouterName,
+-		rToIlbPortName:   "to_" + ec.IntLbrpName,
+-		rToVxlanPortName: "to_" + ec.VxlanIfaceName,
+-		rToHostPortName:  "to_host",
+-		rToElbPortName:   "to_" + ec.ExtLbrpName,
+-		elbToRPortName:   "to_" + ec.RouterName,
+-		elbToKPortName:   "to_" + ec.K8sDispName,
+-		kToElbPortName:   "to_" + ec.ExtLbrpName,
+-		kToIntPortName:   "to_int",
++		cubesLogLevel:            ec.CubesLogLevel,
++		intLbrpName:              ec.IntLbrpName,
++		rName:                    ec.RouterName,
++		extLbrpName:              ec.ExtLbrpName,
++		k8sDispName:              ec.K8sDispName,
++		ilbToRPortName:           "to_" + ec.RouterName,
++		rToIlbPortName:           "to_" + ec.IntLbrpName,
++		rToVxlanPortName:         "to_" + ec.VxlanIfaceName,
++		rToHostPortName:          "to_host",
++		rToElbPortName:           "to_" + ec.ExtLbrpName,
++		elbToRPortName:           "to_" + ec.RouterName,
++		elbToKPortName:           "to_" + ec.K8sDispName,
++		kToElbPortName:           "to_" + ec.ExtLbrpName,
++		kToIntPortName:           "to_int",
++		enableMorpheusDynamicOpt: ec.EnableMorpheusDynamicOpts,
+ 	}
+ }
 diff --git a/polycube/router.go b/polycube/router.go
 index 3357e5d..f40ff7b 100644
 --- a/polycube/router.go
@@ -8907,3 +9058,41 @@ index 3357e5d..f40ff7b 100644
  )
  
  // SetRouterToIntLbrpPortMAC set the MAC of the polycube router interface representing the default gateway for
+diff --git a/polycube/types.go b/polycube/types.go
+index a2d1df7..4cccbef 100644
+--- a/polycube/types.go
++++ b/polycube/types.go
+@@ -17,18 +17,19 @@ limitations under the License.
+ package polycube
+ 
+ type configuration struct {
+-	cubesLogLevel    string
+-	intLbrpName      string
+-	rName            string
+-	extLbrpName      string
+-	k8sDispName      string
+-	ilbToRPortName   string
+-	rToIlbPortName   string
+-	rToVxlanPortName string
+-	rToHostPortName  string
+-	rToElbPortName   string
+-	elbToRPortName   string
+-	elbToKPortName   string
+-	kToElbPortName   string
+-	kToIntPortName   string
++	cubesLogLevel            string
++	intLbrpName              string
++	rName                    string
++	extLbrpName              string
++	k8sDispName              string
++	ilbToRPortName           string
++	rToIlbPortName           string
++	rToVxlanPortName         string
++	rToHostPortName          string
++	rToElbPortName           string
++	elbToRPortName           string
++	elbToKPortName           string
++	kToElbPortName           string
++	kToIntPortName           string
++	enableMorpheusDynamicOpt bool
+ }
