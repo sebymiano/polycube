@@ -11,6 +11,11 @@ echo -e "${COLOR_YELLOW}[ INFO ] Make sure you have installed all Polycube depen
 
 [ -z ${SUDO+x} ] && SUDO='sudo'
 
+# Release in which has been natively introduced support for golang-go (Ubuntu >= 20.04)
+os_limit_major="20"
+os_limit_minor="04"
+read -r os_major os_minor<<<$(grep -Po 'VERSION_ID="\K.*?(?=")' /etc/os-release | sed 's/\./ /g')
+
 $SUDO apt update
 
 install_kubeadm() {
@@ -40,11 +45,35 @@ install_docker() {
     $SUDO systemctl restart containerd
 }
 
+install_golang() {
+  if ! command -v go &> /dev/null
+  then
+    # Go is not available, so let's add to the list of required packages
+    PACKAGES+="golang-go" # needed for polycubectl and pcn-k8s
+    
+    # Checking whether the major release is lower or the minor
+    if  (( os_major < os_limit_major || ( os_major == os_limit_major && os_minor < os_limit_minor ) ))
+    then
+      $SUDO add-apt-repository ppa:longsleep/golang-backports -y || true
+    fi
+
+    $SUDO apt update
+    $SUDO bash -c "DEBIAN_FRONTEND=noninteractive apt-get install -yq $PACKAGES"
+fi
+}
+
 $SUDO apt update && $SUDO apt upgrade -y
 
 install_kubeadm
 install_docker
+install_golang
 
 $SUDO swapoff -a
+
+# Set $GOPATH, if not already set
+if [[ -z "${GOPATH}" ]]; then
+  mkdir -p $HOME/go
+  export GOPATH=$HOME/go
+fi
 
 echo -e "${COLOR_GREE}[ INFO ] Installation completed, now you can run your k8s cluster ${COLOR_OFF}"
