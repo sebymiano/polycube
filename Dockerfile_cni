@@ -1,0 +1,50 @@
+# Build the manager binary
+ARG DEFAULT_CLONE_MODE=git
+
+FROM golang:1.16 AS tmp-builder
+
+ARG DEBIAN_FRONTEND=noninteractive
+
+WORKDIR /
+RUN mkdir -p /polycube
+
+FROM tmp-builder AS branch-version-local
+COPY . /polycube
+
+FROM tmp-builder AS branch-version-git
+ARG POLYCUBE_BRANCH=morpheus-k8s
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -y install git
+RUN git -C / clone --branch ${POLYCUBE_BRANCH} https://github.com/Morpheus-compiler/polycube.git
+
+FROM branch-version-${DEFAULT_CLONE_MODE} AS builder
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -y install curl
+RUN mkdir -p /usr/local/share/polycube /usr/local/include/polycube /opt/cni/bin /cni && touch /cni-conf /pcn_k8s /opt/cni/bin/polycube
+WORKDIR /polycube
+RUN cd /tmp && mkdir -p tmp && cd tmp && \
+    curl -sS -L https://storage.googleapis.com/kubernetes-release/network-plugins/cni-0799f5732f2a11b329d9e3d51b9c8f2e3759f2ff.tar.gz -o cni.tar.gz && \
+    tar -xvf cni.tar.gz && \
+    cp bin/loopback /cni && \
+    cd /polycube/src/components/k8s/cni/polycube && \
+    GOOS=linux go build -o /opt/cni/bin/polycube . && \
+    cd /polycube/src/components/k8s/cni/conf && \
+    GOOS=linux go build -o /cni-conf . && \
+    cd /polycube/src/components/k8s/pcn_k8s/ && \
+    GOOS=linux go build -o /pcn_k8s . ;
+
+# copying cni scripts (will be removed if not needed)
+ADD src/components/k8s/cni/cni-install.sh src/components/k8s/cni/cni-uninstall.sh src/components/k8s/pcn_k8s/cleanup.sh src/components/k8s/pcn_k8s/init.sh /
+
+FROM ubuntu:20.04
+
+# copying k8s scripts and cni if present
+COPY --from=builder /*.sh /cni* /pcn_k8s /
+COPY --from=builder /opt/cni/bin/polycube /opt/cni/bin/
+# creating log dir and file + configuring links for libraries + installing essential runtime tools
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -yq iptables iproute2 && \
+    apt-get purge --auto-remove && apt-get clean \
+    && ldconfig
+
+RUN apt-get update && \
+    DEBIAN_FRONTEND=noninteractive apt-get -y install linux-headers-$(uname -r)
+
+CMD ["/pcn_k8s"]
