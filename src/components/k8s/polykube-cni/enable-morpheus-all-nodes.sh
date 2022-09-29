@@ -1,6 +1,9 @@
 #!/bin/bash
 
-ips=$(kubectl get nodes -o wide | awk '{if (NR!=1) {print $6}}')
+tmp_ips=$(kubectl get nodes -o wide | awk '{if (NR!=1) {print $6}}')
+ips_str="${tmp_ips//$'\n'/ }"
+
+read -a ips <<< "$ips_str"
 
 # Start Morpheus on intLbrp
 for ip in "${ips[@]}"; do
