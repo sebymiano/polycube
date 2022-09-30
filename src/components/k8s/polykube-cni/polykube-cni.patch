@@ -8933,7 +8933,7 @@ index 2e8d79e..1ec1c25 100644
  			})
  		}
 diff --git a/polycube/polycube.go b/polycube/polycube.go
-index 8b42d05..581292d 100644
+index 8b42d05..7292495 100644
 --- a/polycube/polycube.go
 +++ b/polycube/polycube.go
 @@ -20,16 +20,17 @@ import (
@@ -8959,7 +8959,7 @@ index 8b42d05..581292d 100644
  )
  
  const (
-@@ -73,10 +74,11 @@ func createIntLbrp() error {
+@@ -73,10 +74,12 @@ func createIntLbrp() error {
  	}
  	ilbPorts := []lbrp.Ports{ilbToRPort}
  	ilb := lbrp.Lbrp{
@@ -8967,23 +8967,35 @@ index 8b42d05..581292d 100644
 -		Loglevel:  conf.cubesLogLevel,
 -		Ports:     ilbPorts,
 -		PortMode_: "MULTI",
-+		Name:     ilbName,
-+		Loglevel: conf.cubesLogLevel,
-+		Ports:    ilbPorts,
-+		PortMode: "MULTI",
-+		DynOpt:   conf.enableMorpheusDynamicOpt,
++		Name:          ilbName,
++		Loglevel:      conf.cubesLogLevel,
++		Ports:         ilbPorts,
++		PortMode:      "MULTI",
++		DynOpt:        conf.enableMorpheusDynamicOpt,
++		StartMorpheus: false,
  	}
  
  	// creating internal lbrp
-@@ -176,6 +178,7 @@ func createRouter() error {
- 		Loglevel: conf.cubesLogLevel,
- 		Route:    routes,
- 		ArpTable: arptable,
-+		DynOpt:   conf.enableMorpheusDynamicOpt,
+@@ -171,11 +174,13 @@ func createRouter() error {
+ 		},
+ 	}
+ 	r := router.Router{
+-		Name:     rName,
+-		Ports:    rPorts,
+-		Loglevel: conf.cubesLogLevel,
+-		Route:    routes,
+-		ArpTable: arptable,
++		Name:          rName,
++		Ports:         rPorts,
++		Loglevel:      conf.cubesLogLevel,
++		Route:         routes,
++		ArpTable:      arptable,
++		DynOpt:        conf.enableMorpheusDynamicOpt,
++		StartMorpheus: false,
  	}
  
  	// creating router
-@@ -207,10 +210,11 @@ func createExtLbrp() error {
+@@ -207,10 +212,12 @@ func createExtLbrp() error {
  
  	elbPorts := []lbrp.Ports{elbToRPort, elbToKPort}
  	elb := lbrp.Lbrp{
@@ -8991,23 +9003,25 @@ index 8b42d05..581292d 100644
 -		Loglevel:  conf.cubesLogLevel,
 -		Ports:     elbPorts,
 -		PortMode_: "SINGLE",
-+		Name:     elbName,
-+		Loglevel: conf.cubesLogLevel,
-+		Ports:    elbPorts,
-+		PortMode: "SINGLE",
-+		DynOpt:   conf.enableMorpheusDynamicOpt,
++		Name:          elbName,
++		Loglevel:      conf.cubesLogLevel,
++		Ports:         elbPorts,
++		PortMode:      "SINGLE",
++		DynOpt:        conf.enableMorpheusDynamicOpt,
++		StartMorpheus: false,
  	}
  
  	// creating external lbrp
-@@ -251,6 +255,7 @@ func createK8sDispatcher() error {
+@@ -251,6 +258,8 @@ func createK8sDispatcher() error {
  		Ports:         kPorts,
  		InternalSrcIp: node.Conf.VPodIPNet.IP.String(),
  		NodeportRange: node.Env.NodePortRange,
 +		DynOpt:        conf.enableMorpheusDynamicOpt,
++		StartMorpheus: false,
  	}
  
  	// creating k8s dispatcher
-@@ -541,19 +546,20 @@ func EnsureConnection() error {
+@@ -541,19 +550,20 @@ func EnsureConnection() error {
  func InitConf() {
  	ec := node.Env
  	conf = &configuration{
