@@ -111,6 +111,8 @@ class BaseCube {
   const std::string getName() const;
 
   const bool get_dyn_opt_enabled() const;
+  const bool get_morpheus_started() const;
+  void set_start_morpheus(bool start);
 
  protected:
   int get_table_fd(const std::string &table_name, int index, ProgramType type);

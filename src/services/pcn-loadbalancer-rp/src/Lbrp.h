@@ -45,6 +45,8 @@ class Lbrp : public LbrpBase {
   static std::string buildLbrpCode(std::string const& lbrp_code, LbrpPortModeEnum port_mode);
   Lbrp(const std::string name, const LbrpJsonObject &conf);
   virtual ~Lbrp();
+  void update(const LbrpJsonObject &conf);
+  LbrpJsonObject toJsonObject();
 
   void flood_packet(Ports &port, polycube::service::PacketInMetadata &md,
                     const std::vector<uint8_t> &packet);

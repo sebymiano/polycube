@@ -105,18 +105,6 @@ std::vector<std::shared_ptr<Ports>> LbrpBase::getPortsList() {
   return get_ports();
 }
 
-bool LbrpBase::getDynOpt() {
-  return Cube::get_dyn_opt_enabled();
-}
-
-bool LbrpBase::getStartMorpheus() {
-  return Cube::get_morpheus_started();
-}
-
-void LbrpBase::setStartMorpheus(const bool &value) {
-  Cube::set_start_morpheus(value);
-}
-
 void LbrpBase::replaceSrcIpRewrite(const SrcIpRewriteJsonObject &conf) {
   // TODO: This is a basic default implementation, maybe you want to improve it
   delSrcIpRewrite();

@@ -954,7 +954,7 @@ Response read_lbrp_service_list_by_id_handler(
   }
 }
 
-Response read_lbrp_service_name_by_id_0_handler(
+Response read_lbrp_service_name_by_id_handler(
   const char *name, const Key *keys,
   size_t num_keys ) {
   // Getting the path params

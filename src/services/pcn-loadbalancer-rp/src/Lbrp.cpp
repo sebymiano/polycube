@@ -45,16 +45,24 @@ Lbrp::~Lbrp() {
   logger()->info("Destroying Lbrp instance");
 }
 
+void Lbrp::update(const LbrpJsonObject &conf) {
+  LbrpBase::update(conf);
+}
+
+LbrpJsonObject Lbrp::toJsonObject() {
+  return LbrpBase::toJsonObject();
+}
+
 bool Lbrp::getDynOpt() {
-  return LbrpBase::getDynOpt();
+  return Cube::get_dyn_opt_enabled();
 }
 
 bool Lbrp::getStartMorpheus() {
-  return LbrpBase::getStartMorpheus();
+  return Cube::get_morpheus_started();
 }
 
 void Lbrp::setStartMorpheus(const bool &value) {
-  LbrpBase::setStartMorpheus(value);
+  Cube::set_start_morpheus(value);
 }
 
 std::string Lbrp::buildLbrpCode(std::string const &lbrp_code,

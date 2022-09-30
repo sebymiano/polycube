@@ -166,5 +166,13 @@ const bool BaseCube::get_dyn_opt_enabled() const {
   return cube_->get_dyn_opt_enabled();
 }
 
+const bool BaseCube::get_morpheus_started() const {
+  return cube_->get_morpheus_started();
+}
+
+void BaseCube::set_start_morpheus(bool start) {
+  cube_->set_start_morpheus(start);
+}
+
 }  // namespace service
 }  // namespace polycube

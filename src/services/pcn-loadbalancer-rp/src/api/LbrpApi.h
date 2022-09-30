@@ -64,7 +64,7 @@ Response read_lbrp_service_backend_port_by_id_handler(const char *name, const Ke
 Response read_lbrp_service_backend_weight_by_id_handler(const char *name, const Key *keys, size_t num_keys);
 Response read_lbrp_service_by_id_handler(const char *name, const Key *keys, size_t num_keys);
 Response read_lbrp_service_list_by_id_handler(const char *name, const Key *keys, size_t num_keys);
-Response read_lbrp_service_name_by_id_0_handler(const char *name, const Key *keys, size_t num_keys);
+Response read_lbrp_service_name_by_id_handler(const char *name, const Key *keys, size_t num_keys);
 Response read_lbrp_src_ip_rewrite_by_id_handler(const char *name, const Key *keys, size_t num_keys);
 Response read_lbrp_src_ip_rewrite_ip_range_by_id_handler(const char *name, const Key *keys, size_t num_keys);
 Response read_lbrp_src_ip_rewrite_new_ip_range_by_id_handler(const char *name, const Key *keys, size_t num_keys);
