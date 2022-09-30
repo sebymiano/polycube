@@ -62,7 +62,8 @@ BaseCube::BaseCube(const std::string &name, const std::string &service_name,
       level_(level),
       type_(type),
       dyn_opt_enabled_(dyn_opt_enabled),
-      id_(id_generator_.acquire()) {
+      id_(id_generator_.acquire()),
+      morpheus_started_(false) {
 
   cflags_.insert(cflags_.end(), default_cflags_.begin(), default_cflags_.end());
   cflags_.insert(cflags_.end(), cflags.begin(), cflags.end());
