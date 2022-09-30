@@ -16,7 +16,7 @@
 
 #pragma once
 
-#include "../interface/LbrpInterface.h"
+#include "../base/LbrpBase.h"
 
 #include "polycube/services/cube.h"
 #include "polycube/services/port.h"
@@ -31,12 +31,12 @@
 #include <set>
 #include <mutex>
 
-using namespace io::swagger::server::model;
+using namespace polycube::service::model;
 using polycube::service::CubeType;
 
 enum class SlowPathReason { ARP_REPLY = 0, FLOODING = 1 };
 
-class Lbrp : public polycube::service::Cube<Ports>, public LbrpInterface {
+class Lbrp : public LbrpBase {
   friend class Ports;
   friend class Service;
   friend class SrcIpRewrite;
@@ -51,8 +51,16 @@ class Lbrp : public polycube::service::Cube<Ports>, public LbrpInterface {
   void packet_in(Ports &port, polycube::service::PacketInMetadata &md,
                  const std::vector<uint8_t> &packet) override;
 
-  void update(const LbrpJsonObject &conf) override;
-  LbrpJsonObject toJsonObject() override;
+  /// <summary>
+  /// Defines if the service should be automatically optimized by Morpheus
+  /// </summary>
+  bool getDynOpt() override;
+
+  /// <summary>
+  /// Set this flag if you want to start Morpheus compiler
+  /// </summary>
+  bool getStartMorpheus() override;
+  void setStartMorpheus(const bool &value) override;
 
   /// <summary>
   /// Services (i.e., virtual ip:port) exported to the client

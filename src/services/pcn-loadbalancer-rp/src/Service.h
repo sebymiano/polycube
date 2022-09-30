@@ -16,14 +16,14 @@
 
 #pragma once
 
-#include "../interface/ServiceInterface.h"
+#include "../base/ServiceBase.h"
 
 #include <spdlog/spdlog.h>
 #include "ServiceBackend.h"
 
 class Lbrp;
 
-using namespace io::swagger::server::model;
+using namespace polycube::service::model;
 
 /* definitions copied from datapath */
 struct vip {
@@ -39,7 +39,7 @@ struct backend {
   uint16_t proto;
 } __attribute__((packed));
 
-class Service : public ServiceInterface {
+class Service : public ServiceBase {
   friend class ServiceBackend;
 
  public:
@@ -47,8 +47,6 @@ class Service : public ServiceInterface {
   virtual ~Service();
 
   std::shared_ptr<spdlog::logger> logger();
-  void update(const ServiceJsonObject &conf) override;
-  ServiceJsonObject toJsonObject() override;
 
   /// <summary>
   /// Virtual IP (vip) of the service (where clients connect to)
@@ -82,8 +80,6 @@ class Service : public ServiceInterface {
       const std::vector<ServiceBackendJsonObject> &conf) override;
   void replaceBackend(const std::string &ip,
                       const ServiceBackendJsonObject &conf) override;
-  void replaceBackendList(
-          const std::vector<ServiceBackendJsonObject> &conf) override;
   void delBackend(const std::string &ip) override;
   void delBackendList() override;
 
@@ -97,7 +93,6 @@ class Service : public ServiceInterface {
   static const uint16_t ICMP_EBPF_PORT;
 
  private:
-  Lbrp &parent_;
   std::unordered_map<std::string, ServiceBackend> service_backends_;
   std::map<std::string, std::vector<int>> backend_matrix_;
 
@@ -112,11 +107,9 @@ class Service : public ServiceInterface {
   ServiceProtoEnum proto_;
   uint backend_size_;
 
-  std::mutex backend_mutex;
-
   void updateConsistentHashMap();
   std::vector<std::string> getConsistentArray();
-  void updateKernelServiceMap(const std::vector<std::string>& consistent_array);
+  void updateKernelServiceMap(const std::vector<std::string> consistent_array);
   void addBackendToServiceMatrix(std::string backend_ip);
   void removeBackendFromServiceMatrix(std::string backend_ip);
   std::vector<int> getRandomIntVector(int vect_size);

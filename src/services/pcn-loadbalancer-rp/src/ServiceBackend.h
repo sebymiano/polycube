@@ -16,22 +16,20 @@
 
 #pragma once
 
-#include "../interface/ServiceBackendInterface.h"
+#include "../base/ServiceBackendBase.h"
 
 #include <spdlog/spdlog.h>
 
 class Service;
 
-using namespace io::swagger::server::model;
+using namespace polycube::service::model;
 
-class ServiceBackend : public ServiceBackendInterface {
+class ServiceBackend : public ServiceBackendBase {
  public:
   ServiceBackend(Service &parent, const ServiceBackendJsonObject &conf);
   virtual ~ServiceBackend();
 
   std::shared_ptr<spdlog::logger> logger();
-  void update(const ServiceBackendJsonObject &conf) override;
-  ServiceBackendJsonObject toJsonObject() override;
 
   /// <summary>
   /// IP address of the backend server of the pool
@@ -57,7 +55,6 @@ class ServiceBackend : public ServiceBackendInterface {
   void setPort(const uint16_t &value) override;
 
  private:
-  Service &parent_;
   uint16_t weight_;
   uint16_t port_;
   std::string ip_;

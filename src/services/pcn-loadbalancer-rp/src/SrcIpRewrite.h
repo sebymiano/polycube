@@ -16,7 +16,7 @@
 
 #pragma once
 
-#include "../interface/SrcIpRewriteInterface.h"
+#include "../base/SrcIpRewriteBase.h"
 
 #include <spdlog/spdlog.h>
 #include <stdio.h>
@@ -24,7 +24,7 @@
 
 class Lbrp;
 
-using namespace io::swagger::server::model;
+using namespace polycube::service::model;
 
 /* definitions copied from datapath */
 struct src_ip_r_key {
@@ -38,7 +38,7 @@ struct src_ip_r_value {
   uint32_t mask;  // host network byte order
 } __attribute__((packed));
 
-class SrcIpRewrite : public SrcIpRewriteInterface {
+class SrcIpRewrite : public SrcIpRewriteBase {
  public:
   friend class Lbrp;
   SrcIpRewrite(Lbrp &parent, const SrcIpRewriteJsonObject &conf);
@@ -61,7 +61,6 @@ class SrcIpRewrite : public SrcIpRewriteInterface {
   void setIpRange(const std::string &value) override;
 
  private:
-  Lbrp &parent_;
   std::string new_ip_range;
   std::string ip_range;
   uint32_t net;

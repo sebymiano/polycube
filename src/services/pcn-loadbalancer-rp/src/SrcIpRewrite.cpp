@@ -27,7 +27,7 @@ enum {
 };
 
 SrcIpRewrite::SrcIpRewrite(Lbrp &parent, const SrcIpRewriteJsonObject &conf)
-    : parent_(parent) {
+    : SrcIpRewriteBase(parent) {
   logger()->info("[Constructor] Creating SrcIpRewrite instance");
 
   if (conf.newIpRangeIsSet()) {

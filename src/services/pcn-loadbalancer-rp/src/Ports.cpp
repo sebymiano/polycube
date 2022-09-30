@@ -22,7 +22,7 @@
 Ports::Ports(polycube::service::Cube<Ports> &parent,
              std::shared_ptr<polycube::service::PortIface> port,
              const PortsJsonObject &conf)
-    : Port(port), parent_(static_cast<Lbrp &>(parent)) {
+    : PortsBase(parent, port) {
   logger()->info("Creating Ports instance");
 
   auto type = conf.getType();

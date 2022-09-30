@@ -21,7 +21,7 @@
 
 ServiceBackend::ServiceBackend(Service &parent,
                                const ServiceBackendJsonObject &conf)
-    : parent_(parent) {
+    : ServiceBackendBase(parent) {
   logger()->info("[ServiceBackend] Creating ServiceBackend instance");
 
   if (conf.nameIsSet()) {
@@ -41,36 +41,6 @@ ServiceBackend::ServiceBackend(Service &parent,
 }
 
 ServiceBackend::~ServiceBackend() {}
-
-void ServiceBackend::update(const ServiceBackendJsonObject &conf) {
-  // This method updates all the object/parameter in ServiceBackend object
-  // specified in the conf JsonObject.
-  // You can modify this implementation.
-  if (conf.nameIsSet()) {
-    setName(conf.getName());
-  }
-
-  if (conf.weightIsSet()) {
-    setWeight(conf.getWeight());
-  } else {
-    setWeight(1);  // default weight
-  }
-
-  if (conf.portIsSet()) {
-    setPort(conf.getPort());
-  }
-}
-
-ServiceBackendJsonObject ServiceBackend::toJsonObject() {
-  ServiceBackendJsonObject conf;
-
-  conf.setIp(getIp());
-  conf.setName(getName());
-  conf.setWeight(getWeight());
-  conf.setPort(getPort());
-
-  return conf;
-}
 
 std::string ServiceBackend::getIp() {
   // This method retrieves the ip value.

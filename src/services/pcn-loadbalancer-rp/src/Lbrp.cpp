@@ -28,8 +28,9 @@ using namespace polycube::service;
 const std::string Lbrp::EBPF_IP_TO_FRONTEND_PORT_MAP = "ip_to_frontend_port";
 
 Lbrp::Lbrp(const std::string name, const LbrpJsonObject &conf)
-    : Cube(conf.getBase(), {Lbrp::buildLbrpCode(lbrp_code, conf.getPortMode())},
-           {}), lbrp_code_{Lbrp::buildLbrpCode(lbrp_code, conf.getPortMode())},
+    : Cube(conf.getBase(), {Lbrp::buildLbrpCode(lbrp_code, conf.getPortMode())}, {}), 
+      LbrpBase(name), 
+      lbrp_code_{Lbrp::buildLbrpCode(lbrp_code, conf.getPortMode())},
       port_mode_{conf.getPortMode()} {
   logger()->set_pattern("[%Y-%m-%d %H:%M:%S.%e] [Lbrp] [%n] [%l] %v");
   logger()->info("Creating Lbrp instance in {0} port mode",
@@ -44,51 +45,16 @@ Lbrp::~Lbrp() {
   logger()->info("Destroying Lbrp instance");
 }
 
-void Lbrp::update(const LbrpJsonObject &conf) {
-  // This method updates all the object/parameter in Lbrp object specified in
-  // the conf JsonObject.
-  // You can modify this implementation.
-  Cube::set_conf(conf.getBase());
-
-  if (conf.serviceIsSet()) {
-    for (auto &i : conf.getService()) {
-      auto vip = i.getVip();
-      auto vport = i.getVport();
-      auto proto = i.getProto();
-      auto m = getService(vip, vport, proto);
-      m->update(i);
-    }
-  }
-
-  if (conf.srcIpRewriteIsSet()) {
-    auto m = getSrcIpRewrite();
-    m->update(conf.getSrcIpRewrite());
-  }
-
-  if (conf.portsIsSet()) {
-    for (auto &i : conf.getPorts()) {
-      auto name = i.getName();
-      auto m = getPorts(name);
-      m->update(i);
-    }
-  }
+bool Lbrp::getDynOpt() {
+  return LbrpBase::getDynOpt();
 }
 
-LbrpJsonObject Lbrp::toJsonObject() {
-  LbrpJsonObject conf;
-  conf.setBase(Cube::to_json());
+bool Lbrp::getStartMorpheus() {
+  return LbrpBase::getStartMorpheus();
+}
 
-  for (auto &i : getServiceList()) {
-    conf.addService(i->toJsonObject());
-  }
-
-  conf.setSrcIpRewrite(getSrcIpRewrite()->toJsonObject());
-
-  for (auto &i : getPortsList()) {
-    conf.addPorts(i->toJsonObject());
-  }
-
-  return conf;
+void Lbrp::setStartMorpheus(const bool &value) {
+  LbrpBase::setStartMorpheus(value);
 }
 
 std::string Lbrp::buildLbrpCode(std::string const &lbrp_code,
@@ -211,11 +177,11 @@ std::shared_ptr<Ports> Lbrp::getBackendPort() {
 }
 
 std::shared_ptr<Ports> Lbrp::getPorts(const std::string &name) {
-  return get_port(name);
+  return LbrpBase::getPorts(name);
 }
 
 std::vector<std::shared_ptr<Ports>> Lbrp::getPortsList() {
-  return get_ports();
+  return LbrpBase::getPortsList();
 }
 
 void Lbrp::addPortsInSinglePortMode(const std::string &name,
@@ -376,8 +342,7 @@ void Lbrp::replaceSrcIpRewrite(const SrcIpRewriteJsonObject &conf) {
 }
 
 void Lbrp::delSrcIpRewrite() {
-  // I could also use reset but the effect would be the same (I think)
-  src_ip_rewrite_ = nullptr;
+  // what the hell means to remove entry in this case?
 }
 
 std::shared_ptr<Service> Lbrp::getService(const std::string &vip,
@@ -458,8 +423,9 @@ void Lbrp::addService(const std::string &vip, const uint16_t &vport,
     logger()->error("[Service] This service already exists");
     throw std::runtime_error("This service already exists");
   }
-  service_map_.emplace(std::piecewise_construct, std::forward_as_tuple(key), 
+  service_map_.emplace(std::piecewise_construct, std::forward_as_tuple(key),
                        std::forward_as_tuple(*this, conf));
+
 }
 
 void Lbrp::addServiceList(const std::vector<ServiceJsonObject> &conf) {

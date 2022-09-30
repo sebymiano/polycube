@@ -16,7 +16,7 @@
 
 #pragma once
 
-#include "../interface/PortsInterface.h"
+#include "../base/PortsBase.h"
 
 #include "polycube/services/cube.h"
 #include "polycube/services/port.h"
@@ -26,9 +26,9 @@
 
 class Lbrp;
 
-using namespace io::swagger::server::model;
+using namespace polycube::service::model;
 
-class Ports : public polycube::service::Port, public PortsInterface {
+class Ports : public PortsBase {
  public:
   Ports(polycube::service::Cube<Ports> &parent,
         std::shared_ptr<polycube::service::PortIface> port,
@@ -51,7 +51,6 @@ class Ports : public polycube::service::Port, public PortsInterface {
   std::string getIp() override;
   void setIp(const std::string &value) override;
  private:
-  Lbrp &parent_;
   PortsTypeEnum port_type_;
   std::string ip_;
 };
