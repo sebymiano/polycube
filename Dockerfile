@@ -87,7 +87,7 @@ else \
     rm -rf /opt/cni/bin/polycube /*.sh /pcn_k8s /cni*; \
 fi && ldconfig
 
-COPY --from=builder /polycube/src/components/k8s/pcn_k8s/polykube-cni/*.sh /
+COPY --from=builder /polycube/src/components/k8s/polykube-cni/cleanup_polycube.sh /
 
 RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get -y install linux-headers-$(uname -r) psmisc
