@@ -63,6 +63,7 @@ fi
 }
 
 $SUDO apt update && $SUDO apt upgrade -y
+$SUDO apt update && $SUDO apt install jq -y
 
 install_kubeadm
 install_docker
