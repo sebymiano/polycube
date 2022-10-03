@@ -21,7 +21,7 @@ function polycubed_kill_and_wait {
         break
     fi
 
-    if [ "$i" -gt 10]; then
+    if [ "$i" -gt 10 ]; then
         echo "Unable to kill polycube in 10 seconds"
         break
     fi
