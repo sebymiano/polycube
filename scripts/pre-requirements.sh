@@ -379,8 +379,8 @@ else
   $SUDO bash -c "apt-get update && apt-get install cmake -y"
 fi
 
-# Install gcc-9
-$SUDO bash -c "add-apt-repository ppa:ubuntu-toolchain-r/test -y && apt-get update && apt-get install -y gcc-9 g++-9"
+# Install gcc-10
+$SUDO bash -c "add-apt-repository ppa:ubuntu-toolchain-r/test -y && apt-get update && apt-get install -y gcc-10 g++-10"
 
 get_llvm
 #get_flex

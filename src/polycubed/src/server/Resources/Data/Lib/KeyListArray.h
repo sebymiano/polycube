@@ -19,6 +19,7 @@
 #include <string>
 #include <utility>
 #include <vector>
+#include <stdexcept>
 
 #include "../../Body/ListKey.h"
 #include "EntryPoint.h"
