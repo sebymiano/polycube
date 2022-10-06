@@ -86,10 +86,10 @@ index 1e89f5a..181bc3c 100644
 +  morpheusLogLevel: "INFO"
 \ No newline at end of file
 diff --git a/manifests/daemon_set.yaml b/manifests/daemon_set.yaml
-index 91fe70e..5791b9f 100644
+index 91fe70e..28981ff 100644
 --- a/manifests/daemon_set.yaml
 +++ b/manifests/daemon_set.yaml
-@@ -9,29 +9,26 @@ spec:
+@@ -9,45 +9,46 @@ spec:
    selector:
      matchLabels:
        k8s-app: polykube
@@ -129,10 +129,10 @@ index 91fe70e..5791b9f 100644
            imagePullPolicy: Always
            terminationMessagePolicy: FallbackToLogsOnError # in order to allow k8s to retrieve log from container stderr
            securityContext:
-@@ -39,15 +36,16 @@ spec:
-           command: ["polycubed",
-                     "--loglevel=INFO",
-                     "--addr=0.0.0.0",
+             privileged: true
+-          command: ["polycubed",
+-                    "--loglevel=INFO",
+-                    "--addr=0.0.0.0",
 -                    "--logfile=/host/var/log/polycubed.polykube.log"]
 -#          livenessProbe: # TODO maybe the livenessProbe might be removed
 -#            httpGet:
@@ -142,12 +142,18 @@ index 91fe70e..5791b9f 100644
 -#            initialDelaySeconds: 60 # TODO check
 -#            timeoutSeconds: 10 # TODO check
 -#            periodSeconds: 20 # TODO check
-+                    "--logfile=/host/var/log/polycubed.morpheus.log"]
++          command: ["/bin/sh", "-c"]
++          args: ["/save_context.sh &&"
++                 "/create_morpheus_config_file.sh &&"
++                 "polycubed",
++                 "--loglevel=INFO",
++                 "--addr=0.0.0.0",
++                 "--logfile=/host/var/log/polycubed.morpheus.log"]
++          # command: ["polycubed",
++          #           "--loglevel=INFO",
++          #           "--addr=0.0.0.0",
++          #           "--logfile=/host/var/log/polycubed.morpheus.log"]
 +          lifecycle:
-+            postStart:
-+              exec:
-+                command:
-+                  - "/create_morpheus_config_file.sh"
 +            preStop:
 +              exec:
 +                command:
@@ -155,7 +161,7 @@ index 91fe70e..5791b9f 100644
            volumeMounts:
              - name: lib-modules
                mountPath: /lib/modules
-@@ -56,7 +54,7 @@ spec:
+@@ -56,7 +57,7 @@ spec:
              - name: var-log
                mountPath: /host/var/log
          - name: polykube
@@ -164,7 +170,7 @@ index 91fe70e..5791b9f 100644
            imagePullPolicy: Always
            terminationMessagePolicy: FallbackToLogsOnError # in order to allow k8s to retrieve log from container stderr
            securityContext:
-@@ -71,18 +69,6 @@ spec:
+@@ -71,18 +72,6 @@ spec:
                exec:
                  command:
                    - "/cni-uninstall.sh"
@@ -183,7 +189,7 @@ index 91fe70e..5791b9f 100644
            env:
              - name: POD_NAME
                valueFrom:
-@@ -172,6 +158,16 @@ spec:
+@@ -172,6 +161,16 @@ spec:
                  configMapKeyRef:
                    name: polykube-cfg
                    key: isCPNodesDeployAllowed
@@ -200,7 +206,7 @@ index 91fe70e..5791b9f 100644
            volumeMounts:
              - name: opt-cni-bin
                mountPath: /host/opt/cni/bin
-@@ -194,13 +190,5 @@ spec:
+@@ -194,13 +193,5 @@ spec:
            hostPath:
              path: /usr/src
        tolerations:
