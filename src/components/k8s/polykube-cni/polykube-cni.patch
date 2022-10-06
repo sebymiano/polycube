@@ -86,7 +86,7 @@ index 1e89f5a..181bc3c 100644
 +  morpheusLogLevel: "INFO"
 \ No newline at end of file
 diff --git a/manifests/daemon_set.yaml b/manifests/daemon_set.yaml
-index 91fe70e..2b11efe 100644
+index 91fe70e..5791b9f 100644
 --- a/manifests/daemon_set.yaml
 +++ b/manifests/daemon_set.yaml
 @@ -9,29 +9,26 @@ spec:
@@ -147,7 +147,7 @@ index 91fe70e..2b11efe 100644
 +            postStart:
 +              exec:
 +                command:
-+                  - "/create_morpheus_config_file.sh.sh"
++                  - "/create_morpheus_config_file.sh"
 +            preStop:
 +              exec:
 +                command:
