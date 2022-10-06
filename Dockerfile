@@ -89,6 +89,7 @@ fi && ldconfig
 
 COPY --from=builder /polycube/src/components/k8s/polykube-cni/cleanup_polycube.sh /
 COPY --from=builder /polycube/src/components/k8s/polykube-cni/create_morpheus_config_file.sh /
+COPY --from=builder /polycube/src/components/k8s/polykube-cni/save_context.sh /
 
 RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get -y install linux-headers-$(uname -r) psmisc
