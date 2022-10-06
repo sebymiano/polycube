@@ -12,7 +12,7 @@
 #include "HelloworldBase.h"
 
 HelloworldBase::HelloworldBase(const std::string name) {
-  logger()->set_pattern("[%Y-%m-%d %H:%M:%S.%e] [Helloworld] [%n] [%l] %v");
+  logger()->set_pattern("[%Y-%m-%d %H:%M:%S.%e] [Helloworld] [%n] [%^%l%$] %v");
 }
 
 

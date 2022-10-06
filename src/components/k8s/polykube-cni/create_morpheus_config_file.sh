@@ -2,7 +2,7 @@
 
 MORPHEUS_CONFIG_FILE_LOCATION='/etc/morpheus/morpheus.yaml'
 if [ -z "$1" ]; then
-    DEFAULT_LOG_LEVEL=INFO
+    DEFAULT_LOG_LEVEL=${MORPHEUS_LOG_LEVEL}
 else
     DEFAULT_LOG_LEVEL=$1
 fi

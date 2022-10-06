@@ -22,7 +22,7 @@
 Pbforwarder::Pbforwarder(const std::string name,
                          const PbforwarderJsonObject &conf)
     : Cube(conf.getBase(), generate_code_vector(), {}) {
-  logger()->set_pattern("[%Y-%m-%d %H:%M:%S.%e] [Pbforwarder] [%n] [%l] %v");
+  logger()->set_pattern("[%Y-%m-%d %H:%M:%S.%e] [Pbforwarder] [%n] [%^%l%$] %v");
   logger()->info("Creating Pbforwarder instance");
 
   addRulesList(conf.getRules());

@@ -12,7 +12,7 @@
 #include "SimplebridgeBase.h"
 
 SimplebridgeBase::SimplebridgeBase(const std::string name) {
-  logger()->set_pattern("[%Y-%m-%d %H:%M:%S.%e] [Simplebridge] [%n] [%l] %v");
+  logger()->set_pattern("[%Y-%m-%d %H:%M:%S.%e] [Simplebridge] [%n] [%^%l%$] %v");
 }
 
 

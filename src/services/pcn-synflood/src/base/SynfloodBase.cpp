@@ -12,7 +12,7 @@
 #include "SynfloodBase.h"
 
 SynfloodBase::SynfloodBase(const std::string name) {
-  logger()->set_pattern("[%Y-%m-%d %H:%M:%S.%e] [Synflood] [%n] [%l] %v");
+  logger()->set_pattern("[%Y-%m-%d %H:%M:%S.%e] [Synflood] [%n] [%^%l%$] %v");
 }
 
 

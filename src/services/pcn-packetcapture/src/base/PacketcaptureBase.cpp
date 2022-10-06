@@ -12,7 +12,7 @@
 #include "PacketcaptureBase.h"
 
 PacketcaptureBase::PacketcaptureBase(const std::string name) {
-  logger()->set_pattern("[%Y-%m-%d %H:%M:%S.%e] [Packetcapture] [%n] [%l] %v");
+  logger()->set_pattern("[%Y-%m-%d %H:%M:%S.%e] [Packetcapture] [%n] [%^%l%$] %v");
 }
 
 

@@ -32,7 +32,7 @@ Lbrp::Lbrp(const std::string name, const LbrpJsonObject &conf)
       LbrpBase(name), 
       lbrp_code_{Lbrp::buildLbrpCode(lbrp_code, conf.getPortMode())},
       port_mode_{conf.getPortMode()} {
-  logger()->set_pattern("[%Y-%m-%d %H:%M:%S.%e] [Lbrp] [%n] [%l] %v");
+  logger()->set_pattern("[%Y-%m-%d %H:%M:%S.%e] [Lbrp] [%n] [%^%l%$] %v");
   logger()->info("Creating Lbrp instance in {0} port mode",
                  LbrpJsonObject::LbrpPortModeEnum_to_string(port_mode_));
 

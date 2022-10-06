@@ -10,7 +10,7 @@
 #include "BridgeBase.h"
 
 BridgeBase::BridgeBase(const std::string name) {
-  logger()->set_pattern("[%Y-%m-%d %H:%M:%S.%e] [Bridge] [%n] [%l] %v");
+  logger()->set_pattern("[%Y-%m-%d %H:%M:%S.%e] [Bridge] [%n] [%^%l%$] %v");
 }
 
 BridgeBase::~BridgeBase() {}

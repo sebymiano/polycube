@@ -21,7 +21,7 @@
 
 Lbdsr::Lbdsr(const std::string name, const LbdsrJsonObject &conf)
     : Cube(conf.getBase(), {getCode(true)}, {}) {
-  logger()->set_pattern("[%Y-%m-%d %H:%M:%S.%e] [Lbdsr] [%n] [%l] %v");
+  logger()->set_pattern("[%Y-%m-%d %H:%M:%S.%e] [Lbdsr] [%n] [%^%l%$] %v");
   logger()->info("Creating Lbdsr instance");
 
   if (conf.algorithmIsSet()) {

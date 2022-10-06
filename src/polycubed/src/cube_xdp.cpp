@@ -403,18 +403,14 @@ void call_egress_program_with_metadata(struct CTXTYPE *skb,
 const std::string CubeXDP::CUBEXDP_WRAPPER = R"(
 int handle_rx_xdp_wrapper(struct CTXTYPE *ctx) {
   int zero = 0;
-
   struct pkt_metadata *md = port_md.lookup(&zero);
   if (!md) {
     return XDP_ABORTED;
   }
-
   int rc = handle_rx(ctx, md);
-
   switch (rc) {
     case RX_DROP:
       return XDP_DROP;
-
     case RX_OK: {
 #if POLYCUBE_PROGRAM_TYPE == 1  // EGRESS
       int port = md->in_port;
@@ -425,7 +421,6 @@ int handle_rx_xdp_wrapper(struct CTXTYPE *ctx) {
       
       if (*next == 0) {
         return XDP_ABORTED;
-
       } else if (*next >> 16 == 1) {
         // Next is a netdev
         return bpf_redirect(*next & 0xffff, 0);
@@ -434,58 +429,36 @@ int handle_rx_xdp_wrapper(struct CTXTYPE *ctx) {
         // Next is a program
         xdp_nodes.call(ctx, *next & 0xffff);
       }
-
 #else  // INGRESS
       return XDP_PASS;
 #endif
     }
-
     default:
       // Called in case pcn_pkt_redirect() returned XDP_REDIRECT
       return rc;
   }
-
   return XDP_ABORTED;
 }
-
 #if POLYCUBE_PROGRAM_TYPE == 0  // Only INGRESS programs can redirect
 static __always_inline
 int pcn_pkt_redirect(struct CTXTYPE *pkt, struct pkt_metadata *md, u32 out_port) {
-  // Check if the peer is in the optimized path
   switch (out_port) {
     _REDIRECT_CODE;
   }
-
-  // Fall back to table lookup
-  struct _POLYCUBE_peer_info *peer_info = _POLYCUBE_peers.lookup(&out_port);
-  if (!peer_info) {
-    return XDP_ABORTED;
-  }
-
-  if (peer_info->is_netdev) {
-    return bpf_redirect(peer_info->info & 0xffff, 0);
-  } else {
-    md->in_port = peer_info->info >> 16;
-    xdp_nodes.call(pkt, peer_info->info & 0xffff);
-  }
-
   return XDP_ABORTED;
 }
-
 static __always_inline
 void pcn_pkt_recirculate(struct CTXTYPE *skb, u32 port) {
   u32 index = port << 16 | CUBE_ID;
   xdp_nodes.call(skb, index);
 }
 #endif
-
 static __always_inline
 int pcn_pkt_controller(struct CTXTYPE *pkt, struct pkt_metadata *md,
                        u16 reason) {
   md->cube_id = CUBE_ID;
   md->packet_len = pkt->data_end - pkt->data;
   md->reason = reason;
-
   return controller_xdp.perf_submit_skb(pkt, md->packet_len, md, sizeof(*md));
 }
 )";
@@ -495,219 +468,159 @@ const std::string CubeXDP::CUBEXDP_HELPERS = R"(
 #include <linux/string.h> // memmove
 #include <uapi/linux/if_ether.h>  // struct ethhdr
 #include <uapi/linux/ip.h> // struct iphdr
-
 #define CSUM_MANGLED_0 ((__force __sum16)0xffff)
-
 // for some reason vlan_hdr is not defined in uapi/linux/if_vlan.h, it is
 // a short structure hence define it here
 struct vlan_hdr {
   __be16  h_vlan_TCI;
   __be16  h_vlan_encapsulated_proto;
 };
-
 static __always_inline
 bool pcn_is_vlan_present(struct xdp_md *pkt) {
   void* data_end = (void*)(long)pkt->data_end;
   void* data = (void*)(long)pkt->data;
-
   struct ethhdr *eth = data;
   uint64_t nh_off = 0;
-
   uint16_t h_proto;
   nh_off = sizeof(*eth);
-
   if (data + nh_off > data_end)
     return false;
-
   h_proto = eth->h_proto;
   if (h_proto == htons(ETH_P_8021Q) || h_proto == htons(ETH_P_8021AD)) {
     return true;
   }
-
   return false;
 }
-
 static __always_inline
 int pcn_get_vlan_id(struct xdp_md *pkt) {
   void* data_end = (void*)(long)pkt->data_end;
   void* data = (void*)(long)pkt->data;
-
   struct ethhdr *eth = data;
   uint64_t nh_off = 0;
   uint16_t h_proto;
-
   nh_off = sizeof(*eth);
   if (data + nh_off  > data_end)
     return -1;
-
   h_proto = eth->h_proto;
   if (h_proto != htons(ETH_P_8021Q) && h_proto == htons(ETH_P_8021AD))
     return -1;
-
   struct vlan_hdr *vhdr;
   vhdr = data + nh_off;
-
   nh_off += sizeof(struct vlan_hdr);
-
   if (data + nh_off > data_end)
     return -1;
-
   // TODO: Handle double tagged packets
   return ntohs(vhdr->h_vlan_TCI) & 0x0fff;
 }
-
 static __always_inline
 int pcn_get_vlan_proto(struct xdp_md *pkt) {
   void* data_end = (void*)(long)pkt->data_end;
   void* data = (void*)(long)pkt->data;
-
   struct ethhdr *eth = data;
   uint64_t nh_off = 0;
   uint16_t h_proto;
-
   nh_off = sizeof(*eth);
   if (data + nh_off  > data_end)
     return -1;
-
   h_proto = eth->h_proto;
   if (h_proto != htons(ETH_P_8021Q) && h_proto != htons(ETH_P_8021AD))
     return -1;
-
   struct vlan_hdr *vhdr;
   vhdr = data + nh_off;
-
   nh_off += sizeof(struct vlan_hdr);
-
   if (data + nh_off > data_end)
    return -1;
-
   return bpf_ntohs(vhdr->h_vlan_encapsulated_proto);
 }
-
 static __always_inline
 int pcn_vlan_pop_tag(struct xdp_md *pkt) {
   void* data_end = (void*)(long)pkt->data_end;
   void* data = (void*)(long)pkt->data;
-
   struct ethhdr *old_eth = data;
   struct ethhdr *new_eth;
   uint64_t nh_off = 0;
   uint16_t h_proto;
-
   nh_off = sizeof(*old_eth);
-
   if (data + nh_off > data_end)
     return -1;
-
   h_proto = old_eth->h_proto;
   if (h_proto == htons(ETH_P_8021Q) || h_proto == htons(ETH_P_8021AD)) {
-
     struct vlan_hdr *vhdr;
     __be16 vlan_proto;
-
     vhdr = data + nh_off;
-
     nh_off += sizeof(struct vlan_hdr);
-
     if (data + nh_off > data_end)
       return 1; //ERROR
-
     vlan_proto = vhdr->h_vlan_encapsulated_proto;
-
     new_eth = data + sizeof(struct vlan_hdr);
     memmove(new_eth, old_eth, sizeof(struct ethhdr));
-
     if (bpf_xdp_adjust_head(pkt, (int)sizeof(struct vlan_hdr)))
       return 1; //ERROR
-
     data = (void *)(long)pkt->data;
     data_end = (void *)(long)pkt->data_end;
-
     new_eth = data;
     nh_off = sizeof(*new_eth);
     if (data + nh_off > data_end)
       return 1; //ERROR
-
     new_eth->h_proto = vlan_proto;
-
     return 0; //OK
   } else {
     //TODO: Return error or is everything ok?
     return 0; //OK
   }
-
   /* TODO: Should I handle double VLAN tagged packet */
   return -1; //ERROR
 }
-
 static __always_inline
 int pcn_vlan_push_tag(struct xdp_md *pkt, u16 eth_proto, u32 vlan_id) {
   void* data = (void*)(long)pkt->data;
   void* data_end = (void*)(long)pkt->data_end;
-
   struct ethhdr *old_eth = data;
   struct ethhdr *new_eth;
   struct vlan_hdr *vhdr;
   uint64_t nh_off = 0;
   __be16 old_eth_proto = old_eth->h_proto;
-
   nh_off = sizeof(*old_eth);
-
   if (data + nh_off  > data_end)
     return -1;
-
   __be16 vlan_proto = htons(eth_proto);
   if(vlan_proto != htons(ETH_P_8021Q) && vlan_proto != htons(ETH_P_8021AD)) {
     vlan_proto = htons(ETH_P_8021Q);
   }
-
   if (bpf_xdp_adjust_head(pkt, 0 - (int)sizeof(struct vlan_hdr)))
     return -1; //ERROR
-
   data = (void *)(long)pkt->data;
-
   data_end = (void *)(long)pkt->data_end;
-
   new_eth = data;
   nh_off = sizeof(*new_eth);
   if (data + nh_off  > data_end)
     return -1; //ERROR
-
   vhdr = data + sizeof(*new_eth);
   nh_off += sizeof(*vhdr);
   if (data + nh_off  > data_end)
     return -1; //ERROR
-
   old_eth = data + sizeof(*vhdr);
   nh_off += sizeof(*old_eth);
   if (data + nh_off  > data_end)
     return -1; //ERROR
-
   memmove(new_eth, old_eth, sizeof(*new_eth));
   new_eth->h_proto = vlan_proto; //set eth proto to ETH_P_8021Q or ETH_P_8021AD
-
   vhdr = data + sizeof(*new_eth);
   vhdr->h_vlan_TCI = htons((u16)vlan_id);
   vhdr->h_vlan_encapsulated_proto = old_eth_proto;
-
   return 0;
 }
-
 static __always_inline
 void pcn_update_csum(struct iphdr *iph) {
   u16 *next_iph_u16;
   u32 csum = 0;
   int i;
-
   next_iph_u16 = (u16 *)iph;
-
 #pragma clang loop unroll(full)
   for (i = 0; i < sizeof(*iph) >> 1; i++)
     csum += *next_iph_u16++;
-
   iph->check = ~((csum & 0xffff) + (csum >> 16));
 }
-
 /* checksum related stuff */
 static __always_inline __sum16 pcn_csum_fold(__wsum csum) {
   u32 sum = (__force u32)csum;
@@ -715,47 +628,36 @@ static __always_inline __sum16 pcn_csum_fold(__wsum csum) {
   sum = (sum & 0xffff) + (sum >> 16);
   return (__force __sum16)~sum;
 }
-
 static __always_inline __wsum pcn_csum_add(__wsum csum, __wsum addend) {
   u32 res = (__force u32)csum;
   res += (__force u32)addend;
   return (__force __wsum)(res + (res < (__force u32)addend));
 }
-
 static __always_inline __sum16 pcn_csum16_add(__sum16 csum, __be16 addend) {
   u16 res = (__force u16)csum;
-
   res += (__force u16)addend;
   return (__force __sum16)(res + (res < (__force u16)addend));
 }
-
 static __always_inline __wsum pcn_csum_unfold(__sum16 n) {
   return (__force __wsum)n;
 }
-
 static __always_inline void pcn_csum_replace_by_diff(__sum16 *sum, __wsum diff) {
   *sum = pcn_csum_fold(pcn_csum_add(diff, ~pcn_csum_unfold(*sum)));
 }
-
 static __always_inline
 int pcn_l3_csum_replace(struct CTXTYPE *ctx, u32 csum_offset,
                         u32 old_value, u32 new_value, u32 flags) {
   __sum16 *ptr;
-
   if (unlikely(flags & ~(BPF_F_HDR_FIELD_MASK)))
     return -EINVAL;
-
   if (unlikely(csum_offset > 0xffff || csum_offset & 1))
     return -EFAULT;
-
   void *data2 = (void*)(long)ctx->data;
   void *data_end2 = (void*)(long)ctx->data_end;
   if (data2 + csum_offset + sizeof(*ptr) > data_end2) {
     return -EINVAL;
   }
-
   ptr = (__sum16 *)((void*)(long)ctx->data + csum_offset);
-
   switch (flags & BPF_F_HDR_FIELD_MASK	) {
   case 0:
     pcn_csum_replace_by_diff(ptr, new_value);
@@ -771,7 +673,6 @@ int pcn_l3_csum_replace(struct CTXTYPE *ctx, u32 csum_offset,
   }
   return 0;
 }
-
 static __always_inline
 int pcn_l4_csum_replace(struct CTXTYPE *ctx, u32 csum_offset,
                            u32 old_value, u32 new_value, u32 flags) {
@@ -779,25 +680,19 @@ int pcn_l4_csum_replace(struct CTXTYPE *ctx, u32 csum_offset,
 	bool is_mmzero = flags & BPF_F_MARK_MANGLED_0;
   bool do_mforce = flags & BPF_F_MARK_ENFORCE;
   __sum16 *ptr;
-
   if (unlikely(flags & ~(BPF_F_MARK_MANGLED_0 | BPF_F_MARK_ENFORCE |
                          BPF_F_PSEUDO_HDR | BPF_F_HDR_FIELD_MASK)))
     return -EINVAL;
-
   if (unlikely(csum_offset > 0xffff || csum_offset & 1))
     return -EFAULT;
-
   void *data2 = (void*)(long)ctx->data;
   void *data_end2 = (void*)(long)ctx->data_end;
   if (data2 + csum_offset + sizeof(*ptr) > data_end2) {
     return -EINVAL;
   }
-
   ptr = (__sum16 *)((void*)(long)ctx->data + csum_offset);
-
   if (is_mmzero && !do_mforce && !*ptr)
     return 0;
-
   switch (flags & BPF_F_HDR_FIELD_MASK) {
   case 0:
     pcn_csum_replace_by_diff(ptr, new_value);
@@ -811,17 +706,14 @@ int pcn_l4_csum_replace(struct CTXTYPE *ctx, u32 csum_offset,
   default:
     return -EINVAL;
   }
-
   // It may happen that the checksum of UDP packets is 0;
   // in that case there is an ambiguity because 0 could be
   // considered as a packet without checksum, in that case
   // the checksum has to be "mangled" (i.e., write 0xffff instead of 0).
   if (is_mmzero && !*ptr)
     *ptr = CSUM_MANGLED_0;
-
   return 0;
 }
-
 static __always_inline
 __wsum pcn_csum_diff(__be32 *from, u32 from_size, __be32 *to,
                      u32 to_size, __wsum seed) {
@@ -831,18 +723,14 @@ __wsum pcn_csum_diff(__be32 *from, u32 from_size, __be32 *to,
 #else
   if (from_size != 4 || to_size != 4)
     return -EINVAL;
-
   __wsum result = pcn_csum_add(*to, ~*from);
   result += seed;
 	if (seed > result)
 		result += 1;
-
   return result;
 #endif
 }
-
 /* end checksum related stuff */
-
 )";
 
 }  // namespace polycube

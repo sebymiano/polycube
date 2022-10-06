@@ -1,7 +1,7 @@
 #include "DynmonBase.h"
 
 DynmonBase::DynmonBase(const std::string name) : m_name(name) {
-  logger()->set_pattern("[%Y-%m-%d %H:%M:%S.%e] [Dynmon] [%n] [%l] %v");
+  logger()->set_pattern("[%Y-%m-%d %H:%M:%S.%e] [Dynmon] [%n] [%^%l%$] %v");
 }
 
 void DynmonBase::update(const DynmonJsonObject &conf) {

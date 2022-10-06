@@ -62,7 +62,7 @@ index 0607c65..7e73dd4 100644
  	}
  	nlog = l.WithFields(log.Fields{
 diff --git a/manifests/config_map.yaml b/manifests/config_map.yaml
-index 1e89f5a..540d8f2 100644
+index 1e89f5a..181bc3c 100644
 --- a/manifests/config_map.yaml
 +++ b/manifests/config_map.yaml
 @@ -10,7 +10,7 @@ data:
@@ -74,7 +74,7 @@ index 1e89f5a..540d8f2 100644
    nodePortRange: "30000-32767"
    cniConfFilePath: "/host/etc/cni/net.d/00-polykube.json"
    mtu: "1450"
-@@ -28,4 +28,6 @@ data:
+@@ -28,4 +28,7 @@ data:
    # added to the daemonset tolerations:
    # - effect: NoSchedule
    #   key: node-role.kubernetes.io/master
@@ -83,9 +83,10 @@ index 1e89f5a..540d8f2 100644
 +  isCPNodesDeployAllowed: "true"
 +  # This flag is used to enable Morpheus optimization
 +  enableMorpheusDynamicOpts: "true"
++  morpheusLogLevel: "INFO"
 \ No newline at end of file
 diff --git a/manifests/daemon_set.yaml b/manifests/daemon_set.yaml
-index 91fe70e..5a6b215 100644
+index 91fe70e..2b11efe 100644
 --- a/manifests/daemon_set.yaml
 +++ b/manifests/daemon_set.yaml
 @@ -9,29 +9,26 @@ spec:
@@ -146,7 +147,7 @@ index 91fe70e..5a6b215 100644
 +            postStart:
 +              exec:
 +                command:
-+                  - "/create_morpheus_config_file.sh.sh INFO"
++                  - "/create_morpheus_config_file.sh.sh"
 +            preStop:
 +              exec:
 +                command:
@@ -182,7 +183,7 @@ index 91fe70e..5a6b215 100644
            env:
              - name: POD_NAME
                valueFrom:
-@@ -172,6 +158,11 @@ spec:
+@@ -172,6 +158,16 @@ spec:
                  configMapKeyRef:
                    name: polykube-cfg
                    key: isCPNodesDeployAllowed
@@ -191,10 +192,15 @@ index 91fe70e..5a6b215 100644
 +                configMapKeyRef:
 +                  name: polykube-cfg
 +                  key: enableMorpheusDynamicOpts
++            - name: MORPHEUS_LOG_LEVEL
++              valueFrom:
++                configMapKeyRef:
++                  name: polykube-cfg
++                  key: morpheusLogLevel
            volumeMounts:
              - name: opt-cni-bin
                mountPath: /host/opt/cni/bin
-@@ -194,13 +185,5 @@ spec:
+@@ -194,13 +190,5 @@ spec:
            hostPath:
              path: /usr/src
        tolerations:

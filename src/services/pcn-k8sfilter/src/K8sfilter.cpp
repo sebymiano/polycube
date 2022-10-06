@@ -23,7 +23,7 @@
 
 K8sfilter::K8sfilter(const std::string name, const K8sfilterJsonObject &conf)
     : Cube(conf.getBase(), {k8sfilter_code}, {}) {
-  logger()->set_pattern("[%Y-%m-%d %H:%M:%S.%e] [K8sfilter] [%n] [%l] %v");
+  logger()->set_pattern("[%Y-%m-%d %H:%M:%S.%e] [K8sfilter] [%n] [%^%l%$] %v");
   logger()->info("Creating K8sfilter instance");
 
   addPortsList(conf.getPorts());

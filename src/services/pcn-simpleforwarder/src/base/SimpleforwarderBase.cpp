@@ -12,7 +12,7 @@
 #include "SimpleforwarderBase.h"
 
 SimpleforwarderBase::SimpleforwarderBase(const std::string name) {
-  logger()->set_pattern("[%Y-%m-%d %H:%M:%S.%e] [Simpleforwarder] [%n] [%l] %v");
+  logger()->set_pattern("[%Y-%m-%d %H:%M:%S.%e] [Simpleforwarder] [%n] [%^%l%$] %v");
 }
 
 

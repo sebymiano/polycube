@@ -25,7 +25,7 @@ Transparenthelloworld::Transparenthelloworld(
     : TransparentCube(conf.getBase(), {transparent_helloworld_code_ingress},
                       {transparent_helloworld_code_egress}) {
   logger()->set_pattern(
-      "[%Y-%m-%d %H:%M:%S.%e] [Transparenthelloworld] [%n] [%l] %v");
+      "[%Y-%m-%d %H:%M:%S.%e] [Transparenthelloworld] [%n] [%^%l%$] %v");
   logger()->info("Creating Transparenthelloworld instance");
 
   setIngressAction(conf.getIngressAction());

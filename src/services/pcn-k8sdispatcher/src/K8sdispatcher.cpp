@@ -40,7 +40,7 @@ K8sdispatcher::K8sdispatcher(const std::string name,
       nodeportRange_{"30000-32767"},
       nodeportRangeTuple_{30000, 32767},
       nodeIpNboInt_{0} {
-  logger()->set_pattern("[%Y-%m-%d %H:%M:%S.%e] [K8sDispatcher] [%n] [%l] %v");
+  logger()->set_pattern("[%Y-%m-%d %H:%M:%S.%e] [K8sDispatcher] [%n] [%^%l%$] %v");
   logger()->info("Creating K8sDispatcher instance");
 
   if (conf.nodeportRangeIsSet()) {

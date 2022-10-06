@@ -12,7 +12,7 @@
 #include "BmcBase.h"
 
 BmcBase::BmcBase(const std::string name) {
-  logger()->set_pattern("[%Y-%m-%d %H:%M:%S.%e] [Bmc] [%n] [%l] %v");
+  logger()->set_pattern("[%Y-%m-%d %H:%M:%S.%e] [Bmc] [%n] [%^%l%$] %v");
 }
 
 

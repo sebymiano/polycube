@@ -23,14 +23,17 @@ BaseCube::BaseCube(const nlohmann::json &conf,
                    const std::vector<std::string> &ingress_code,
                    const std::vector<std::string> &egress_code,
                    const std::vector<std::string> &cflags)
-  : dismounted_(false),
-    logger_(std::make_shared<spdlog::logger>(
-          conf.at("name").get<std::string>(), (spdlog::sinks_init_list){
-                    std::make_shared<spdlog::sinks::rotating_file_sink_mt>(
-                        logfile_, 1048576 * 5, 3),
-                    std::make_shared<spdlog::sinks::ansicolor_stdout_sink_mt>()})) {
+  : dismounted_(false) {
+  auto file_logger = std::make_shared<spdlog::sinks::rotating_file_sink_mt>(logfile_, 1048576 * 5, 3);
+  auto console_logger = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
+  console_logger->set_color(spdlog::level::trace, spdlog::string_view_t("\033[35m"));
+
+  std::vector<spdlog::sink_ptr> sinks {file_logger, console_logger};
+  logger_ = std::make_shared<spdlog::logger>(conf.at("name").get<std::string>(), sinks.begin(), sinks.end());
+
   auto loglevel_ = stringLogLevel(conf.at("loglevel").get<std::string>());
-  logger()->set_level(logLevelToSPDLog(loglevel_));
+  logger_->set_level(logLevelToSPDLog(loglevel_));
+  logger_->flush_on(logLevelToSPDLog(loglevel_));
   handle_log_msg = [&](const LogMsg *msg) -> void { datapath_log_msg(msg); };
 }
 

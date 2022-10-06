@@ -19,7 +19,7 @@
 
 Firewall::Firewall(const std::string name, const FirewallJsonObject &conf)
     : TransparentCube(conf.getBase(), {firewall_code}, {firewall_code}), FirewallBase(name) {
-  logger()->set_pattern("[%Y-%m-%d %H:%M:%S.%e] [Firewall] [%n] [%l] %v");
+  logger()->set_pattern("[%Y-%m-%d %H:%M:%S.%e] [Firewall] [%n] [%^%l%$] %v");
   logger()->info("Creating Firewall instance");
 
 

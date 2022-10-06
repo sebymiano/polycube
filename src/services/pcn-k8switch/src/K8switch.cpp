@@ -25,7 +25,7 @@ using namespace Tins;
 
 K8switch::K8switch(const std::string name, const K8switchJsonObject &conf)
     : Cube(conf.getBase(), {}, {}) {
-  logger()->set_pattern("[%Y-%m-%d %H:%M:%S.%e] [K8switch] [%n] [%l] %v");
+  logger()->set_pattern("[%Y-%m-%d %H:%M:%S.%e] [K8switch] [%n] [%^%l%$] %v");
   logger()->info("Creating K8switch instance");
 
   // call do... functions to avoid reloading code so many times

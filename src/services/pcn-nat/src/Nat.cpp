@@ -27,7 +27,7 @@ Nat::Nat(const std::string name, const NatJsonObject &conf)
           conf.getBase(),
           {generate_code() + nat_code_common + nat_code_ingress + nat_code},
           {generate_code() + nat_code_common + nat_code_egress + nat_code}) {
-  logger()->set_pattern("[%Y-%m-%d %H:%M:%S.%e] [Nat] [%n] [%l] %v");
+  logger()->set_pattern("[%Y-%m-%d %H:%M:%S.%e] [Nat] [%n] [%^%l%$] %v");
   logger()->info("Creating Nat instance");
 
   addRule(conf.getRule());

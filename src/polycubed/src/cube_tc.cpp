@@ -230,7 +230,6 @@ BPF_TABLE("extern", int, int, nodes, _POLYCUBE_MAX_NODES);
 #if defined(SHADOW) && defined(SPAN)
 BPF_PERF_OUTPUT(span_slowpath);
 #endif
-
 struct controller_table_t {
   int key;
   u32 leaf;
@@ -241,7 +240,6 @@ struct controller_table_t {
 };
 __attribute__((section("maps/extern")))
 struct controller_table_t controller_tc;
-
 #if defined(SHADOW) && defined(SPAN)
 static __always_inline
 int to_controller_span(struct CTXTYPE *skb, struct pkt_metadata md) {
@@ -249,12 +247,10 @@ int to_controller_span(struct CTXTYPE *skb, struct pkt_metadata md) {
   return r;
 }
 #endif
-
 static __always_inline
 int pcn_pkt_drop(struct CTXTYPE *skb, struct pkt_metadata *md) {
   return RX_DROP;
 }
-
 static __always_inline
 int pcn_pkt_controller_with_metadata(struct CTXTYPE *skb,
                                      struct pkt_metadata *md,
@@ -265,24 +261,20 @@ int pcn_pkt_controller_with_metadata(struct CTXTYPE *skb,
   md->md[2] = metadata[2];
   return pcn_pkt_controller(skb, md, reason);
 }
-
 static __always_inline
 void call_ingress_program_with_metadata(struct CTXTYPE *skb,
                                         struct pkt_metadata *md, int index) {
   // Save the traffic class for the next program in case it was changed
   // by the current one
   skb->mark = md->traffic_class;
-
   call_ingress_program(skb, index);
 }
-
 static __always_inline
 void call_egress_program_with_metadata(struct CTXTYPE *skb,
                                        struct pkt_metadata *md, int index) {
   // Save the traffic class for the next program in case it was changed
   // by the current one
   skb->mark = md->traffic_class;
-
   call_egress_program(skb, index);
 }
 )";
@@ -338,27 +330,11 @@ int pcn_vlan_push_tag(struct CTXTYPE *ctx, u16 eth_proto, u32 vlan_id) {
 const std::string CubeTC::CUBETC_WRAPPER = R"(
 static __always_inline
 int forward(struct CTXTYPE *skb, u32 out_port) {
-  // Check if the peer is in the optimized path
   switch (out_port) {
     _REDIRECT_CODE;
   }
-
-  // Fall back to table lookup
-  struct _POLYCUBE_peer_info *peer_info = _POLYCUBE_peers.lookup(&out_port);
-  if (!peer_info) {
-    return TC_ACT_SHOT;
-  }
-
-  skb->cb[0] = peer_info->info;
-  if (peer_info->is_netdev) {
-    return bpf_redirect(peer_info->info & 0xffff, 0);
-  } else {
-    nodes.call(skb, peer_info->info & 0xffff);
-  }
-
   return TC_ACT_SHOT;
 }
-
 #if defined(SHADOW) && defined(SPAN)
 static __always_inline
 void packet_span(struct CTXTYPE *skb, u32 out_port) {
@@ -370,7 +346,6 @@ void packet_span(struct CTXTYPE *skb, u32 out_port) {
   to_controller_span(skb, md);
 }
 #endif
-
 int handle_rx_wrapper(struct CTXTYPE *skb) {
   //bpf_trace_printk("" MODULE_UUID_SHORT ": rx:%d\n", skb->cb[0]);
   struct pkt_metadata md = {};
@@ -380,7 +355,6 @@ int handle_rx_wrapper(struct CTXTYPE *skb) {
   md.packet_len = skb->len;
   md.traffic_class = skb->mark;
   skb->cb[0] = md.in_port << 16 | CUBE_ID;
-
   // Check if the cube is shadow and the in_port has odd index
 #ifdef SHADOW
   if (md.in_port % 2) {
@@ -392,13 +366,10 @@ int handle_rx_wrapper(struct CTXTYPE *skb) {
   packet_span(skb, md.in_port);
 #endif
 #endif
-
   int rc = handle_rx(skb, &md);
-
   // Save the traffic class for the next program in case it was changed
   // by the current one
   skb->mark = md.traffic_class;
-
   switch (rc) {
     case RX_REDIRECT:
       // FIXME: reason is right, we are reusing the field
@@ -409,13 +380,11 @@ int handle_rx_wrapper(struct CTXTYPE *skb) {
 #if POLYCUBE_PROGRAM_TYPE == 1  // EGRESS
       // If there is another egress program call it, otherwise let the packet
       // pass
-
       int port = md.in_port;
       u16 *next = egress_next.lookup(&port);
       if (!next) {
         return TC_ACT_SHOT;
       }
-
       if (*next == 0) {
         return TC_ACT_SHOT;
       } else if (*next == 0xffff) {
@@ -423,7 +392,6 @@ int handle_rx_wrapper(struct CTXTYPE *skb) {
       } else {
         nodes.call(skb, *next);
       }
-
 #else  // INGRESS
       return TC_ACT_OK;
 #endif
@@ -431,7 +399,6 @@ int handle_rx_wrapper(struct CTXTYPE *skb) {
   }
   return TC_ACT_SHOT;
 }
-
 #if POLYCUBE_PROGRAM_TYPE == 0  // Only INGRESS programs can redirect
 static __always_inline
 int pcn_pkt_redirect(struct CTXTYPE *skb,
@@ -444,14 +411,12 @@ int pcn_pkt_redirect(struct CTXTYPE *skb,
 #endif
   return RX_REDIRECT;
 }
-
 static __always_inline
 void pcn_pkt_recirculate(struct CTXTYPE *skb, u32 port) {
   u32 index = port << 16 | CUBE_ID;
   nodes.call(skb, index);
 }
 #endif
-
 static __always_inline
 int pcn_pkt_redirect_ns(struct CTXTYPE *skb,
                      struct pkt_metadata *md, u32 port) {
@@ -464,7 +429,6 @@ int pcn_pkt_redirect_ns(struct CTXTYPE *skb,
 #endif
   return TC_ACT_SHOT;
 }
-
 static __always_inline
 int pcn_pkt_controller(struct CTXTYPE *skb, struct pkt_metadata *md,
                        u16 reason) {
@@ -475,11 +439,9 @@ int pcn_pkt_controller(struct CTXTYPE *skb, struct pkt_metadata *md,
     volatile __u32 vlan_proto = skb->vlan_proto;
     bpf_skb_vlan_push(skb, vlan_proto, vlan_tci);
   }
-
   md->cube_id = CUBE_ID;
   md->packet_len = skb->len;
   md->reason = reason;
-
   return controller_tc.perf_submit_skb(skb, skb->len, md, sizeof(*md));
 }
 )";

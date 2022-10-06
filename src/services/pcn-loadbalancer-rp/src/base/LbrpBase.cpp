@@ -12,7 +12,7 @@
 #include "LbrpBase.h"
 
 LbrpBase::LbrpBase(const std::string name) {
-  logger()->set_pattern("[%Y-%m-%d %H:%M:%S.%e] [Lbrp] [%n] [%l] %v");
+  logger()->set_pattern("[%Y-%m-%d %H:%M:%S.%e] [Lbrp] [%n] [%^%l%$] %v");
 }
 
 

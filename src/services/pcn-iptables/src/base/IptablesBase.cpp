@@ -12,7 +12,7 @@
 #include "IptablesBase.h"
 
 IptablesBase::IptablesBase(const std::string name) {
-  logger()->set_pattern("[%Y-%m-%d %H:%M:%S.%e] [Iptables] [%n] [%l] %v");
+  logger()->set_pattern("[%Y-%m-%d %H:%M:%S.%e] [Iptables] [%n] [%^%l%$] %v");
 }
 
 

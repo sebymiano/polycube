@@ -14,7 +14,7 @@
 #include "../SessionTable.h"
 
 FirewallBase::FirewallBase(const std::string name) {
-  logger()->set_pattern("[%Y-%m-%d %H:%M:%S.%e] [Firewall] [%n] [%l] %v");
+  logger()->set_pattern("[%Y-%m-%d %H:%M:%S.%e] [Firewall] [%n] [%^%l%$] %v");
 }
 
 FirewallBase::~FirewallBase() {}
