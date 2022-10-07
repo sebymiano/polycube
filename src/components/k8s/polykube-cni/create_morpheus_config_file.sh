@@ -7,6 +7,7 @@ else
     DEFAULT_LOG_LEVEL=$1
 fi
 
+mkdir -p -- "$(dirname -- "${MORPHEUS_CONFIG_FILE_LOCATION}")"
 cat > ${MORPHEUS_CONFIG_FILE_LOCATION} <<EOF
 Morpheus:
   enable_runtime_opts: true
