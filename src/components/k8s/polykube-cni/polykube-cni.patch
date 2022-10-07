@@ -86,7 +86,7 @@ index 1e89f5a..181bc3c 100644
 +  morpheusLogLevel: "INFO"
 \ No newline at end of file
 diff --git a/manifests/daemon_set.yaml b/manifests/daemon_set.yaml
-index 91fe70e..657f73a 100644
+index 91fe70e..f67a578 100644
 --- a/manifests/daemon_set.yaml
 +++ b/manifests/daemon_set.yaml
 @@ -9,45 +9,46 @@ spec:
@@ -142,13 +142,13 @@ index 91fe70e..657f73a 100644
 -#            initialDelaySeconds: 60 # TODO check
 -#            timeoutSeconds: 10 # TODO check
 -#            periodSeconds: 20 # TODO check
-+          command: ["/bin/sh", "-c"]
-+          args: ["/save_context.sh &&",
-+                 "/create_morpheus_config_file.sh &&",
-+                 "polycubed",
-+                 "--loglevel=INFO",
-+                 "--addr=0.0.0.0",
-+                 "--logfile=/host/var/log/polycubed.morpheus.log"]
++          command: ["/bin/bash", "-c"]
++          args: ["/save_context.sh && \
++                 /create_morpheus_config_file.sh && \
++                 polycubed \
++                 --loglevel=INFO \
++                 --addr=0.0.0.0 \
++                 --logfile=/host/var/log/polycubed.morpheus.log"]
 +          # command: ["polycubed",
 +          #           "--loglevel=INFO",
 +          #           "--addr=0.0.0.0",
