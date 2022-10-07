@@ -1,6 +1,6 @@
 #!/bin/bash
 
-tmp_ips=$(kubectl get nodes -o wide | awk '{if (NR!=1) {print $6}}')
+tmp_ips=$(kubectl get nodes -o wide | grep -v 'control-plane' | awk '{if (NR!=1) {print $6}}')
 ips_str="${tmp_ips//$'\n'/ }"
 
 read -a ips <<< "$ips_str"
