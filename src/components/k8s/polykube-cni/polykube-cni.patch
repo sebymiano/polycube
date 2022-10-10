@@ -86,10 +86,10 @@ index 1e89f5a..181bc3c 100644
 +  morpheusLogLevel: "INFO"
 \ No newline at end of file
 diff --git a/manifests/daemon_set.yaml b/manifests/daemon_set.yaml
-index 91fe70e..70381ff 100644
+index 91fe70e..718b9b6 100644
 --- a/manifests/daemon_set.yaml
 +++ b/manifests/daemon_set.yaml
-@@ -9,45 +9,52 @@ spec:
+@@ -9,45 +9,48 @@ spec:
    selector:
      matchLabels:
        k8s-app: polykube
@@ -149,10 +149,6 @@ index 91fe70e..70381ff 100644
 +                 --loglevel=INFO \
 +                 --addr=0.0.0.0 \
 +                 --logfile=/host/var/log/polycubed.morpheus.log"]
-+          # command: ["polycubed",
-+          #           "--loglevel=INFO",
-+          #           "--addr=0.0.0.0",
-+          #           "--logfile=/host/var/log/polycubed.morpheus.log"]
 +          lifecycle:
 +            preStop:
 +              exec:
@@ -167,7 +163,7 @@ index 91fe70e..70381ff 100644
            volumeMounts:
              - name: lib-modules
                mountPath: /lib/modules
-@@ -56,7 +63,7 @@ spec:
+@@ -56,7 +59,7 @@ spec:
              - name: var-log
                mountPath: /host/var/log
          - name: polykube
@@ -176,7 +172,7 @@ index 91fe70e..70381ff 100644
            imagePullPolicy: Always
            terminationMessagePolicy: FallbackToLogsOnError # in order to allow k8s to retrieve log from container stderr
            securityContext:
-@@ -71,18 +78,6 @@ spec:
+@@ -71,18 +74,6 @@ spec:
                exec:
                  command:
                    - "/cni-uninstall.sh"
@@ -195,7 +191,7 @@ index 91fe70e..70381ff 100644
            env:
              - name: POD_NAME
                valueFrom:
-@@ -172,6 +167,16 @@ spec:
+@@ -172,6 +163,16 @@ spec:
                  configMapKeyRef:
                    name: polykube-cfg
                    key: isCPNodesDeployAllowed
@@ -212,7 +208,7 @@ index 91fe70e..70381ff 100644
            volumeMounts:
              - name: opt-cni-bin
                mountPath: /host/opt/cni/bin
-@@ -194,13 +199,5 @@ spec:
+@@ -194,13 +195,5 @@ spec:
            hostPath:
              path: /usr/src
        tolerations:
