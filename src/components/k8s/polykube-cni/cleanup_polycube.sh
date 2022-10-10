@@ -35,9 +35,10 @@ function remove_all_bpf_programs {
   read -a interfaces <<< "$interfaces_str"
 
   for if in "${interfaces[@]}"; do
-    ip link set dev ${if} xdp off &> /dev/null
-    tc filter delete dev ${if} ingress &> /dev/null
-    tc filter delete dev ${if} egress &> /dev/null
+    local mod_if=$(echo "${if%@*}")
+    ip link set dev ${mod_if} xdp off &> /dev/null
+    tc filter delete dev ${mod_if} ingress &> /dev/null
+    tc filter delete dev ${mod_if} egress &> /dev/null
   done
 }
 
@@ -61,7 +62,7 @@ ip link del dev polykube_net &> /dev/null
 ip link del dev vxlan0 &> /dev/null
 ip link del dev pcn_xdp_cp &> /dev/null
 ip link del dev pcn_tc_cp &> /dev/null
-delete_additional_interfaces
+#delete_additional_interfaces
 
 ip route restore > /ip_route
 ip address restore > /ip_address
