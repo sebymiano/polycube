@@ -29,8 +29,8 @@ function polycubed_kill_and_wait {
 }
 
 function remove_all_bpf_programs {
-  tmp_interfaces=$(ip -o link show | awk -F': ' '{print $2}')
-  interfaces_str="${tmp_interfaces//$'\n'/ }"
+  local tmp_interfaces=$(ip -o link show | awk -F': ' '{print $2}')
+  local interfaces_str="${tmp_interfaces//$'\n'/ }"
 
   read -a interfaces <<< "$interfaces_str"
 
@@ -41,6 +41,19 @@ function remove_all_bpf_programs {
   done
 }
 
+function delete_additional_interfaces {
+  set -x
+  local tmp_interfaces=$(ip -o link show | awk -F': ' '{print $2}' | grep eth0)
+  local interfaces_str="${tmp_interfaces//$'\n'/ }"
+
+  read -a interfaces_arr <<< "$interfaces_str"
+
+  for if in "${interfaces_arr[@]}"; do
+    local mod_if=$(echo "${if%@*}")
+    ip link del ${mod_if} &> /dev/null
+  done
+}
+
 polycubed_kill_and_wait
 remove_all_bpf_programs
 ip link del dev polykube_host &> /dev/null
@@ -48,6 +61,7 @@ ip link del dev polykube_net &> /dev/null
 ip link del dev vxlan0 &> /dev/null
 ip link del dev pcn_xdp_cp &> /dev/null
 ip link del dev pcn_tc_cp &> /dev/null
+delete_additional_interfaces
 
 ip route restore > /ip_route
 ip address restore > /ip_address
