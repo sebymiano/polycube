@@ -62,12 +62,27 @@ install_golang() {
 fi
 }
 
+install_helm() {
+  if ! command -v helm &> /dev/null; then
+    wget https://get.helm.sh/helm-v3.10.0-linux-amd64.tar.gz -P /tmp/helm
+
+    pushd .
+    cd /tmp/helm
+    tar -zxvf helm-v3.10.0-linux-amd64.tar.gz -C /tmp/helm --strip-components 1
+    $SUDO mv helm /usr/local/bin/helm
+    popd
+
+    $SUDO rm -rf /tmp/helm
+  fi
+}
+
 $SUDO apt update && $SUDO apt upgrade -y
 $SUDO apt update && $SUDO apt install jq -y
 
 install_kubeadm
 install_docker
 install_golang
+install_helm
 
 $SUDO swapoff -a
 
