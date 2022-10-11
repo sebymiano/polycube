@@ -1,5 +1,10 @@
 #!/bin/bash
 
+COLOR_RED='\033[0;31m'
+COLOR_GREEN='\033[0;32m'
+COLOR_YELLOW='\033[0;33m'
+COLOR_OFF='\033[0m' # No Color
+
 tmp_ips=$(kubectl get nodes -o wide | grep -v 'control-plane' | awk '{if (NR!=1) {print $6}}')
 ips_str="${tmp_ips//$'\n'/ }"
 
@@ -44,6 +49,7 @@ done
 if [ $ENABLE_LBRP == "true" ]; then
     # Start Morpheus on intLbrp
     for ip in "${ips[@]}"; do
+        echo -e "${COLOR_GREEN}[ INFO ] Start Polykube-Morpheus on ilb0 (ip: ${ip}) ${COLOR_OFF}"
         POLYCUBECTL_URL=http://${ip}:9000/polycube/v1/ polycubectl ilb0 set start-morpheus=true
     done
 fi
@@ -51,6 +57,7 @@ fi
 if [ $ENABLE_ROUTER == "true" ]; then
     # Start Morpheus on router
     for ip in "${ips[@]}"; do
+        echo -e "${COLOR_GREEN}[ INFO ] Start Polykube-Morpheus on r0 (ip: ${ip}) ${COLOR_OFF}"
         POLYCUBECTL_URL=http://${ip}:9000/polycube/v1/ polycubectl r0 set start-morpheus=true
     done
 fi 
@@ -58,6 +65,7 @@ fi
 if [ $ENABLE_LBRP == "true" ]; then
     # Start Morpheus on extLbrp
     for ip in "${ips[@]}"; do
+        echo -e "${COLOR_GREEN}[ INFO ] Start Polykube-Morpheus on elb0 (ip: ${ip}) ${COLOR_OFF}"
         POLYCUBECTL_URL=http://${ip}:9000/polycube/v1/ polycubectl elb0 set start-morpheus=true
     done
 fi
@@ -65,6 +73,7 @@ fi
 if [ $ENABLE_K8S_DISPATCHER == "true" ]; then
     # Start Morpheus on k8sdispatcher
     for ip in "${ips[@]}"; do
+        echo -e "${COLOR_GREEN}[ INFO ] Start Polykube-Morpheus on k0 (ip: ${ip}) ${COLOR_OFF}"
         POLYCUBECTL_URL=http://${ip}:9000/polycube/v1/ polycubectl k0 set start-morpheus=true
     done
 fi
