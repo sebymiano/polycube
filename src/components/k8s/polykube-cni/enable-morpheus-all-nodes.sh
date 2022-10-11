@@ -21,7 +21,7 @@ echo "$usage"
 echo
 }
 
-while getopts :dh option; do
+while getopts rlkh option; do
  case "${option}" in
  h|\?)
   show_help
