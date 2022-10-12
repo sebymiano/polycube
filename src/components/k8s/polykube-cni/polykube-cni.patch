@@ -62,7 +62,7 @@ index 0607c65..7e73dd4 100644
  	}
  	nlog = l.WithFields(log.Fields{
 diff --git a/manifests/config_map.yaml b/manifests/config_map.yaml
-index 1e89f5a..181bc3c 100644
+index 1e89f5a..872435d 100644
 --- a/manifests/config_map.yaml
 +++ b/manifests/config_map.yaml
 @@ -10,7 +10,7 @@ data:
@@ -74,7 +74,7 @@ index 1e89f5a..181bc3c 100644
    nodePortRange: "30000-32767"
    cniConfFilePath: "/host/etc/cni/net.d/00-polykube.json"
    mtu: "1450"
-@@ -28,4 +28,7 @@ data:
+@@ -28,4 +28,10 @@ data:
    # added to the daemonset tolerations:
    # - effect: NoSchedule
    #   key: node-role.kubernetes.io/master
@@ -84,12 +84,15 @@ index 1e89f5a..181bc3c 100644
 +  # This flag is used to enable Morpheus optimization
 +  enableMorpheusDynamicOpts: "true"
 +  morpheusLogLevel: "INFO"
++  morpheusTablesToSkip: "[hash_session]"
++  morpheusOptimizerTimeout: "2"
++  morpheusOptimizerTimeoutInit: "10"
 \ No newline at end of file
 diff --git a/manifests/daemon_set.yaml b/manifests/daemon_set.yaml
-index 91fe70e..3156c88 100644
+index 91fe70e..53207a4 100644
 --- a/manifests/daemon_set.yaml
 +++ b/manifests/daemon_set.yaml
-@@ -9,45 +9,45 @@ spec:
+@@ -9,45 +9,60 @@ spec:
    selector:
      matchLabels:
        k8s-app: polykube
@@ -157,10 +160,25 @@ index 91fe70e..3156c88 100644
 +                configMapKeyRef:
 +                  name: polykube-cfg
 +                  key: morpheusLogLevel
++            - name: MORPHEUS_TABLES_TO_SKIP
++              valueFrom:
++                configMapKeyRef:
++                  name: polykube-cfg
++                  key: morpheusTablesToSkip
++            - name: MORPHEUS_OPTIMIZER_TIMEOUT
++              valueFrom:
++                configMapKeyRef:
++                  name: polykube-cfg
++                  key: morpheusOptimizerTimeout
++            - name: MORPHEUS_OPTIMIZER_TIMEOUT_INIT
++              valueFrom:
++                configMapKeyRef:
++                  name: polykube-cfg
++                  key: morpheusOptimizerTimeoutInit
            volumeMounts:
              - name: lib-modules
                mountPath: /lib/modules
-@@ -56,7 +56,7 @@ spec:
+@@ -56,7 +71,7 @@ spec:
              - name: var-log
                mountPath: /host/var/log
          - name: polykube
@@ -169,7 +187,7 @@ index 91fe70e..3156c88 100644
            imagePullPolicy: Always
            terminationMessagePolicy: FallbackToLogsOnError # in order to allow k8s to retrieve log from container stderr
            securityContext:
-@@ -71,18 +71,6 @@ spec:
+@@ -71,18 +86,6 @@ spec:
                exec:
                  command:
                    - "/cni-uninstall.sh"
@@ -188,7 +206,7 @@ index 91fe70e..3156c88 100644
            env:
              - name: POD_NAME
                valueFrom:
-@@ -172,6 +160,16 @@ spec:
+@@ -172,6 +175,16 @@ spec:
                  configMapKeyRef:
                    name: polykube-cfg
                    key: isCPNodesDeployAllowed
@@ -205,7 +223,7 @@ index 91fe70e..3156c88 100644
            volumeMounts:
              - name: opt-cni-bin
                mountPath: /host/opt/cni/bin
-@@ -194,13 +192,5 @@ spec:
+@@ -194,13 +207,5 @@ spec:
            hostPath:
              path: /usr/src
        tolerations:
