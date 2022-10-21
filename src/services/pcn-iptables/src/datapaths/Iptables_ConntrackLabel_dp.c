@@ -106,10 +106,13 @@ struct ct_v {
   uint8_t ipRev;
   uint8_t portRev;
   uint32_t sequence;
-} __attribute__((packed));
+  struct bpf_spin_lock lock;
+};
 
 #if _INGRESS_LOGIC
-BPF_TABLE_SHARED("lru_hash", struct ct_k, struct ct_v, connections, 65536);
+// For some reason, if I use the lru_hash, the spin lock does not work
+BPF_TABLE_SHARED("hash", struct ct_k, struct ct_v, connections, 65536);
+// BPF_TABLE_SHARED("lru_hash", struct ct_k, struct ct_v, connections, 65536);
 #endif
 
 #if _EGRESS_LOGIC
@@ -242,11 +245,13 @@ static int handle_rx(struct CTXTYPE *ctx, struct pkt_metadata *md) {
   if (pkt->l4proto == IPPROTO_TCP) {
     value = connections.lookup(&key);
     if (value != NULL) {
+      bpf_spin_lock(&value->lock);
       if ((value->ipRev == ipRev) && (value->portRev == portRev)) {
         goto TCP_FORWARD;
       } else if ((value->ipRev != ipRev) && (value->portRev != portRev)) {
         goto TCP_REVERSE;
       } else {
+        bpf_spin_unlock(&value->lock);
         goto TCP_MISS;
       }
 
@@ -255,6 +260,7 @@ static int handle_rx(struct CTXTYPE *ctx, struct pkt_metadata *md) {
       // If it is a RST, label it as established.
       if ((pkt->flags & TCPHDR_RST) != 0) {
         pkt->connStatus = ESTABLISHED;
+        bpf_spin_unlock(&value->lock);
         goto action;
       }
 
@@ -265,12 +271,14 @@ static int handle_rx(struct CTXTYPE *ctx, struct pkt_metadata *md) {
           // Another SYN. It is valid, probably a retransmission.
           // connections.delete(&key);
           pkt->connStatus = NEW;
+          bpf_spin_unlock(&value->lock);
           goto action;
         } else {
           // Receiving packets outside the 3-Way handshake without completing
           // the handshake
           // TODO: Drop it?
           pkt->connStatus = INVALID;
+          bpf_spin_unlock(&value->lock);
           goto action;
         }
       }
@@ -281,12 +289,14 @@ static int handle_rx(struct CTXTYPE *ctx, struct pkt_metadata *md) {
             (pkt->ackN == value->sequence)) {
           // Valid ACK to the SYN, ACK
           pkt->connStatus = ESTABLISHED;
+          bpf_spin_unlock(&value->lock);
           goto action;
         } else {
           // Validation failed, either ACK is not the only flag set or the ack
           // number is wrong
           // TODO: drop it?
           pkt->connStatus = INVALID;
+          bpf_spin_unlock(&value->lock);
           goto action;
         }
       }
@@ -294,6 +304,7 @@ static int handle_rx(struct CTXTYPE *ctx, struct pkt_metadata *md) {
       if (value->state == ESTABLISHED || value->state == FIN_WAIT_1 ||
           value->state == FIN_WAIT_2 || value->state == LAST_ACK) {
         pkt->connStatus = ESTABLISHED;
+        bpf_spin_unlock(&value->lock);
         goto action;
       }
 
@@ -303,15 +314,17 @@ static int handle_rx(struct CTXTYPE *ctx, struct pkt_metadata *md) {
         if ((pkt->flags & TCPHDR_SYN) != 0 &&
             (pkt->flags | TCPHDR_SYN) == TCPHDR_SYN) {
           pkt->connStatus = NEW;
+          bpf_spin_unlock(&value->lock);
           goto action;
         }
       }
 
+      pkt->connStatus = INVALID;
+      bpf_spin_unlock(&value->lock);
       // Unexpected situation
       pcn_log(ctx, LOG_DEBUG,
               "[ConntrackLabel] FW_DIRECTION Should not get here. Flags: %d. State: %d. ",
               pkt->flags, value->state);
-      pkt->connStatus = INVALID;
       goto action;
 
     TCP_REVERSE:;
@@ -319,6 +332,7 @@ static int handle_rx(struct CTXTYPE *ctx, struct pkt_metadata *md) {
       // If it is a RST, label it as established.
       if ((pkt->flags & TCPHDR_RST) != 0) {
         pkt->connStatus = ESTABLISHED;
+        bpf_spin_unlock(&value->lock);
         goto action;
       }
 
@@ -329,12 +343,14 @@ static int handle_rx(struct CTXTYPE *ctx, struct pkt_metadata *md) {
                 (TCPHDR_SYN | TCPHDR_ACK) &&
             pkt->ackN == value->sequence) {
           pkt->connStatus = ESTABLISHED;
+          bpf_spin_unlock(&value->lock);
           goto action;
         }
         // Here is an unexpected packet, only a SYN, ACK is acepted as an answer
         // to a SYN
         // TODO: Drop it?
         pkt->connStatus = INVALID;
+        bpf_spin_unlock(&value->lock);
         goto action;
       }
 
@@ -346,15 +362,18 @@ static int handle_rx(struct CTXTYPE *ctx, struct pkt_metadata *md) {
                 (TCPHDR_SYN | TCPHDR_ACK) &&
             pkt->ackN == value->sequence) {
           pkt->connStatus = ESTABLISHED;
+          bpf_spin_unlock(&value->lock);
           goto action;
         }
         pkt->connStatus = INVALID;
+        bpf_spin_unlock(&value->lock);
         goto action;
       }
 
       if (value->state == ESTABLISHED || value->state == FIN_WAIT_1 ||
           value->state == FIN_WAIT_2 || value->state == LAST_ACK) {
         pkt->connStatus = ESTABLISHED;
+        bpf_spin_unlock(&value->lock);
         goto action;
       }
 
@@ -364,15 +383,17 @@ static int handle_rx(struct CTXTYPE *ctx, struct pkt_metadata *md) {
         if ((pkt->flags & TCPHDR_SYN) != 0 &&
             (pkt->flags | TCPHDR_SYN) == TCPHDR_SYN) {
           pkt->connStatus = NEW;
+          bpf_spin_unlock(&value->lock);
           goto action;
         }
       }
 
+      pkt->connStatus = INVALID;
+      bpf_spin_unlock(&value->lock);
       pcn_log(ctx, LOG_DEBUG,
               "[ConntrackLabel] [REV_DIRECTION] Should not get here. Flags: "
               "%d. State: %d. ",
               pkt->flags, value->state);
-      pkt->connStatus = INVALID;
       goto action;
     }
 
@@ -395,11 +416,13 @@ static int handle_rx(struct CTXTYPE *ctx, struct pkt_metadata *md) {
   if (pkt->l4proto == IPPROTO_UDP) {
     value = connections.lookup(&key);
     if (value != NULL) {
+      bpf_spin_lock(&value->lock);
       if ((value->ipRev == ipRev) && (value->portRev == portRev)) {
         goto UDP_FORWARD;
       } else if ((value->ipRev != ipRev) && (value->portRev != portRev)) {
         goto UDP_REVERSE;
       } else {
+        bpf_spin_unlock(&value->lock);
         goto UDP_MISS;
       }
 
@@ -411,10 +434,12 @@ static int handle_rx(struct CTXTYPE *ctx, struct pkt_metadata *md) {
         // there has been no answer, from the other side. Connection is still
         // NEW.
         pkt->connStatus = NEW;
+        bpf_spin_unlock(&value->lock);
         goto action;
       } else {
         // value->state == ESTABLISHED
         pkt->connStatus = ESTABLISHED;
+        bpf_spin_unlock(&value->lock);
         goto action;
       }
 
@@ -424,10 +449,12 @@ static int handle_rx(struct CTXTYPE *ctx, struct pkt_metadata *md) {
         // means that this is an answer, from the other side. Connection is
         // now ESTABLISHED.
         pkt->connStatus = ESTABLISHED;
+        bpf_spin_unlock(&value->lock);
         goto action;
       } else {
         // value->state == ESTABLISHED
         pkt->connStatus = ESTABLISHED;
+        bpf_spin_unlock(&value->lock);
         goto action;
       }
     }

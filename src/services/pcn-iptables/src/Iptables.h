@@ -32,6 +32,8 @@
 
 #include <spdlog/spdlog.h>
 
+#include <api/BPF.h> // needed for bpf_spin_lock definition
+
 #include "Chain.h"
 #include "Ports.h"
 #include "SessionTable.h"
@@ -57,7 +59,8 @@ struct ct_v {
   uint8_t ipRev;
   uint8_t portRev;
   uint32_t sequence;
-} __attribute__((packed));
+  struct bpf_spin_lock lock;
+};
 
 class Ports;
 class Chain;
