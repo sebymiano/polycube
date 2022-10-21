@@ -49,12 +49,6 @@ BPF_TABLE_SHARED("percpu_array", int, u64, bytes_default_Input, 1);
 
 BPF_TABLE_SHARED("percpu_array", int, u64, pkts_default_Forward, 1);
 BPF_TABLE_SHARED("percpu_array", int, u64, bytes_default_Forward, 1);
-
-BPF_TABLE_SHARED("array", int, u64, default_action_Input, 1);
-BPF_TABLE_SHARED("array", int, u64, default_action_Forward, 1);
-
-BPF_TABLE_SHARED("array", int, u64, input_chain_empty, 1);
-BPF_TABLE_SHARED("array", int, u64, forward_chain_empty, 1);
 #endif
 
 #if _EGRESS_LOGIC
@@ -62,10 +56,6 @@ BPF_TABLE("extern", int, struct packetHeaders, packet, 1);
 
 BPF_TABLE_PUBLIC("percpu_array", int, u64, pkts_default_Output, 1);
 BPF_TABLE_PUBLIC("percpu_array", int, u64, bytes_default_Output, 1);
-
-BPF_TABLE_PUBLIC("array", int, u64, default_action_Output, 1);
-
-BPF_TABLE_PUBLIC("array", int, u64, output_chain_empty, 1);
 #endif
 
 struct elements {

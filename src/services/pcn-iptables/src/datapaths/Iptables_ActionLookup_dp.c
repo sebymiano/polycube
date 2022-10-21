@@ -19,7 +19,7 @@
    ======================= */
 
 // ALL _SOMETHING are const changed dynamically by the control plane
-
+#if _NR_ELEMENTS > 0
 struct elements {
   uint64_t bits[_MAXRULES];
 };
@@ -48,7 +48,7 @@ static __always_inline struct elements *getShared() {
   int key = 0;
   return sharedEle.lookup(&key);
 }
-
+#endif
 // Counters
 // TODO define 8000 as a const
 BPF_TABLE("percpu_array", int, u64, pkts_DIRECTION, 8000);
@@ -71,6 +71,7 @@ static int handle_rx(struct CTXTYPE *ctx, struct pkt_metadata *md) {
 
 // _NR_ELEMENTS = int (number of rules / 64)
 // because of a bug in bcc, 63 bits are used
+#if _NR_ELEMENTS > 0
   int key = 0;
   struct elements *ruleMatched = getShared();
   if (ruleMatched == NULL) {
@@ -104,6 +105,6 @@ static int handle_rx(struct CTXTYPE *ctx, struct pkt_metadata *md) {
     pcn_log(ctx, LOG_ERR, "[ActionLookup] Something went wrong. ");
     return RX_DROP;
   }
-
+#endif
   return RX_DROP;
 }

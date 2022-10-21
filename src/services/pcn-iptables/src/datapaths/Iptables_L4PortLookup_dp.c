@@ -66,21 +66,6 @@ static __always_inline struct elements *getBitVect(uint16_t *key) {
 
 BPF_TABLE("extern", int, u64, pkts_default__DIRECTION, 1);
 BPF_TABLE("extern", int, u64, bytes_default__DIRECTION, 1);
-BPF_TABLE("extern", int, u64, default_action__DIRECTION, 1);
-
-static __always_inline int applyDefaultAction(struct CTXTYPE *ctx) {
-  u64 *value;
-
-  int zero = 0;
-  value = default_action__DIRECTION.lookup(&zero);
-  if (value && *value == 1) {
-    //Default Action is ACCEPT
-    call_bpf_program(ctx, _CONNTRACKTABLEUPDATE);
-    return RX_DROP;
-  }
-
-  return RX_DROP;
-}
 
 static __always_inline void incrementDefaultCounters_DIRECTION(u32 bytes) {
   u64 *value;
@@ -101,6 +86,7 @@ static int handle_rx(struct CTXTYPE *ctx, struct pkt_metadata *md) {
    * The struct elements and the lookup table are defined only if _NR_ELEMENTS>0,
    * so this code has to be used only in this case.
    */
+  #if _NR_ELEMENTS > 0
   int key = 0;
   struct packetHeaders *pkt = getPacket();
   if (pkt == NULL) {
@@ -148,7 +134,7 @@ static int handle_rx(struct CTXTYPE *ctx, struct pkt_metadata *md) {
     if (ele == NULL) {
       pcn_log(ctx, LOG_DEBUG, "[L4_TYPEPortLookup] No match. ");
       incrementDefaultCounters_DIRECTION(md->packet_len);
-      return applyDefaultAction(ctx);
+      _DEFAULTACTION
     }
   }
 
@@ -168,6 +154,9 @@ NEXT:;
     return applyDefaultAction(ctx);
   }
   call_bpf_program(ctx, _NEXT_HOP_1);
+#else
+  return RX_DROP;
+#endif
 
   return RX_DROP;
 }

@@ -141,17 +141,6 @@ Iptables::Iptables(const std::string name, const IptablesJsonObject &conf)
   logger()->debug("Automatically Attaching to network interfaces");
   addPortsList(conf.getPorts());
   reloadAll();
-
-  std::vector<std::shared_ptr<ChainRule>> empty;
-  auto chainInputParserProgram = std::dynamic_pointer_cast<Iptables::Parser>(programs_[std::make_pair(ModulesConstants::PARSER_INGRESS, ChainNameEnum::INVALID_INGRESS)]);
-  chainInputParserProgram->updateDefaultActionTable(ChainNameEnum::INPUT);
-  chainInputParserProgram->updateIsTableEmpty(ChainNameEnum::INPUT, empty);
-  chainInputParserProgram->updateDefaultActionTable(ChainNameEnum::FORWARD);
-  chainInputParserProgram->updateIsTableEmpty(ChainNameEnum::FORWARD, empty);
-
-  auto chainOutputParserProgram = std::dynamic_pointer_cast<Iptables::Parser>(programs_[std::make_pair(ModulesConstants::PARSER_EGRESS, ChainNameEnum::INVALID_EGRESS)]);
-  chainOutputParserProgram->updateDefaultActionTable(ChainNameEnum::OUTPUT);
-  chainOutputParserProgram->updateIsTableEmpty(ChainNameEnum::OUTPUT, empty);
 }
 
 Iptables::~Iptables() {

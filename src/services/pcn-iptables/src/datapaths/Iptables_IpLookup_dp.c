@@ -60,21 +60,6 @@ static __always_inline struct elements *getBitVect(struct lpm_k *key) {
 
 BPF_TABLE("extern", int, u64, pkts_default__DIRECTION, 1);
 BPF_TABLE("extern", int, u64, bytes_default__DIRECTION, 1);
-BPF_TABLE("extern", int, u64, default_action__DIRECTION, 1);
-
-static __always_inline int applyDefaultAction(struct CTXTYPE *ctx) {
-  u64 *value;
-
-  int zero = 0;
-  value = default_action__DIRECTION.lookup(&zero);
-  if (value && *value == 1) {
-    //Default Action is ACCEPT
-    call_bpf_program(ctx, _CONNTRACKTABLEUPDATE);
-    return RX_DROP;
-  }
-
-  return RX_DROP;
-}
 
 static __always_inline void incrementDefaultCounters_DIRECTION(u32 bytes) {
   u64 *value;
@@ -112,23 +97,10 @@ static int handle_rx(struct CTXTYPE *ctx, struct pkt_metadata *md) {
   struct lpm_k lpm_key = {32, pkt->_TYPEIp};
   struct elements *ele = getBitVect(&lpm_key);
 
-//  u32 result = jhash(&lpm_key, sizeof(lpm_key), JHASH_INITVAL);
-//  if(!result)
-//    return RX_DROP;
-//
-//  struct elements ele_try;
-//
-//  for (int i = 0; i < _NR_ELEMENTS; ++i) {
-//    /*This is the first module, it initializes the percpu*/
-//    (ele_try.bits)[i] = 0x7FFFFFFFFFFFFFFF;
-//  }
-//
-//  struct elements *ele = &ele_try;
-
   if (ele == NULL) {
     pcn_log(ctx, LOG_DEBUG, "[Ip_TYPELookup] No match. (pkt->_TYPEIp: %u) ", pkt->_TYPEIp);
     incrementDefaultCounters_DIRECTION(md->packet_len);
-    return applyDefaultAction(ctx);
+    _DEFAULTACTION
   } else {
     struct elements *result = getShared();
     if (result == NULL) {
@@ -149,7 +121,7 @@ static int handle_rx(struct CTXTYPE *ctx, struct pkt_metadata *md) {
         pcn_log(ctx, LOG_DEBUG,
                 "[Ip_TYPELookup] Bitvector is all zero. Break pipeline for Ip_TYPE_DIRECTION");
         incrementDefaultCounters_DIRECTION(md->packet_len);
-        return applyDefaultAction(ctx);
+        _DEFAULTACTION
       }
     }  // if result == NULL
   }    // if ele==NULL

@@ -419,11 +419,17 @@ static int handle_rx(struct CTXTYPE *ctx, struct pkt_metadata *md) {
       }
 
     UDP_REVERSE:;
-      // An entry was present in the rev direction with the NEW state. This
-      // means that this is an answer, from the other side. Connection is
-      // now ESTABLISHED.
-      pkt->connStatus = ESTABLISHED;
-      goto action;
+      if (value->state == NEW) {
+        // An entry was present in the rev direction with the NEW state. This
+        // means that this is an answer, from the other side. Connection is
+        // now ESTABLISHED.
+        pkt->connStatus = ESTABLISHED;
+        goto action;
+      } else {
+        // value->state == ESTABLISHED
+        pkt->connStatus = ESTABLISHED;
+        goto action;
+      }
     }
 
   UDP_MISS:;

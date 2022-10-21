@@ -260,7 +260,6 @@ get_folly() {
       autoconf                  \
       autoconf-archive          \
       libtool                   \
-      libboost-all-dev          \
       libevent-dev              \
       libdouble-conversion-dev  \
       libgoogle-glog-dev        \
@@ -322,6 +321,34 @@ get_prometheus_cpp() {
   echo -e "${COLOR_GREEN}prometheus CPP is installed ${COLOR_OFF}"
   popd
   touch "${WORKDIR}/prometheus_installed"
+}
+
+get_boost_cpp() {
+  BOOST_DIR=$WORKDIR/boost
+  BOOST_BUILD_DIR=$WORKDIR/boost/build
+
+  if [ -f "${WORKDIR}/boost_installed" ]; then
+    return
+  fi
+
+  rm -rf "$BOOST_DIR"
+  pushd .
+  cd "$WORKDIR"
+  echo -e "${COLOR_GREEN}[ INFO ] Downloading Boost CPP ${COLOR_OFF}"
+  mkdir -p "$BOOST_DIR"
+  wget https://boostorg.jfrog.io/artifactory/main/release/1.80.0/source/boost_1_80_0.tar.gz
+  tar xf boost_1_80_0.tar.gz -C boost --strip-components 1
+  rm boost_1_80_0.tar.gz
+  echo -e "${COLOR_GREEN}[ INFO ] Building Boost CPP ${COLOR_OFF}"
+  cd "$BOOST_DIR"
+
+  ./bootstrap.sh --prefix=/usr/local
+  ./b2
+  $SUDO ./b2 install
+  $SUDO ldconfig
+  echo -e "${COLOR_GREEN}Boost CPP is installed ${COLOR_OFF}"
+  popd
+  touch "${WORKDIR}/boost_installed"
 }
 
 $SUDO apt update
@@ -389,6 +416,7 @@ get_pistache
 get_libtins
 get_fmt
 get_gflags
+get_boost_cpp
 get_folly
 get_bison
 get_yaml_cpp

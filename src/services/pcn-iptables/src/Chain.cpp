@@ -437,12 +437,6 @@ void Chain::updateChain() {
     chainnameenum = ChainNameEnum::INVALID_INGRESS;
   }
 
-  if (rules_.empty()) {
-    auto chainParserProgram = std::dynamic_pointer_cast<Iptables::Parser>(parent_.programs_[std::make_pair(chainparser, chainnameenum)]);
-    chainParserProgram->updateIsTableEmpty(getName(), rules_);
-    return;
-  }
-
   auto start = std::chrono::high_resolution_clock::now();
 
   // Programs indexes
@@ -895,10 +889,6 @@ void Chain::updateChain() {
   parent_.programs_[std::make_pair(chainselector, chainnameenum)]->reload();
 
   parent_.programs_[std::make_pair(chainparser, chainnameenum)]->reload();
-
-  auto chainParserProgram = std::dynamic_pointer_cast<Iptables::Parser>(parent_.programs_[std::make_pair(chainparser, chainnameenum)]);
-  chainParserProgram->updateIsTableEmpty(getName(), getRuleList());
-  chainParserProgram->updateDefaultActionTable(getName());
 
   // Unload the programs belonging to the old chain.
   // Implicit in destructors

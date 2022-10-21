@@ -171,7 +171,7 @@ class Iptables : public IptablesBase {
 
   // max rules number, due to algorithm and bpf programs size limit.
   // in order to avoid verifier to complain, we set this limit.
-  static const int max_rules_ = 1024;
+  static const int max_rules_ = 64000;
 
   std::mutex mutex_iptables_;
 
@@ -271,8 +271,6 @@ class Iptables : public IptablesBase {
     std::string defaultActionString(ChainNameEnum chain);  // Overrides
 
     void updateLocalIps();
-    void updateIsTableEmpty(const ChainNameEnum &chain, const std::vector<std::shared_ptr<ChainRule>> &ruleList);
-    void updateDefaultActionTable(const ChainNameEnum &chainName);
   };
 
   class Horus : public Program {
