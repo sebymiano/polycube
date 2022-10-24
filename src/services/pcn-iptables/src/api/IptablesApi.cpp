@@ -1414,6 +1414,40 @@ Response read_iptables_session_table_state_by_id_handler(
   }
 }
 
+Response read_iptables_spinlocks_by_id_handler(
+  const char *name, const Key *keys,
+  size_t num_keys ) {
+  // Getting the path params
+  std::string unique_name { name };
+
+  try {
+
+    auto x = read_iptables_spinlocks_by_id(unique_name);
+    nlohmann::json response_body;
+    response_body = x;
+    return { kOk, ::strdup(response_body.dump().c_str()) };
+  } catch(const std::exception &e) {
+    return { kGenericError, ::strdup(e.what()) };
+  }
+}
+
+Response read_iptables_start_morpheus_by_id_handler(
+  const char *name, const Key *keys,
+  size_t num_keys ) {
+  // Getting the path params
+  std::string unique_name { name };
+
+  try {
+
+    auto x = read_iptables_start_morpheus_by_id(unique_name);
+    nlohmann::json response_body;
+    response_body = x;
+    return { kOk, ::strdup(response_body.dump().c_str()) };
+  } catch(const std::exception &e) {
+    return { kGenericError, ::strdup(e.what()) };
+  }
+}
+
 Response replace_iptables_by_id_handler(
   const char *name, const Key *keys,
   size_t num_keys ,
@@ -2247,6 +2281,42 @@ Response update_iptables_ports_list_by_id_handler(
       unique_value.push_back(a);
     }
     update_iptables_ports_list_by_id(unique_name, unique_value);
+    return { kOk, nullptr };
+  } catch(const std::exception &e) {
+    return { kGenericError, ::strdup(e.what()) };
+  }
+}
+
+Response update_iptables_spinlocks_by_id_handler(
+  const char *name, const Key *keys,
+  size_t num_keys ,
+  const char *value) {
+  // Getting the path params
+  std::string unique_name { name };
+
+  try {
+    auto request_body = nlohmann::json::parse(std::string { value });
+    // The conversion is done automatically by the json library
+    bool unique_value = request_body;
+    update_iptables_spinlocks_by_id(unique_name, unique_value);
+    return { kOk, nullptr };
+  } catch(const std::exception &e) {
+    return { kGenericError, ::strdup(e.what()) };
+  }
+}
+
+Response update_iptables_start_morpheus_by_id_handler(
+  const char *name, const Key *keys,
+  size_t num_keys ,
+  const char *value) {
+  // Getting the path params
+  std::string unique_name { name };
+
+  try {
+    auto request_body = nlohmann::json::parse(std::string { value });
+    // The conversion is done automatically by the json library
+    bool unique_value = request_body;
+    update_iptables_start_morpheus_by_id(unique_name, unique_value);
     return { kOk, nullptr };
   } catch(const std::exception &e) {
     return { kGenericError, ::strdup(e.what()) };

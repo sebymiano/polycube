@@ -198,6 +198,9 @@ void Iptables::update(const IptablesJsonObject &conf) {
       m->update(i);
     }
   }
+
+  setStartMorpheus(conf.getStartMorpheus());
+  setSpinlocks(conf.getSpinlocks());
 }
 
 IptablesJsonObject Iptables::toJsonObject() {
@@ -218,6 +221,14 @@ IptablesJsonObject Iptables::toJsonObject() {
   }
 
   return conf;
+}
+
+bool Iptables::getStartMorpheus() {
+  return Cube::get_morpheus_started();
+}
+
+void Iptables::setStartMorpheus(const bool &value) {
+  Cube::set_start_morpheus(value);
 }
 
 void Iptables::packet_in(Ports &port, polycube::service::PacketInMetadata &md,
@@ -508,6 +519,15 @@ void Iptables::disableAcceptEstablished(Chain &chain) {
           ->reload();
     }
   }
+}
+
+bool Iptables::getSpinlocks() {
+  return use_spinlocks_;
+}
+
+void Iptables::setSpinlocks(const bool &value) {
+  use_spinlocks_ = value;
+  reloadAll();
 }
 
 void Iptables::setConntrack(const IptablesConntrackEnum &value) {

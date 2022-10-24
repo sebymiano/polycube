@@ -144,6 +144,15 @@ std::string Iptables::ConntrackLabel::getCode() {
   replaceAll(no_macro_code, "_CONNTRACK_MAIN_MODE",
              std::to_string(iptables_.conntrack_mode_));
 
+  if (iptables_.use_spinlocks_) {
+    replaceAll(no_macro_code, "_SPINLOCK_ENABLED",
+             std::to_string(1));
+  } else {
+    replaceAll(no_macro_code, "_SPINLOCK_ENABLED",
+             std::to_string(0));
+  }
+  
+
   // /*Replacing hops*/
   // replaceAll(noMacroCode, "_NEXT_HOP_1", std::to_string(index + 1));
 

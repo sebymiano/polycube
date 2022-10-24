@@ -86,6 +86,14 @@ std::string Iptables::ConntrackTableUpdate::getCode() {
   replaceAll(no_macro_code, "_CONNTRACK_MAIN_MODE",
              std::to_string(iptables_.conntrack_mode_));
 
+  if (iptables_.use_spinlocks_) {
+    replaceAll(no_macro_code, "_SPINLOCK_ENABLED",
+             std::to_string(1));
+  } else {
+    replaceAll(no_macro_code, "_SPINLOCK_ENABLED",
+             std::to_string(0));
+  }
+
   if (program_type_ == ProgramType::INGRESS) {
     replaceAll(no_macro_code, "_INGRESS_LOGIC", std::to_string(1));
     replaceAll(no_macro_code, "_EGRESS_LOGIC", std::to_string(0));

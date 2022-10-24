@@ -83,6 +83,12 @@ class Iptables : public IptablesBase {
   bool getDynOpt() override;
 
   /// <summary>
+  /// Set this flag if you want to start Morpheus compiler
+  /// </summary>
+  bool getStartMorpheus() override;
+  void setStartMorpheus(const bool &value) override;
+
+  /// <summary>
   /// Enables the Connection Tracking module. Mandatory if connection tracking
   /// rules are needed. Default is ON.
   /// </summary>
@@ -113,6 +119,12 @@ class Iptables : public IptablesBase {
   /// </summary>
   bool getInteractive() override;
   void setInteractive(const bool &value) override;
+
+  /// <summary>
+  /// Use spinlocks in the data plane (default to TRUE)
+  /// </summary>
+  bool getSpinlocks() override;
+  void setSpinlocks(const bool &value) override;
 
   std::shared_ptr<Chain> getChain(const ChainNameEnum &name) override;
   std::vector<std::shared_ptr<Chain>> getChainList() override;
@@ -183,6 +195,8 @@ class Iptables : public IptablesBase {
 
   // interactive mode
   bool interactive_ = true;
+
+  bool use_spinlocks_ = true;
 
   // HORUS optimization enabled by current rule set
   bool horus_runtime_enabled_ = false;

@@ -53,6 +53,14 @@
 
 #define AF_INET 2 /* Internet IP Protocol 	*/
 
+#if _SPINLOCK_ENABLED == 0
+#define pcn_spin_lock(fmt, ...) (0)
+#define pcn_spin_unlock(fmt, ...) (0)
+#else
+#define pcn_spin_lock(...) bpf_spin_lock(__VA_ARGS__)
+#define pcn_spin_unlock(...) bpf_spin_unlock(__VA_ARGS__)
+#endif
+
 struct icmphdr {
   u_int8_t type; /* message type */
   u_int8_t code; /* type sub-code */
@@ -222,13 +230,13 @@ pcn_log(ctx, LOG_DEBUG, "Conntrack Mode: _CONNTRACK_MAIN_MODE");
 
     value = connections.lookup(&key);
     if (value != NULL) {
-      bpf_spin_lock(&value->lock);
+      pcn_spin_lock(&value->lock);
       if ((value->ipRev == ipRev) && (value->portRev == portRev)) {
         goto TCP_FORWARD;
       } else if ((value->ipRev != ipRev) && (value->portRev != portRev)) {
         goto TCP_REVERSE;
       } else {
-        bpf_spin_unlock(&value->lock);
+        pcn_spin_unlock(&value->lock);
         goto TCP_MISS;
       }
 
@@ -242,7 +250,7 @@ pcn_log(ctx, LOG_DEBUG, "Conntrack Mode: _CONNTRACK_MAIN_MODE");
           // Another SYN. It is valid, probably a retransmission.
           value->ttl = *timestamp + TCP_SYN_SENT;
 
-          bpf_spin_unlock(&value->lock);
+          pcn_spin_unlock(&value->lock);
           goto forward_action;
         } else {
           // Receiving packets outside the 3-Way handshake without completing
@@ -250,7 +258,7 @@ pcn_log(ctx, LOG_DEBUG, "Conntrack Mode: _CONNTRACK_MAIN_MODE");
           // TODO: Drop it?
           pkt->connStatus = INVALID;
 
-          bpf_spin_unlock(&value->lock);
+          pcn_spin_unlock(&value->lock);
           pcn_log(ctx, LOG_TRACE,
                   "[ConntrackTableUpdate] [FW_DIRECTION] Failed ACK check in "
                   "SYN_SENT state. Flags: %x",
@@ -268,7 +276,7 @@ pcn_log(ctx, LOG_DEBUG, "Conntrack Mode: _CONNTRACK_MAIN_MODE");
           value->state = ESTABLISHED;
           value->ttl = *timestamp + TCP_ESTABLISHED;
 
-          bpf_spin_unlock(&value->lock);
+          pcn_spin_unlock(&value->lock);
           pcn_log(ctx, LOG_TRACE,
                   "[ConntrackTableUpdate] [FW_DIRECTION] Changing state from "
                   "SYN_RECV to ESTABLISHED");
@@ -280,7 +288,7 @@ pcn_log(ctx, LOG_DEBUG, "Conntrack Mode: _CONNTRACK_MAIN_MODE");
           // TODO: drop it?
 
           pkt->connStatus = INVALID;
-          bpf_spin_unlock(&value->lock);
+          pcn_spin_unlock(&value->lock);
           pcn_log(ctx, LOG_TRACE,
                   "[ConntrackTableUpdate] [FW_DIRECTION] Failed ACK check in "
                   "SYN_RECV state. Flags: %x",
@@ -297,7 +305,7 @@ pcn_log(ctx, LOG_DEBUG, "Conntrack Mode: _CONNTRACK_MAIN_MODE");
           value->ttl = *timestamp + TCP_FIN_WAIT;
           value->sequence = pkt->ackN;
 
-          bpf_spin_unlock(&value->lock);
+          pcn_spin_unlock(&value->lock);
           pcn_log(ctx, LOG_TRACE,
                   "[ConntrackTableUpdate] [FW_DIRECTION] Changing state from "
                   "ESTABLISHED to FIN_WAIT_1. Seq: %u",
@@ -306,7 +314,7 @@ pcn_log(ctx, LOG_DEBUG, "Conntrack Mode: _CONNTRACK_MAIN_MODE");
           goto forward_action;
         } else {
           value->ttl = *timestamp + TCP_ESTABLISHED;
-          bpf_spin_unlock(&value->lock);
+          pcn_spin_unlock(&value->lock);
           goto forward_action;
         }
       }
@@ -317,17 +325,17 @@ pcn_log(ctx, LOG_DEBUG, "Conntrack Mode: _CONNTRACK_MAIN_MODE");
           // Received ACK
           value->state = FIN_WAIT_2;
           value->ttl = *timestamp + TCP_FIN_WAIT;
-          bpf_spin_unlock(&value->lock);
+          pcn_spin_unlock(&value->lock);
           pcn_log(ctx, LOG_TRACE,
                   "[ConntrackTableUpdate] [FW_DIRECTION] Changing state from "
                   "FIN_WAIT_1 to FIN_WAIT_2");
-          bpf_spin_lock(&value->lock);
+          pcn_spin_lock(&value->lock);
         } else {
           // Validation failed, either ACK is not the only flag set or the ack
           // number is wrong
           // TODO: drop it?
           pkt->connStatus = INVALID;
-          bpf_spin_unlock(&value->lock);
+          pcn_spin_unlock(&value->lock);
           pcn_log(ctx, LOG_TRACE,
                   "[ConntrackTableUpdate] [FW_DIRECTION] Failed ACK check in "
                   "FIN_WAIT_1 state. Flags: %x. AckSeq: %u",
@@ -346,7 +354,7 @@ pcn_log(ctx, LOG_DEBUG, "Conntrack Mode: _CONNTRACK_MAIN_MODE");
           value->ttl = *timestamp + TCP_LAST_ACK;
           value->sequence = pkt->ackN;
 
-          bpf_spin_unlock(&value->lock);
+          pcn_spin_unlock(&value->lock);
           pcn_log(ctx, LOG_TRACE,
                   "[ConntrackTableUpdate] [FW_DIRECTION] Changing state from "
                   "FIN_WAIT_2 to LAST_ACK");
@@ -355,7 +363,7 @@ pcn_log(ctx, LOG_DEBUG, "Conntrack Mode: _CONNTRACK_MAIN_MODE");
         } else {
           // Still receiving packets
           value->ttl = *timestamp + TCP_FIN_WAIT;
-          bpf_spin_unlock(&value->lock);
+          pcn_spin_unlock(&value->lock);
           pcn_log(ctx, LOG_TRACE,
                   "[ConntrackTableUpdate] [FW_DIRECTION] Failed FIN check in "
                   "FIN_WAIT_2 state. Flags: %x. Seq: %u",
@@ -371,7 +379,7 @@ pcn_log(ctx, LOG_DEBUG, "Conntrack Mode: _CONNTRACK_MAIN_MODE");
           value->state = TIME_WAIT;
           value->ttl = *timestamp + TCP_LAST_ACK;
           
-          bpf_spin_unlock(&value->lock);
+          pcn_spin_unlock(&value->lock);
           pcn_log(ctx, LOG_TRACE,
                   "[ConntrackTableUpdate] [FW_DIRECTION] Changing state from "
                   "LAST_ACK to TIME_WAIT");
@@ -379,22 +387,22 @@ pcn_log(ctx, LOG_DEBUG, "Conntrack Mode: _CONNTRACK_MAIN_MODE");
         }
         // Still receiving packets
         value->ttl = *timestamp + TCP_LAST_ACK;
-        bpf_spin_unlock(&value->lock);
+        pcn_spin_unlock(&value->lock);
         goto forward_action;
       }
 
       if (value->state == TIME_WAIT) {
         if (pkt->connStatus == NEW) {
-          bpf_spin_unlock(&value->lock);
+          pcn_spin_unlock(&value->lock);
           goto TCP_MISS;
         } else {
           // Let the packet go, but do not update timers.
-          bpf_spin_unlock(&value->lock);
+          pcn_spin_unlock(&value->lock);
           goto forward_action;
         }
       }
 
-      bpf_spin_unlock(&value->lock);
+      pcn_spin_unlock(&value->lock);
       pcn_log(ctx, LOG_DEBUG,
               "[ConntrackTableUpdate] [FW_DIRECTION] Should not get here. "
               "Flags: %x. State: %d. ",
@@ -414,7 +422,7 @@ pcn_log(ctx, LOG_DEBUG, "Conntrack Mode: _CONNTRACK_MAIN_MODE");
           value->state = SYN_RECV;
           value->ttl = *timestamp + TCP_SYN_RECV;
           value->sequence = pkt->seqN + HEX_BE_ONE;
-          bpf_spin_unlock(&value->lock);
+          pcn_spin_unlock(&value->lock);
           pcn_log(ctx, LOG_TRACE,
                   "[ConntrackTableUpdate] [REV_DIRECTION] Changing state from "
                   "SYN_SENT to SYN_RECV");
@@ -425,7 +433,7 @@ pcn_log(ctx, LOG_DEBUG, "Conntrack Mode: _CONNTRACK_MAIN_MODE");
         // to a SYN
         // TODO: Drop it?
         pkt->connStatus = INVALID;
-        bpf_spin_unlock(&value->lock);
+        pcn_spin_unlock(&value->lock);
         goto forward_action;
       }
 
@@ -437,11 +445,11 @@ pcn_log(ctx, LOG_DEBUG, "Conntrack Mode: _CONNTRACK_MAIN_MODE");
                 (TCPHDR_SYN | TCPHDR_ACK) &&
             pkt->ackN == value->sequence) {
           value->ttl = *timestamp + TCP_SYN_RECV;
-          bpf_spin_unlock(&value->lock);
+          pcn_spin_unlock(&value->lock);
           goto forward_action;
         }
         pkt->connStatus = INVALID;
-        bpf_spin_unlock(&value->lock);
+        pcn_spin_unlock(&value->lock);
         goto forward_action;
       }
 
@@ -451,7 +459,7 @@ pcn_log(ctx, LOG_DEBUG, "Conntrack Mode: _CONNTRACK_MAIN_MODE");
           value->state = FIN_WAIT_1;
           value->ttl = *timestamp + TCP_FIN_WAIT;
           value->sequence = pkt->ackN;
-          bpf_spin_unlock(&value->lock);
+          pcn_spin_unlock(&value->lock);
           pcn_log(ctx, LOG_TRACE,
                   "[ConntrackTableUpdate] [REV_DIRECTION] Changing state from "
                   "ESTABLISHED to FIN_WAIT_1. Seq: %x",
@@ -460,7 +468,7 @@ pcn_log(ctx, LOG_DEBUG, "Conntrack Mode: _CONNTRACK_MAIN_MODE");
           goto forward_action;
         } else {
           value->ttl = *timestamp + TCP_ESTABLISHED;
-          bpf_spin_unlock(&value->lock);
+          pcn_spin_unlock(&value->lock);
           goto forward_action;
         }
       }
@@ -471,11 +479,11 @@ pcn_log(ctx, LOG_DEBUG, "Conntrack Mode: _CONNTRACK_MAIN_MODE");
           // Received ACK
           value->state = FIN_WAIT_2;
           value->ttl = *timestamp + TCP_FIN_WAIT;
-          bpf_spin_unlock(&value->lock);
+          pcn_spin_unlock(&value->lock);
           pcn_log(ctx, LOG_TRACE,
                   "[ConntrackTableUpdate] [REV_DIRECTION] Changing state from "
                   "FIN_WAIT_1 to FIN_WAIT_2");
-          bpf_spin_lock(&value->lock);
+          pcn_spin_lock(&value->lock);
 
           // Don't forward packet, we can continue performing the check in case
           // the current packet is a ACK,FIN. In this case we match the next if
@@ -485,7 +493,7 @@ pcn_log(ctx, LOG_DEBUG, "Conntrack Mode: _CONNTRACK_MAIN_MODE");
           // number is wrong
           // TODO: drop it?
           pkt->connStatus = INVALID;
-          bpf_spin_unlock(&value->lock);
+          pcn_spin_unlock(&value->lock);
           pcn_log(ctx, LOG_TRACE,
                   "[ConntrackTableUpdate] [REV_DIRECTION] Failed ACK check in "
                   "FIN_WAIT_1 state. Flags: %d. AckSeq: %d",
@@ -503,7 +511,7 @@ pcn_log(ctx, LOG_DEBUG, "Conntrack Mode: _CONNTRACK_MAIN_MODE");
           value->state = LAST_ACK;
           value->ttl = *timestamp + TCP_LAST_ACK;
           value->sequence = pkt->ackN;
-          bpf_spin_unlock(&value->lock);
+          pcn_spin_unlock(&value->lock);
           pcn_log(ctx, LOG_TRACE,
                   "[ConntrackTableUpdate] [REV_DIRECTION] Changing state from "
                   "FIN_WAIT_1 to LAST_ACK");
@@ -512,7 +520,7 @@ pcn_log(ctx, LOG_DEBUG, "Conntrack Mode: _CONNTRACK_MAIN_MODE");
         } else {
           // Still receiving packets
           value->ttl = *timestamp + TCP_FIN_WAIT;
-          bpf_spin_unlock(&value->lock);
+          pcn_spin_unlock(&value->lock);
           pcn_log(ctx, LOG_TRACE,
                   "[ConntrackTableUpdate] [REV_DIRECTION] Failed FIN check in "
                   "FIN_WAIT_2 state. Flags: %d. Seq: %d",
@@ -527,7 +535,7 @@ pcn_log(ctx, LOG_DEBUG, "Conntrack Mode: _CONNTRACK_MAIN_MODE");
           // Ack to the last FIN.
           value->state = TIME_WAIT;
           value->ttl = *timestamp + TCP_LAST_ACK;
-          bpf_spin_unlock(&value->lock);
+          pcn_spin_unlock(&value->lock);
 
           pcn_log(ctx, LOG_TRACE,
                   "[ConntrackTableUpdate] [REV_DIRECTION] Changing state from "
@@ -537,22 +545,22 @@ pcn_log(ctx, LOG_DEBUG, "Conntrack Mode: _CONNTRACK_MAIN_MODE");
         }
         // Still receiving packets
         value->ttl = *timestamp + TCP_LAST_ACK;
-        bpf_spin_unlock(&value->lock);
+        pcn_spin_unlock(&value->lock);
         goto forward_action;
       }
 
       if (value->state == TIME_WAIT) {
         if (pkt->connStatus == NEW) {
-          bpf_spin_unlock(&value->lock);
+          pcn_spin_unlock(&value->lock);
           goto TCP_MISS;
         } else {
           // Let the packet go, but do not update timers.
-          bpf_spin_unlock(&value->lock);
+          pcn_spin_unlock(&value->lock);
           goto forward_action;
         }
       }
 
-      bpf_spin_unlock(&value->lock);
+      pcn_spin_unlock(&value->lock);
       pcn_log(ctx, LOG_DEBUG,
               "[ConntrackTableUpdate] [REV_DIRECTION] Should not get here. "
               "Flags: %d. "
@@ -586,13 +594,13 @@ pcn_log(ctx, LOG_DEBUG, "Conntrack Mode: _CONNTRACK_MAIN_MODE");
   if (pkt->l4proto == IPPROTO_UDP) {
     value = connections.lookup(&key);
     if (value != NULL) {
-      bpf_spin_lock(&value->lock);
+      pcn_spin_lock(&value->lock);
       if ((value->ipRev == ipRev) && (value->portRev == portRev)) {
         goto UDP_FORWARD;
       } else if ((value->ipRev != ipRev) && (value->portRev != portRev)) {
         goto UDP_REVERSE;
       } else {
-        bpf_spin_unlock(&value->lock);
+        pcn_spin_unlock(&value->lock);
         goto UDP_MISS;
       }
 
@@ -607,12 +615,12 @@ pcn_log(ctx, LOG_DEBUG, "Conntrack Mode: _CONNTRACK_MAIN_MODE");
         // attack where the attacker prevents the entry from being deleted by
         // continuosly sending packets.
         value->ttl = *timestamp + UDP_NEW_TIMEOUT;
-        bpf_spin_unlock(&value->lock);
+        pcn_spin_unlock(&value->lock);
         goto forward_action;
       } else {
         // value->state == ESTABLISHED
         value->ttl = *timestamp + UDP_ESTABLISHED_TIMEOUT;
-        bpf_spin_unlock(&value->lock);
+        pcn_spin_unlock(&value->lock);
         goto forward_action;
       }
 
@@ -628,12 +636,12 @@ pcn_log(ctx, LOG_DEBUG, "Conntrack Mode: _CONNTRACK_MAIN_MODE");
         pcn_log(ctx, LOG_TRACE,
                 "[ConntrackTableUpdate] [REV_DIRECTION] Changing state from "
                 "NEW to ESTABLISHED");
-        bpf_spin_unlock(&value->lock);
+        pcn_spin_unlock(&value->lock);
         goto forward_action;
       } else {
         // value->state == ESTABLISHED
         value->ttl = *timestamp + UDP_ESTABLISHED_TIMEOUT;
-        bpf_spin_unlock(&value->lock);
+        pcn_spin_unlock(&value->lock);
         goto forward_action;
       }
     }

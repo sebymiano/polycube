@@ -91,6 +91,8 @@ Response read_iptables_ports_list_by_id_handler(const char *name, const Key *key
 Response read_iptables_session_table_by_id_handler(const char *name, const Key *keys, size_t num_keys);
 Response read_iptables_session_table_list_by_id_handler(const char *name, const Key *keys, size_t num_keys);
 Response read_iptables_session_table_state_by_id_handler(const char *name, const Key *keys, size_t num_keys);
+Response read_iptables_spinlocks_by_id_handler(const char *name, const Key *keys, size_t num_keys);
+Response read_iptables_start_morpheus_by_id_handler(const char *name, const Key *keys, size_t num_keys);
 Response replace_iptables_by_id_handler(const char *name, const Key *keys, size_t num_keys, const char *value);
 Response replace_iptables_chain_by_id_handler(const char *name, const Key *keys, size_t num_keys, const char *value);
 Response replace_iptables_chain_list_by_id_handler(const char *name, const Key *keys, size_t num_keys, const char *value);
@@ -120,6 +122,8 @@ Response update_iptables_interactive_by_id_handler(const char *name, const Key *
 Response update_iptables_list_by_id_handler(const char *name, const Key *keys, size_t num_keys, const char *value);
 Response update_iptables_ports_by_id_handler(const char *name, const Key *keys, size_t num_keys, const char *value);
 Response update_iptables_ports_list_by_id_handler(const char *name, const Key *keys, size_t num_keys, const char *value);
+Response update_iptables_spinlocks_by_id_handler(const char *name, const Key *keys, size_t num_keys, const char *value);
+Response update_iptables_start_morpheus_by_id_handler(const char *name, const Key *keys, size_t num_keys, const char *value);
 
 Response iptables_chain_list_by_id_help(const char *name, const Key *keys, size_t num_keys);
 Response iptables_chain_rule_list_by_id_help(const char *name, const Key *keys, size_t num_keys);

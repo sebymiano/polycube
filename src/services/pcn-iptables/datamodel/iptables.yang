@@ -104,6 +104,12 @@ module iptables {
         default true;
   }
 
+  leaf spinlocks {
+    type boolean;
+    description "Use spinlocks in the data plane (default to TRUE)";
+        default true;
+  }
+
   leaf conntrack {
     type enumeration {
       enum ON;

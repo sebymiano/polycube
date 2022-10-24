@@ -63,6 +63,14 @@ public:
   void unsetDynOpt();
 
   /// <summary>
+  /// Set this flag if you want to start Morpheus compiler
+  /// </summary>
+  bool getStartMorpheus() const;
+  void setStartMorpheus(bool value);
+  bool startMorpheusIsSet() const;
+  void unsetStartMorpheus();
+
+  /// <summary>
   /// Entry of the ports table
   /// </summary>
   const std::vector<PortsJsonObject>& getPorts() const;
@@ -77,6 +85,14 @@ public:
   void setInteractive(bool value);
   bool interactiveIsSet() const;
   void unsetInteractive();
+
+  /// <summary>
+  /// Use spinlocks in the data plane (default to TRUE)
+  /// </summary>
+  bool getSpinlocks() const;
+  void setSpinlocks(bool value);
+  bool spinlocksIsSet() const;
+  void unsetSpinlocks();
 
   /// <summary>
   /// Enables the Connection Tracking module. Mandatory if connection tracking rules are needed. Default is ON.
@@ -119,10 +135,14 @@ private:
   bool m_nameIsSet;
   bool m_dynOpt;
   bool m_dynOptIsSet;
+  bool m_startMorpheus;
+  bool m_startMorpheusIsSet;
   std::vector<PortsJsonObject> m_ports;
   bool m_portsIsSet;
   bool m_interactive;
   bool m_interactiveIsSet;
+  bool m_spinlocks;
+  bool m_spinlocksIsSet;
   IptablesConntrackEnum m_conntrack;
   bool m_conntrackIsSet;
   IptablesHorusEnum m_horus;

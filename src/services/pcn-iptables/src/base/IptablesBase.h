@@ -49,6 +49,12 @@ class IptablesBase: public virtual polycube::service::Cube<Ports> {
   virtual bool getDynOpt() = 0;
 
   /// <summary>
+  /// Set this flag if you want to start Morpheus compiler
+  /// </summary>
+  virtual bool getStartMorpheus() = 0;
+  virtual void setStartMorpheus(const bool &value) = 0;
+
+  /// <summary>
   /// Entry of the ports table
   /// </summary>
   virtual std::shared_ptr<Ports> getPorts(const std::string &name);
@@ -64,6 +70,12 @@ class IptablesBase: public virtual polycube::service::Cube<Ports> {
   /// </summary>
   virtual bool getInteractive() = 0;
   virtual void setInteractive(const bool &value) = 0;
+
+  /// <summary>
+  /// Use spinlocks in the data plane (default to TRUE)
+  /// </summary>
+  virtual bool getSpinlocks() = 0;
+  virtual void setSpinlocks(const bool &value) = 0;
 
   /// <summary>
   /// Enables the Connection Tracking module. Mandatory if connection tracking rules are needed. Default is ON.

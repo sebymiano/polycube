@@ -21,9 +21,13 @@ IptablesJsonObject::IptablesJsonObject() {
   m_nameIsSet = false;
   m_dynOpt = false;
   m_dynOptIsSet = true;
+  m_startMorpheus = false;
+  m_startMorpheusIsSet = true;
   m_portsIsSet = false;
   m_interactive = true;
   m_interactiveIsSet = true;
+  m_spinlocks = true;
+  m_spinlocksIsSet = true;
   m_conntrackIsSet = false;
   m_horusIsSet = false;
   m_sessionTableIsSet = false;
@@ -34,8 +38,10 @@ IptablesJsonObject::IptablesJsonObject(const nlohmann::json &val) :
   JsonObjectBase(val) {
   m_nameIsSet = false;
   m_dynOptIsSet = false;
+  m_startMorpheusIsSet = false;
   m_portsIsSet = false;
   m_interactiveIsSet = false;
+  m_spinlocksIsSet = false;
   m_conntrackIsSet = false;
   m_horusIsSet = false;
   m_sessionTableIsSet = false;
@@ -50,6 +56,10 @@ IptablesJsonObject::IptablesJsonObject(const nlohmann::json &val) :
     setDynOpt(val.at("dyn-opt").get<bool>());
   }
 
+  if (val.count("start-morpheus")) {
+    setStartMorpheus(val.at("start-morpheus").get<bool>());
+  }
+
   if (val.count("ports")) {
     for (auto& item : val["ports"]) {
       PortsJsonObject newItem{ item };
@@ -61,6 +71,10 @@ IptablesJsonObject::IptablesJsonObject(const nlohmann::json &val) :
 
   if (val.count("interactive")) {
     setInteractive(val.at("interactive").get<bool>());
+  }
+
+  if (val.count("spinlocks")) {
+    setSpinlocks(val.at("spinlocks").get<bool>());
   }
 
   if (val.count("conntrack")) {
@@ -104,6 +118,10 @@ nlohmann::json IptablesJsonObject::toJson() const {
     val["dyn-opt"] = m_dynOpt;
   }
 
+  if (m_startMorpheusIsSet) {
+    val["start-morpheus"] = m_startMorpheus;
+  }
+
   {
     nlohmann::json jsonArray;
     for (auto& item : m_ports) {
@@ -117,6 +135,10 @@ nlohmann::json IptablesJsonObject::toJson() const {
 
   if (m_interactiveIsSet) {
     val["interactive"] = m_interactive;
+  }
+
+  if (m_spinlocksIsSet) {
+    val["spinlocks"] = m_spinlocks;
   }
 
   if (m_conntrackIsSet) {
@@ -184,6 +206,23 @@ void IptablesJsonObject::unsetDynOpt() {
   m_dynOptIsSet = false;
 }
 
+bool IptablesJsonObject::getStartMorpheus() const {
+  return m_startMorpheus;
+}
+
+void IptablesJsonObject::setStartMorpheus(bool value) {
+  m_startMorpheus = value;
+  m_startMorpheusIsSet = true;
+}
+
+bool IptablesJsonObject::startMorpheusIsSet() const {
+  return m_startMorpheusIsSet;
+}
+
+void IptablesJsonObject::unsetStartMorpheus() {
+  m_startMorpheusIsSet = false;
+}
+
 const std::vector<PortsJsonObject>& IptablesJsonObject::getPorts() const{
   return m_ports;
 }
@@ -217,6 +256,23 @@ bool IptablesJsonObject::interactiveIsSet() const {
 
 void IptablesJsonObject::unsetInteractive() {
   m_interactiveIsSet = false;
+}
+
+bool IptablesJsonObject::getSpinlocks() const {
+  return m_spinlocks;
+}
+
+void IptablesJsonObject::setSpinlocks(bool value) {
+  m_spinlocks = value;
+  m_spinlocksIsSet = true;
+}
+
+bool IptablesJsonObject::spinlocksIsSet() const {
+  return m_spinlocksIsSet;
+}
+
+void IptablesJsonObject::unsetSpinlocks() {
+  m_spinlocksIsSet = false;
 }
 
 IptablesConntrackEnum IptablesJsonObject::getConntrack() const {

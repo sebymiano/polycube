@@ -1003,6 +1003,40 @@ read_iptables_session_table_state_by_id(const std::string &name, const std::stri
 }
 
 /**
+* @brief   Read spinlocks by ID
+*
+* Read operation of resource: spinlocks*
+*
+* @param[in] name ID of name
+*
+* Responses:
+* bool
+*/
+bool
+read_iptables_spinlocks_by_id(const std::string &name) {
+  auto iptables = get_cube(name);
+  return iptables->getSpinlocks();
+
+}
+
+/**
+* @brief   Read start-morpheus by ID
+*
+* Read operation of resource: start-morpheus*
+*
+* @param[in] name ID of name
+*
+* Responses:
+* bool
+*/
+bool
+read_iptables_start_morpheus_by_id(const std::string &name) {
+  auto iptables = get_cube(name);
+  return iptables->getStartMorpheus();
+
+}
+
+/**
 * @brief   Replace chain by ID
 *
 * Replace operation of resource: chain*
@@ -1546,6 +1580,42 @@ update_iptables_ports_by_id(const std::string &name, const std::string &portsNam
 void
 update_iptables_ports_list_by_id(const std::string &name, const std::vector<PortsJsonObject> &value) {
   throw std::runtime_error("Method not supported");
+}
+
+/**
+* @brief   Update spinlocks by ID
+*
+* Update operation of resource: spinlocks*
+*
+* @param[in] name ID of name
+* @param[in] value Use spinlocks in the data plane (default to TRUE)
+*
+* Responses:
+*
+*/
+void
+update_iptables_spinlocks_by_id(const std::string &name, const bool &value) {
+  auto iptables = get_cube(name);
+
+  return iptables->setSpinlocks(value);
+}
+
+/**
+* @brief   Update start-morpheus by ID
+*
+* Update operation of resource: start-morpheus*
+*
+* @param[in] name ID of name
+* @param[in] value Set this flag if you want to start Morpheus compiler
+*
+* Responses:
+*
+*/
+void
+update_iptables_start_morpheus_by_id(const std::string &name, const bool &value) {
+  auto iptables = get_cube(name);
+
+  return iptables->setStartMorpheus(value);
 }
 
 

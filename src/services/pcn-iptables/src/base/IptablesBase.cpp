@@ -12,7 +12,7 @@
 #include "IptablesBase.h"
 
 IptablesBase::IptablesBase(const std::string name) {
-  logger()->set_pattern("[%Y-%m-%d %H:%M:%S.%e] [Iptables] [%n] [%^%l%$] %v");
+  logger()->set_pattern("[%Y-%m-%d %H:%M:%S.%e] [Iptables] [%n] [%l] %v");
 }
 
 
@@ -22,6 +22,9 @@ IptablesBase::~IptablesBase() {}
 void IptablesBase::update(const IptablesJsonObject &conf) {
   set_conf(conf.getBase());
 
+  if (conf.startMorpheusIsSet()) {
+    setStartMorpheus(conf.getStartMorpheus());
+  }
   if (conf.portsIsSet()) {
     for (auto &i : conf.getPorts()) {
       auto name = i.getName();
@@ -31,6 +34,9 @@ void IptablesBase::update(const IptablesJsonObject &conf) {
   }
   if (conf.interactiveIsSet()) {
     setInteractive(conf.getInteractive());
+  }
+  if (conf.spinlocksIsSet()) {
+    setSpinlocks(conf.getSpinlocks());
   }
   if (conf.conntrackIsSet()) {
     setConntrack(conf.getConntrack());
@@ -64,10 +70,12 @@ IptablesJsonObject IptablesBase::toJsonObject() {
 
   conf.setName(getName());
   conf.setDynOpt(getDynOpt());
+  conf.setStartMorpheus(getStartMorpheus());
   for (auto &i : getPortsList()) {
     conf.addPorts(i->toJsonObject());
   }
   conf.setInteractive(getInteractive());
+  conf.setSpinlocks(getSpinlocks());
   conf.setConntrack(getConntrack());
   conf.setHorus(getHorus());
   for(auto &i : getSessionTableList()) {
