@@ -15,6 +15,7 @@ read -r os_major os_minor<<<$(grep -Po 'VERSION_ID="\K.*?(?=")' /etc/os-release 
 
 FMT_VERSION=8.1.1
 FOLLY_VERSION=v2024.04.08.00
+PROMETHEUS_CPP_VERSION=v1.2.4
 
 get_flex() {
   # licd $WORKDIR
@@ -311,7 +312,7 @@ get_prometheus_cpp() {
   cd "$WORKDIR"
   echo -e "${COLOR_GREEN}[ INFO ] Downloading prometheus CPP ${COLOR_OFF}"
   mkdir -p "$PROMETHEUS_DIR"
-  wget https://github.com/jupp0r/prometheus-cpp/releases/download/v1.0.0/prometheus-cpp-with-submodules.tar.gz
+  wget https://github.com/jupp0r/prometheus-cpp/releases/download/${PROMETHEUS_CPP_VERSION}/prometheus-cpp-with-submodules.tar.gz
   tar xf prometheus-cpp-with-submodules.tar.gz -C prometheus --strip-components 1
   rm prometheus-cpp-with-submodules.tar.gz
   echo -e "${COLOR_GREEN}[ INFO ] Building prometheus CPP ${COLOR_OFF}"
