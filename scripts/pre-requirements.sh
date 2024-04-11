@@ -13,6 +13,8 @@ os_limit_major="20"
 os_limit_minor="04"
 read -r os_major os_minor<<<$(grep -Po 'VERSION_ID="\K.*?(?=")' /etc/os-release | sed 's/\./ /g')
 
+FMT_VERSION=8.1.1
+FOLLY_VERSION=v2024.04.08.00
 
 get_flex() {
   # licd $WORKDIR
@@ -199,7 +201,7 @@ get_fmt() {
   pushd .
   cd "$WORKDIR"
   echo -e "${COLOR_GREEN}[ INFO ] Cloning fmt repo ${COLOR_OFF}"
-  git clone https://github.com/fmtlib/fmt
+  git clone --depth 1 --branch ${FMT_VERSION} https://github.com/fmtlib/fmt
   mkdir -p "$FMT_BUILD_DIR"
   cd "$FMT_BUILD_DIR"
   cmake -DCXX_STD=gnu++17                         \
@@ -280,7 +282,7 @@ get_folly() {
 
   pushd .
   echo -e "${COLOR_GREEN}[ INFO ] Cloning folly repo ${COLOR_OFF}"
-  git clone https://github.com/facebook/folly --depth 1 "$FOLLY_DIR"
+  git clone --branch ${FOLLY_VERSION} --depth 1 https://github.com/facebook/folly "$FOLLY_DIR"
   echo -e "${COLOR_GREEN}[ INFO ] Building Folly ${COLOR_OFF}"
   mkdir -p "$FOLLY_BUILD_DIR"
   cd "$FOLLY_BUILD_DIR" || exit
