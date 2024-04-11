@@ -71,11 +71,14 @@ fi
 
 # print bash commands and their arguments as they are executed
 set -x
+
+if git rev-parse --git-dir > /dev/null 2>&1; then
+  git submodule init
+  git submodule update --recursive
+fi
+
 # exit immediately if a command exits with a non-zero status
 set -e
-
-git submodule init
-git submodule update --recursive
 
 source scripts/pre-requirements.sh
 
