@@ -15,7 +15,7 @@ read -r os_major os_minor<<<$(grep -Po 'VERSION_ID="\K.*?(?=")' /etc/os-release 
 
 FMT_VERSION=8.1.1
 FOLLY_VERSION=v2024.04.08.00
-PROMETHEUS_CPP_VERSION=v1.2.4
+PROMETHEUS_CPP_VERSION=v1.1.0
 
 get_flex() {
   # licd $WORKDIR
