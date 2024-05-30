@@ -343,6 +343,7 @@ PACKAGES+=" jq bash-completion" # needed for polycubectl bash autocompletion
 PACKAGES+=" libpcre3-dev" # needed for libyang
 PACKAGES+=" libpcap-dev" # needed for packetcapture filter
 PACKAGES+=" tcpreplay" # needed for packetcapture filter
+PACKAGES+=" curl libcurl4-openssl-dev"
 
 if ! command -v go &> /dev/null
 then
